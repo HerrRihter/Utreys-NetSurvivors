@@ -508,10 +508,12 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
       const n = icn('turret'), h = 96, w = L.hsz(n, h), c = u.evo ? CYAN_HI : CYAN; SH(X + 4, Y, 40, 12, 0.5);
       L.sprite(n, X - w / 2, Y - h + 8, { w, h, u: { grade: [0.85, 1, 0, 1], tint: [0.8, 0.95, 1.1, 0.3], rim: [0.6, 0.004, -0.004, 1.2], rimCol: c, alpha: bl } });
       if (GT - u.nt > -0.06) L.glow(X + Math.cos(u.a) * 26, Y - 74 + Math.sin(u.a) * 20, 16, c, 0.9 * bl, 3); L.glow(X, Y - h + 12, 10, c, (0.5 + 0.5 * Math.sin(GT * 6 + u.t0)) * bl, 4); }]); }
-    // orbit scanners sort with the band (they circle the hero in depth)
-    if (ST.wp.orbit) { const st = SIM.wstat('orbit', ST.wp.orbit); for (let i = 0; i < st.count; i++) { const a = GT * st.spin + i * 6.2832 / st.count, ox = ST.x + Math.cos(a) * st.radius, oy = ST.y - 34 + Math.sin(a) * st.radius * 0.62;
-      Yb.push([oy + 34, () => { L.glow(sx(ox), sy(oy), 46, MINT, 0.5, 3); for (let j = 1; j < 6; j++) { const b = a - j * 0.09; L.glow(sx(ST.x + Math.cos(b) * st.radius), sy(ST.y - 34 + Math.sin(b) * st.radius * 0.62), 16 - j * 2, MINT, 0.4 * (1 - j / 6), 3); }
-        L.sprite('ic_orbit', sx(ox) - 19, sy(oy) - 19, { w: 38, h: 38 }); }]); } }
+    // orbit scanners sort with the band (they circle the hero in depth); placed by the sim, so the evolution and the modifiers show
+    // where they hit. The evolution's ring is lighter, with its own icon.
+    const MINT_HI = [0.75, 1, 0.94];
+    for (const { a, x: ox, y: oy, R, evo } of SIM.orbits(ST, GT)) { const c = evo ? MINT_HI : MINT, ic = evo ? 'ic_x_orbit' : 'ic_orbit', sz = evo ? 44 : 38;
+      Yb.push([oy + 34, () => { L.glow(sx(ox), sy(oy), evo ? 54 : 46, c, 0.5, 3); for (let j = 1; j < 6; j++) { const b = a - j * 0.09; L.glow(sx(ST.x + Math.cos(b) * R), sy(ST.y - 34 + Math.sin(b) * R * 0.62), 16 - j * 2, c, 0.4 * (1 - j / 6), 3); }
+        L.sprite(ic, sx(ox) - sz / 2, sy(oy) - sz / 2, { w: sz, h: sz }); }]); }
     Yb.sort((a, b) => a[0] - b[0]).forEach(([, d]) => d());
 
     // ===== projectiles =====

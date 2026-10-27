@@ -264,6 +264,13 @@
   const MAX_W = 4, MAX_P = 6, MAX_PL = 5, MAX_WL = 6;   // weapons besides the hero's own attack (+ the hero's slots: Utrace 5), 6 passive kinds
   const wstat = (id, lv) => { const w = WEAP[id], s = Object.assign({}, w.base); for (let i = 0; i < lv - 1; i++) { const d = w.steps[i][1];
     for (const k in d) s[k] = k === 'dmg' || k === 'cd' ? s[k] * (1 + d[k]) : s[k] + d[k]; } return s; };
+  // an orbit scanner's angle and place (st: wstat with the modifiers applied); the hits and the drawing both use it
+  const orbitAt = (S, st, i, t) => { const a = t * st.spin + i * 6.2832 / st.count; return [a, S.x + Math.cos(a) * st.radius, S.y - 34 + Math.sin(a) * st.radius * 0.62]; };
+  // every orbit scanner of the run at time t, the base weapon's or its evolution's, with Широкий охват and Репликация as in step()
+  const orbits = (S, t = S.t) => { const M = mul(S), out = [];
+    for (const id in S.wp) { if ((WEAP[id].kind || WEAP[id].of || id) !== 'orbit') continue; const st = wstat(id, S.wp[id]); st.radius *= M.area; st.count += M.amount;
+      for (let i = 0; i < st.count; i++) { const [a, x, y] = orbitAt(S, st, i, t); out.push({ a, x, y, R: st.radius, evo: !!WEAP[id].evo }); } }
+    return out; };
 
   // ---------------- level: generated per run (MAPS); y = ground contact point ----------------
   // Every run builds its own layout from its seed. The plaza round the core is fixed (the reference's composition); the five
@@ -814,8 +821,8 @@
           hitTanks(S, tx + Math.cos(a) * st.range * 0.6, ty + 40 + Math.sin(a) * st.range * 0.6, st.range * 0.45, st.dmg);
           if (n) S.freeze = Math.max(S.freeze, 0.02 + 0.004 * Math.min(n, 6)); }
       }
-      if (kind === 'orbit') { const n = st.count, R0 = st.radius, sp = st.spin;
-        for (let i = 0; i < n; i++) { const a = t * sp + i * 6.2832 / n, ox = S.x + Math.cos(a) * R0, oy = S.y - 34 + Math.sin(a) * R0 * 0.62;
+      if (kind === 'orbit') { const n = st.count;
+        for (let i = 0; i < n; i++) { const [, ox, oy] = orbitAt(S, st, i, t);
           near(S, g, ox, oy + 30, 40, (e) => { if (t - e.oT < st.rehit) return; if (Math.hypot(e.x - ox, e.y - 30 - oy) > 30 + FOE[e.k].r) return; e.oT = t;
             const dx = e.x - S.x, dy = e.y - S.y, d = Math.hypot(dx, dy) || 1; hurtFoe(S, e, st.dmg * M.dmg, dx / d * 160, dy / d * 160, 'orbit'); });
           hitTanks(S, ox, oy, 20, st.dmg * DT * 4); } }
@@ -1161,7 +1168,7 @@
   // every spawn ring position a foe could land on can reach the hero's start on the flow field
   const selfCheck = (map = 'dc', seed = 0) => validate(buildLevel(map, seed));
   root.SIM = { DT, L, K, VIEW, WORLD, HINT, RUN_T, RESTART_T, RIG, FOE, FOE_DESC, WEAP, WSUM, PASS, EVO, HEROES, SKINS, ABIL, AB_MAX, CLIENTS, MAX_W, MAX_P, MAX_WL, MAX_PL, FOOT, PLAZA, zoneAt, MAPS, COMPONENTS, buildLevel, validate, ensureLevel, levelFor, lerp, TERM_R, TERM_USE, quizOpt, QUIZ_BTN, doorOpen, nearUse, EDU_MAZE,
-    SPAWN, ORIGIN, NODE_R, HOLD_T, wstat, hpMax, shoulder, hand, tip, cardRect, ctlRect, create, spawn, respawn, outOfPlay, step, at, scriptInput, demoCheck, selfCheck, rollPick, mkFoe };
+    SPAWN, ORIGIN, NODE_R, HOLD_T, wstat, orbits, hpMax, shoulder, hand, tip, cardRect, ctlRect, create, spawn, respawn, outOfPlay, step, at, scriptInput, demoCheck, selfCheck, rollPick, mkFoe };
   // the active level's data, read live (the level changes with the run)
   for (const k of ['ZONES', 'PROPS', 'BOXES', 'LAMPS', 'TANKS', 'STENCILS', 'CABLES', 'TAPES', 'HOLOS', 'RINGS', 'DESKS']) Object.defineProperty(root.SIM, k, { get: () => LV[k], enumerable: true });
   Object.defineProperty(root.SIM, 'SOLIDS', { get: () => LV.BOXES }); Object.defineProperty(root.SIM, 'LEVEL_ID', { get: () => LEVEL_ID }); Object.defineProperty(root.SIM, 'LEVEL', { get: () => LV });
