@@ -1,0 +1,10 @@
+Use case: a PROP KIT sheet for a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter (props stand on the floor).
+Image 1 shows the game's characters: match ONLY its line weight, chunky cartoon shapes and cel shading; do NOT take its colours (the style bible palette rules).
+Draw these separate props in one row, left to right, all on one shared invisible ground line, each showing its top and its front face:
+1) a tall server rack cabinet: near-black body, a dark perforated door, a vertical pale cyan LED strip on each front edge, rows of tiny pale cyan and mint indicator dots, a bundle of dark cables over the top;
+2) a second server rack of the same size: dark glass door with servers behind it, thin pale cyan lines on the server fronts;
+3) a wide precision cooling unit (CRAC): dark blue-grey cabinet with big front grilles, two round fans on top with pale mint rings, a small pale cyan status screen;
+4) a low wide UPS battery cabinet: dark body, vertical battery slots with pale cyan charge bars;
+5) an ENERGY CELL: a squat dark cabinet with a big round window showing a pale cyan crystal core, a yellow-black warning stripe band on its base.
+Composition: very wide empty gaps (at least 90 px) between props, nothing touching or overlapping, nothing cut by the canvas edge.
+Constraints: no text, no letters, no logos, no floor, no ground shadow, no glow.

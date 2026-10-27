@@ -1,0 +1,52 @@
+[
+ {
+  "name": "ab_overclock_gen",
+  "prompt": "art/prompts/ab_overclock.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/icons3_sheet.png=approved icon style of this game"
+  ]
+ },
+ {
+  "name": "ab_registry_gen",
+  "prompt": "art/prompts/ab_registry.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/icons3_sheet.png=approved icon style of this game"
+  ]
+ },
+ {
+  "name": "ab_volley_gen",
+  "prompt": "art/prompts/ab_volley.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/icons3_sheet.png=approved icon style of this game"
+  ]
+ },
+ {
+  "name": "ab_negotiate_gen",
+  "prompt": "art/prompts/ab_negotiate.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/icons3_sheet.png=approved icon style of this game"
+  ]
+ },
+ {
+  "name": "ab_field_gen",
+  "prompt": "art/prompts/ab_field.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/icons3_sheet.png=approved icon style of this game"
+  ]
+ }
+]

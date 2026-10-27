@@ -1,0 +1,7 @@
+Use case: ONE part — the BODY — of a hero SKIN for cut-out rig animation in a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is a SCHEMATIC of this part: a flat grey silhouette with a dark outline. Fill EXACTLY this outline: the same silhouette, the same size and position on the canvas, the same proportions. It shows no details.
+Image 2 is the base hero БА's body: keep its design — the U body, the two cubes, the eyes, the bar chart panel on its front and the short chain with a document tag at its side — so the skin is clearly the same character.
+Skin: КОНСУЛЬТАНТ — a calm, soft variant: smooth soft rounded surfaces without hard seams, a matte soft warm grey (#b3b0a8) body with soft teal (#8fd8cf) and sand beige (#e6d7b8) cubes, relaxed half-closed calm eyes with a gentle smile, thin soft glowing seam lines; the chart panel soft and rounded with gentle teal bars, the chain and tag soft sand.
+Draw ONLY the body: no legs, no arms, the hip and shoulder areas closed and complete, facing the viewer.
+Line and finish: crisp clean vector-like linework, one even thin dark navy outline (#0b1622) around every shape, smooth flat cel shading with one shadow tone and one highlight tone, NO grain, NO texture, NO noise, NO wobbly or blobby edges.
+Constraints: one single part, centred, nothing else on the canvas, no text, no letters, no numbers, no ground, no shadow, no glow, transparent background, not cut by the canvas edge.

@@ -1,0 +1,13 @@
+Use case: an ICON SET for the HUD of a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is the approved style of this game: match its near-black blue-teal bodies, flat pale cyan and mint light details, very dark navy outline, chunky cartoon shapes and cel shading exactly.
+Image 2 is the icon set already in the game: the new icons must sit next to these as one family.
+These are EVOLVED weapons: each is the upgraded, grander form of an existing icon, bigger and more ornate, with extra pale mint accents and a small mint four-point star in its top-right corner.
+Draw 13 separate icons in rows of five, five, three, each centred in its own cell, left to right, top to bottom:
+1) a barcode scanner firing two fans of scan lines, forward and backward; 2) a ring of six small round scanner drones on a wide orbit; 3) a swarm of three data packet arrows with pixel tails;
+4) a ring of five DataMatrix mine plates; 5) a heart outline with ping signal waves around it;
+6) eight circular retry arrows bursting outward in all directions; 7) a memory chip inside a big ring of heat waves; 8) a wide fan of many small square data packets;
+9) a web of lightning connecting many network nodes; 10) a network-cable storm cloud with many lightning bolts;
+11) three small server-turret cabinets side by side; 12) a big frozen ice crystal with a snowflake inside; 13) a grenade bursting into many small grenades that burst again.
+Light details are drawn as flat pale cyan or mint shapes, not glowing. Nothing warm: no brown, no beige, no orange.
+Composition: every item separate with very wide empty gaps, nothing touching, no frames or backgrounds behind icons.
+Constraints: no text, no letters, no numbers, no logos, no floor, no ground shadow, no glow.

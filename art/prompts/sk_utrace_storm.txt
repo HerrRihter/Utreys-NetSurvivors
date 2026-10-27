@@ -1,0 +1,9 @@
+Use case: a SKIN for the hero of a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter: a character PART SHEET for cut-out rig animation.
+Image 1 is the hero Utrace (the base design and the exact parts layout): keep its silhouette, proportions and the U body, the two cubes on top, the eyes and the limb design, so the skin is clearly the same character and fits the same rig.
+Skin: ШТУРМ — an aggressive armoured variant: angular armour plating over the U with sharp chamfered edges and two short swept-back fins on the cube tops; gunmetal (#2b3138) armour with coral red (#ff4a3d) edge lights; the cubes are dark gunmetal with a coral front plate; determined narrowed eyes with a confident grin; the limbs get sharp angular armour cuffs and the shoes become armoured boots with coral soles.
+Draw the character split into separate parts, front 3/4 view, all on one canvas:
+- top row, centred: the BODY alone, with NO legs and NO arms (the hip and shoulder areas closed and complete), facing the viewer;
+- bottom row, left to right, each part straight and vertical, complete: ONE LEG (hip at the top, ankle at the bottom, NO foot), ONE SHOE (side view, toe pointing right), ONE ARM (shoulder at the top, a mitten hand at the bottom).
+Every part separate with very wide empty gaps (at least 80 px), nothing touching, overlapping or cut by the canvas edge.
+Line and finish: crisp clean vector-like linework, one even thin dark navy outline (#0b1622) around every shape, smooth flat cel shading with one soft shadow tone and one highlight tone, NO grain, NO paint texture, NO noise, NO wobbly or blobby edges.
+Constraints: no text, no letters, no numbers, no logos other than the body shape itself, no ground, no shadow under the parts, no glow, transparent background.

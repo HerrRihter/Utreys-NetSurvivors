@@ -1,0 +1,44 @@
+{
+  "name": "outage_sheet",
+  "provider": "codex",
+  "status": "ok",
+  "started": "2026-10-27T18:14:00",
+  "model": "codex image_gen",
+  "size_requested": "1536x1024",
+  "size_sent": "1536x1024",
+  "quality": "high",
+  "seed": null,
+  "prompt_source": "art/prompts/outage_v30.txt",
+  "refs": [
+    {
+      "path": "art/gen/props_e_sheet.png",
+      "label": "approved style of this game: match its palette, dark navy outline, cel shading and the flat pale-cyan light details exactly"
+    },
+    {
+      "path": "art/gen/boss_sheet.png",
+      "label": "layout and scale reference only: copy the parts layout (body on top; below it leg, foot, arm) and the chunky proportions, NOT its design or colours"
+    }
+  ],
+  "prompt": "REFERENCE IMAGES (attached in this order):\nImage 1 = approved style of this game: match its palette, dark navy outline, cel shading and the flat pale-cyan light details exactly\nImage 2 = layout and scale reference only: copy the parts layout (body on top; below it leg, foot, arm) and the chunky proportions, NOT its design or colours\n\nSTYLE BIBLE v2 (cyber datacenter): hand-drawn comic-book 2D game art, chunky readable cartoon shapes, cel shading with 2-3 hard-edged tones and grain; even medium-weight ink outline in very dark navy (#061018) around every object and major interior forms.\nPalette: almost-black blue-teal bodies and metals (#071016, #0e1a22, #1a2a33, #2a3a44), matte, low saturation; light-emitting details (screens, LED strips, edge strips, indicator dots, power cores, cable ends) painted as FLAT pale cyan (#bff8ff) or pale mint (#c9fff0) shapes with a thin cyan (#00e5ff) border, no glow; warning details only in yellow (#ffd600) with black stripes; nothing warm, no brown, no beige, no orange metal.\nLight: dim cool ambient from above, key from the upper left, lit faces only slightly lighter; the cyan details are the brightest areas; no cast shadows painted on the ground.\nStrict top-down 3/4 view, camera about 50 degrees above the ground, orthographic, objects show their top and their front face.\nNo text, no letters, no numbers, no logos, no watermark, no glow, no light rays, no cast shadows, no frame.\n\nASSET:\nUse case: a character PART SHEET for cut-out rig animation in a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.\nImage 1 is the approved style of this game: match its near-black blue-teal bodies, very dark navy outline, chunky cartoon shapes, cel shading and flat light details exactly.\nImage 2 shows only how the parts are laid out on a sheet and how chunky a boss is: copy that layout and scale, not its design.\nSubject: \u00abDatacenter Outage\u00bb, the final boss: a huge blacked-out server cabinet creature, taller than wide, its rack doors cracked open, dead dark drive bays, a thick torn power cable hanging like a tail with a broken plug, two dim warning-lamp eyes and a hazard-stripe jaw; it must look heavier and more menacing than any other character. It is a brand-new character, clearly different in silhouette from Image 2.\nColours: the big body surfaces are dark blue-teal plates like the machines in Image 1; the ACCENT COLOURS (deep warning red and hazard yellow) are mandatory and strong: a thick accent frame\naround the main body plate, accent stripes or cuffs on every leg, arm and shoe, accent details on the face. Together the accent covers about a third of what you see,\nsaturated and flat; never cyan or teal (cyan is reserved for the hero). The character must be recognisable by colour and silhouette alone from far away.\nLight details are flat colour shapes, not glowing.\nLayout: body on top; below it, left to right: ONE leg, ONE foot (shoe), ONE arm, every part separate with very wide empty gaps, all on a plain empty background.\nConstraints: no text, no letters, no logos, no numbers, no ground, no shadow, no glow.\n\nCanvas: 1536x1024 px (3:2 landscape); if that exact size is unavailable, use the closest size with the same aspect ratio.\n\nBackground: fully transparent (real alpha channel, PNG) everywhere outside the ASSET, with clean anti-aliased edges; no ground or cast shadow beyond what the ASSET describes, no frame, no checkerboard pattern",
+  "raw": "art/raw\\outage_sheet.png",
+  "out": "art/gen\\outage_sheet.png",
+  "request_id": "01a17e23-d665-7de0-8e79-5ec9ff75cb7d",
+  "native_alpha_returned": true,
+  "size_raw": "1536x1024",
+  "size_final": "1536x1024",
+  "alpha": {
+    "requested": "native",
+    "plan": "native",
+    "validation": {
+      "ok": true,
+      "kind": "ok",
+      "has_alpha_channel": true,
+      "clear_frac": 0.599,
+      "soft_edge_ratio": 1.902
+    },
+    "method": "native",
+    "fit": "none"
+  },
+  "warnings": [],
+  "seconds": 178.6
+}

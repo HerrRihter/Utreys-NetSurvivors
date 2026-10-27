@@ -1,0 +1,10 @@
+Use case: a character PART SHEET for cut-out rig animation in a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is the approved style of this game: match its near-black blue-teal bodies, very dark navy outline, chunky cartoon shapes, cel shading and flat light details exactly.
+Image 2 shows only how the parts are laid out on a sheet and how chunky a boss is: copy that layout and scale, not its design.
+Subject: «Replication Failure», a boss: a wide twin-hulled server creature split vertically down the middle into two mirrored halves held together by a cracked glowing data bridge; each half has one big round eye, so together they read as one face that is tearing apart; small sync arrows that point away from each other on the shoulders. It is a brand-new character, clearly different in silhouette from Image 2.
+Colours: the big body surfaces are dark blue-teal plates like the machines in Image 1; the ACCENT COLOURS (magenta and violet) are mandatory and strong: a thick accent frame
+around the main body plate, accent stripes or cuffs on every leg, arm and shoe, accent details on the face. Together the accent covers about a third of what you see,
+saturated and flat; never cyan or teal (cyan is reserved for the hero). The character must be recognisable by colour and silhouette alone from far away.
+Light details are flat colour shapes, not glowing.
+Layout: body on top; below it, left to right: ONE leg, ONE foot (shoe), ONE arm, every part separate with very wide empty gaps, all on a plain empty background.
+Constraints: no text, no letters, no logos, no numbers, no ground, no shadow, no glow.

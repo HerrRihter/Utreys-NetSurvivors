@@ -1,0 +1,10 @@
+Use case: an ICON SET for the HUD (weapon and skill icons), bold readable silhouettes for a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is the approved style of this game: match its near-black blue-teal bodies, flat pale cyan and mint light details, very dark navy outline, chunky cartoon shapes and cel shading exactly.
+Draw 12 separate icons in a 4 by 3 grid, each centred in its cell, left to right, top to bottom, every icon a dark near-black object with pale cyan / mint light details:
+1) a handheld barcode scanner firing a fan of pale cyan scan lines; 2) a small round scanner drone on a pale cyan orbit ring; 3) a pale cyan data packet arrow with a pixel tail; 4) a dark square plate with a pale cyan DataMatrix dot pattern (a mine);
+5) pale mint ping signal waves around a dot; 6) a pale cyan circular retry arrow; 7) a dark memory chip with pale mint heat waves; 8) a pale cyan heart outline with a small power plug;
+9) a dark sneaker with pale cyan speed lines; 10) a dark horseshoe magnet with pale cyan tips; 11) a pale cyan lightning bolt; 12) a dark stopwatch with a pale cyan face.
+Then a bottom row of 5 pickups: a mint crystal gem, a cyan crystal gem, a pale violet crystal gem, a dark data ingot with a pale cyan edge, a dark first-aid box with a pale mint cross.
+Light details are drawn as flat pale cyan or mint shapes, not glowing. Warning details only in yellow with black stripes. Nothing warm: no brown, no beige, no orange, no warm interior light.
+Composition: every item separate with very wide empty gaps, nothing touching, no frames around icons.
+Constraints: no text, no letters, no numbers, no logos, no floor, no ground shadow, no glow.

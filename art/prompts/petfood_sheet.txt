@@ -1,0 +1,14 @@
+Use case: a character PART SHEET for cut-out rig animation in a top-down 3/4 survivors-like game set inside a cyberpunk datacenter.
+Image 1 is the style reference only (line, shading, palette, light); do not copy its subjects.
+Image 2 is the ORIGINAL DESIGN of this enemy from the game this project continues: match its outer shape, frame and colour scheme closely so players recognise it.
+Image 3 is a sibling enemy already in the game: match its line weight, proportions and limb style, but make this one clearly its own character.
+Subject: the Mars Petfood client: a round deep-blue disc with a cyan rim (like Image 2), a cyan paw-print badge area at the bottom left blank, a little pet-bowl helmet on top; scrappy.
+The game prints the original emblem onto the body itself: put two simple cartoon eyes near the TOP edge of the face and leave the middle and lower part as ONE plain flat area in the plate's background colour, no letters, no logo, no mouth there.
+Draw the SAME character split into separate parts, front 3/4 view, all on one canvas:
+- top row, centred: the BODY alone, with NO legs and NO arms (closed and complete where limbs attach), facing the viewer;
+- bottom row, left to right, each part drawn straight and vertical, complete:
+  1) ONE LEG: a single straight stubby leg (thigh and shin in one piece, a slight knee crease), hip end at the top, ankle at the bottom, NO foot, colour deep blue;
+  2) ONE FOOT: a single chunky cartoon shoe seen from the side, toe pointing right, colour cyan;
+  3) ONE ARM: a single straight arm hanging down, shoulder end at the top, a round mitten hand at the bottom, colour deep blue with a cyan hand.
+Composition: every part separate with very wide empty gaps (at least 80 px), nothing touching or overlapping, nothing cut by the canvas edge.
+Constraints: no text, no letters, no logos, no numbers, no ground, no shadow, no glow.

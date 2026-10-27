@@ -1,0 +1,6 @@
+{
+  "appId": "com.utreys.netsurvivors",
+  "appName": "NetSurvivors",
+  "webDir": "dist/app/game",
+  "android": { "allowMixedContent": false }
+}

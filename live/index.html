@@ -1,0 +1,246 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>live</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<style>
+:root{--ar:1.7778}
+html,body{margin:0;background:#000;height:100%;overflow:hidden}
+canvas{display:block;width:min(100vw,calc(100vh*var(--ar)));height:auto;aspect-ratio:var(--ar);margin:auto;position:absolute;inset:0;cursor:none;touch-action:none}
+html,body{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+#turn{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#01060a;color:#7ff6ff;font:600 22px Consolas,'Cascadia Mono',monospace;text-align:center;z-index:7;padding:24px}
+#turn b{font-size:56px}@media (orientation:portrait) and (pointer:coarse){#turn{display:flex}}
+@media (max-height:520px){#acct,#wipe{align-items:flex-start;overflow:auto}#acct .box,#wipe .box{margin:12px 0;padding:16px 20px}}
+#acct input,#wipe input{font-size:16px}#acct button,#wipe button{min-height:44px}
+#hint{pointer-events:none;position:absolute;left:0;right:0;bottom:3vh;text-align:center;font:600 18px -apple-system,sans-serif;color:#fff;text-shadow:0 2px 6px #000;transition:opacity .4s}
+#dev{position:absolute;left:10px;bottom:8px;font:12px ui-monospace,Menlo,monospace;color:#fff;background:#0008;padding:5px 8px;border-radius:6px;opacity:.55;white-space:pre}
+#dev:hover{opacity:1}
+#fps{position:absolute;right:10px;bottom:8px;font:13px ui-monospace,Menlo,monospace;color:#7ff6ff;background:#000b;padding:4px 9px;border-radius:6px;display:none;pointer-events:none;white-space:pre}
+#acct,#wipe{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#01060acc;font:600 18px Consolas,'Cascadia Mono',monospace;color:#e6fdff;z-index:5}
+#acct .box,#wipe .box{width:min(520px,90vw);background:#03111a;border:2px solid #00e5ff;border-radius:10px;padding:26px 30px;box-shadow:0 0 40px #00e5ff33}
+#acct h2,#wipe h2{margin:0 0 6px;color:#7ff6ff;font-size:28px;letter-spacing:1px}#acct p,#wipe p{margin:0 0 16px;color:#7f9ea6;font-size:15px;font-weight:400}
+#acct input,#wipe input{display:block;width:100%;box-sizing:border-box;margin:8px 0;padding:12px 14px;background:#020b10;border:1px solid #21545e;border-radius:6px;color:#fff;font:inherit;outline:none}
+#acct input:focus,#wipe input:focus{border-color:#00e5ff}#acct .row,#wipe .row{display:flex;gap:10px;margin-top:14px}
+#acct button,#wipe button{flex:1;padding:12px;background:#063a44;border:1px solid #00e5ff;border-radius:6px;color:#fff;font:inherit;cursor:pointer}#acct button.alt,#wipe button.alt{background:transparent;border-color:#21545e;color:#a9c9cf}
+#acct button:disabled,#wipe button:disabled{opacity:.5;cursor:default}#acct .err,#wipe .err{min-height:22px;margin-top:10px;color:#ff8f85;font-size:16px}
+#wipe .box{border-color:#ff6b5e;box-shadow:0 0 40px #ff6b5e33}#wipe h2{color:#ff8f85}#wipe button[type=submit]{background:#4a1410;border-color:#ff6b5e}
+#bye{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#01060a;font:600 22px Consolas,'Cascadia Mono',monospace;color:#7f9ea6;z-index:6;text-align:center}
+#bye h2{margin:0;color:#7ff6ff;font-size:40px;letter-spacing:2px}#bye button{padding:14px 28px;min-height:48px;background:#063a44;border:1px solid #00e5ff;border-radius:6px;color:#fff;font:inherit;cursor:pointer}
+#flash{position:absolute;right:12px;bottom:10px;font:600 13px -apple-system,sans-serif;color:#9f9;background:#000a;padding:4px 10px;border-radius:6px;opacity:0;transition:opacity .6s}
+</style>
+</head><body><canvas id="c"></canvas>
+<div id="hint">press any key or click to play — arrows / WASD move, Space jump, X action, R restart</div>
+<div id="acct"><div class="box"><h2 id="acct-t">ВХОД</h2><p id="acct-p">Логин: 3–16 символов, буквы одного алфавита, цифры, «_» и «-»</p>
+<form id="acct-f" autocomplete="on"><input id="acct-l" placeholder="Логин" maxlength="16" autocomplete="username"><input id="acct-pw" type="password" placeholder="Пароль" autocomplete="current-password">
+<input id="acct-r" type="password" placeholder="Пароль ещё раз" autocomplete="new-password"><div class="err" id="acct-e"></div>
+<div class="row"><button type="submit" id="acct-go">Войти</button><button type="button" class="alt" id="acct-sw">Регистрация</button></div>
+<div class="row"><button type="button" class="alt" id="acct-out">Выйти из аккаунта</button><button type="button" class="alt" id="acct-x">Закрыть · Esc</button></div></form></div></div>
+<div id="wipe"><div class="box"><h2>СБРОС ПРОГРЕССА</h2><p id="wipe-p"></p>
+<form id="wipe-f" autocomplete="off"><input id="wipe-i" placeholder="Введите СБРОС" maxlength="12" autocomplete="off"><div class="err" id="wipe-e"></div>
+<div class="row"><button type="submit" id="wipe-go" disabled>Сбросить</button><button type="button" class="alt" id="wipe-x">Отмена · Esc</button></div></form></div></div>
+<div id="turn"><b>⟳</b><div>Поверните устройство горизонтально</div></div>
+<div id="bye"><h2>ИГРА ЗАКРЫТА</h2><div>Прогресс сохранён. Вкладку можно закрыть.</div><button type="button" id="bye-back">Вернуться в игру</button></div>
+<div id="dev"></div><div id="fps"></div><div id="flash">reloaded</div>
+<script>
+// LIVE PREVIEW. Scripts and images load with a cache-buster; the page polls its sources and reloads itself when any of
+// them changes, keeping the play state (sessionStorage). Attract demo until a key or click, then play (keyboard + pointer).
+// Dev keys: P pause, [ ] speed (0.1 / 0.25 / 0.5 / 1), . single step, Esc back to the demo, R restart.
+// ?render=1 exposes window.__renderAt(t) for render.mjs (no loop, no polling).
+const V = Date.now(), STATIC = !!window.__STATIC__;          // STATIC: packed build (no polling, no dev overlay)
+const load = (src) => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src + '?v=' + V; s.onload = res; s.onerror = () => rej(new Error('failed ' + src)); document.head.appendChild(s); });
+(async () => {
+  // sizes.js: window.SIZES (display size per sprite in view px, engine.md §7); audio.js: sound from the event bus (stub until used)
+  for (const f of ['assets.js', 'sizes.js', 'gl.js', 'lib.js', 'firebase-config.js', 'cloud.js', 'course.js', 'edu.js', 'sim.js', 'ach.js', 'meta.js', 'scene.js', 'audio.js']) await load(f);
+  const q = new URLSearchParams(location.search), render = q.has('render');
+  const VW = (SIM.VIEW || {}).W || 1920, VH = (SIM.VIEW || {}).H || 1080;             // view size and aspect come from the sim
+  document.documentElement.style.setProperty('--ar', VW / VH); if (SIM.HINT) document.getElementById('hint').textContent = SIM.HINT;
+  G.init(document.getElementById('c'), VW, VH);
+  const rep = new Set(SCENE.REPEAT || []), near = (n) => SCENE.NEAREST === true || (SCENE.NEAREST || []).includes(n);   // NEAREST: true = all
+  await Promise.all(Object.keys(ASSETS).map((n) => G.load(n, 'assets/' + n + '.png?v=' + V, { repeat: rep.has(n), nearest: near(n) })));
+  SCENE.programs();
+  window.__duration = SIM.L;
+  window.__renderAt = (t) => { SCENE.render(t); return document.getElementById('c').toDataURL('image/png'); };
+  window.__ready = true;
+  if (render) return;
+
+  const keys = {}, hint = document.getElementById('hint'), dev = document.getElementById('dev'), flash = document.getElementById('flash');
+  const SPEEDS = [0.1, 0.25, 0.5, 1];
+  let play = null, acc = 0, simT = 0, speed = 1, paused = false, stepOnce = false, fps = 60;
+  // a kept shift (the pause menu's «Выйти в меню», or the page closed mid-shift): resumed from the main menu, ended by a new start
+  const SKEY = 'ns_suspended_v1'; let kept = null;
+  const keepInfo = (S) => (S ? { hero: S.hero, map: S.map, t: S.t, room: S.room || 0 } : null);
+  const keep = (S) => { kept = S; if (window.META) META.setSuspended(keepInfo(S)); try { if (S) localStorage.setItem(SKEY, JSON.stringify(S)); else localStorage.removeItem(SKEY); } catch (e) {} };
+  try { const ks = JSON.parse(localStorage.getItem(SKEY) || 'null'); if (ks && !ks.over && !ks.demo) keep(Object.assign(SIM.create(), ks)); } catch (e) {}
+  const startRun = () => { if (kept && window.META) { META.bank(kept); keep(null); }                // a new shift ends the kept one (its codes are banked)
+    if (window.META) META.PAUSE.close(); play = SIM.spawn(simT, window.META ? META.mods() : undefined, window.META ? META.runOpts() : undefined); hint.style.opacity = 0; };
+  const resumeRun = () => { if (!kept) return; play = kept; acc = 0; keep(null); if (window.META) META.PAUSE.close(); hint.style.opacity = 0; };
+  // the pause menu's choices
+  const pauseDo = (a) => { if (!a || !play) return; if (a === 'menu') { keep(play); play = null; SCENE.state = null; META.go('main', true); }
+    else if (a === 'end') { META.bank(play); play = null; SCENE.state = null; META.go('main', true); } };
+  // «Выход» (main menu): the APK closes the app; a browser tab cannot be closed by its page, so the game stops (loop, sound) and says so
+  let gone = false; const bye = document.getElementById('bye');
+  const quit = () => { const App = window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App; if (App && App.exitApp) { App.exitApp(); return; }
+    try { window.close(); } catch (e) {} gone = true; if (window.AUDIO) AUDIO.halted = true; bye.style.display = 'flex'; };
+  document.getElementById('bye-back').onclick = () => { gone = false; if (window.AUDIO) AUDIO.halted = false; bye.style.display = 'none'; last = performance.now(); loop(); };
+  bye.addEventListener('pointerdown', (e) => e.stopPropagation()); bye.addEventListener('keydown', (e) => e.stopPropagation());
+  // «Сбросить прогресс» (settings): the second confirmation is typing СБРОС; META.wipe does the rest (and the account's cloud list)
+  const wipeBox = document.getElementById('wipe'), wipeIn = document.getElementById('wipe-i'), wipeGo = document.getElementById('wipe-go');
+  const wipeOpen = () => { const cl = window.CLOUD, inn = cl && cl.state.status === 'signedIn', acct = META.data.cloud && META.data.cloud.uid;
+    document.getElementById('wipe-p').textContent = 'Сотрутся коды, покупки, улучшения, достижения, рекорды и статистика' + (inn ? ' — на этом устройстве и в профиле ' + cl.state.login : acct ? ' — на этом устройстве и в профиле (при следующем входе)' : ' на этом устройстве') +
+      '. Таблицы лидеров и настройки останутся. Отменить можно в «Настройках» до следующей смены.';
+    wipeIn.value = ''; wipeGo.disabled = true; wipeBox.style.display = 'flex'; setTimeout(() => wipeIn.focus(), 0); };
+  const wipeClose = () => { wipeBox.style.display = 'none'; document.activeElement && document.activeElement.blur(); };
+  wipeIn.addEventListener('input', () => { wipeGo.disabled = wipeIn.value.trim().toUpperCase() !== 'СБРОС'; });
+  document.getElementById('wipe-f').addEventListener('submit', (e) => { e.preventDefault(); if (wipeGo.disabled) return; wipeClose(); META.wipe(); if (window.AUDIO) AUDIO.effect('magic'); });
+  document.getElementById('wipe-x').onclick = wipeClose;
+  wipeBox.addEventListener('keydown', (e) => { if (e.code === 'Escape') wipeClose(); e.stopPropagation(); }); wipeBox.addEventListener('pointerdown', (e) => { if (e.target === wipeBox) wipeClose(); e.stopPropagation(); });
+  addEventListener('ns-wipe', () => keep(null));
+  // the Android app (stage 8, Capacitor): the system «Назад» closes a dialog, opens or closes the pause, leaves the results or a menu
+  // screen; on the main menu a second press within 2 s quits
+  { const App = window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App; let backT = 0;
+    if (App && App.addListener) App.addListener('backButton', () => { const acct = document.getElementById('acct');
+      if (acct.style.display === 'flex') { ACCOUNT_UI.close(); return; } if (wipeBox.style.display === 'flex') { wipeClose(); return; } if (gone) return;
+      if (play && window.META && META.PAUSE.isOpen) { META.PAUSE.close(); return; }
+      if (play && !play.over && !play.demo) { META.PAUSE.open(); for (const k in keys) keys[k] = 0; TOUCH.stick = null; return; }
+      if (play) { toMenu(); return; }
+      if (window.META && META.view().scr !== 'main') { META.key('Escape'); return; }
+      if (performance.now() - backT < 2000) { App.exitApp(); return; } backT = performance.now();
+      hint.textContent = 'Нажмите «Назад» ещё раз, чтобы выйти'; hint.style.opacity = 1; setTimeout(() => { hint.style.opacity = 0; }, 2000); }); }                                              // a kept shift belongs to the progress that is gone
+  addEventListener('pagehide', () => { if (play && !play.over && !play.demo && window.META) keep(play); });
+  if (window.META) hint.style.opacity = 0;                                                    // the menu shows its own help
+  if (!STATIC) window.__dev = { get play() { return play; }, set play(v) { play = v; acc = 0; } };          // dev only: tests swap in a prepared run
+  try { const sv = JSON.parse(sessionStorage.getItem('live') || 'null');                     // restore across live reloads
+    if (sv) { simT = sv.simT; speed = sv.speed; paused = sv.paused; if (sv.play) { play = Object.assign(SIM.create(), sv.play); hint.style.opacity = 0; }
+      flash.style.opacity = 1; setTimeout(() => (flash.style.opacity = 0), 1200); } } catch (e) {}
+  const save = () => { try { sessionStorage.setItem('live', JSON.stringify({ simT, speed, paused, play })); } catch (e) {} };
+  // the account form (CLOUD): sign in / register / sign out; while it is open the keys belong to it
+  { const $ = (id) => document.getElementById(id), box = $('acct'); let reg = false;
+    const show = () => { const st = CLOUD.state, inn = st.status === 'signedIn'; $('acct-t').textContent = inn ? 'АККАУНТ' : reg ? 'РЕГИСТРАЦИЯ' : 'ВХОД';
+      $('acct-p').textContent = inn ? 'Вы вошли как ' + st.login + '. Забеги идут в таблицы лидеров.' : 'Логин: 3–16 символов, буквы одного алфавита, цифры, «_» и «-»';
+      for (const id of ['acct-l', 'acct-pw', 'acct-go', 'acct-sw']) $(id).style.display = inn ? 'none' : ''; $('acct-r').style.display = !inn && reg ? '' : 'none';
+      $('acct-out').style.display = inn ? '' : 'none'; $('acct-go').textContent = reg ? 'Зарегистрироваться' : 'Войти'; $('acct-sw').textContent = reg ? 'У меня есть аккаунт' : 'Регистрация';
+      $('acct-e').textContent = st.error || ''; for (const id of ['acct-go', 'acct-out']) $(id).disabled = !!st.busy; };
+    window.ACCOUNT_UI = { open: () => { box.style.display = 'flex'; CLOUD.state.error = ''; show(); setTimeout(() => (CLOUD.state.status === 'signedIn' ? $('acct-x') : $('acct-l')).focus(), 0); },
+      close: () => { box.style.display = 'none'; document.activeElement && document.activeElement.blur(); }, get open_() { return box.style.display === 'flex'; } };
+    if (window.CLOUD) CLOUD.subscribe(() => { if (box.style.display === 'flex') { show(); if (CLOUD.state.status === 'signedIn' && !CLOUD.state.busy && !CLOUD.state.error && $('acct-out').style.display === 'none') ACCOUNT_UI.close(); } });
+    $('acct-f').addEventListener('submit', async (e) => { e.preventDefault(); const l = $('acct-l').value, p = $('acct-pw').value;
+      const done = reg ? await CLOUD.register(l, p, $('acct-r').value) : await CLOUD.signIn(l, p); if (done) { $('acct-pw').value = $('acct-r').value = ''; ACCOUNT_UI.close(); } });
+    $('acct-sw').onclick = () => { reg = !reg; CLOUD.state.error = ''; show(); }; $('acct-out').onclick = async () => { await CLOUD.signOut(); ACCOUNT_UI.close(); }; $('acct-x').onclick = () => ACCOUNT_UI.close();
+    box.addEventListener('keydown', (e) => { if (e.code === 'Escape') ACCOUNT_UI.close(); e.stopPropagation(); }); box.addEventListener('pointerdown', (e) => { if (e.target === box) ACCOUNT_UI.close(); e.stopPropagation(); }); }
+  const toMenu = () => { if (play && window.META) { META.bank(play); META.go('main', true); } play = null; SCENE.state = null; hint.style.opacity = window.META ? 0 : 1; };
+  addEventListener('keydown', (e) => { TOUCH.on = false;
+    if (document.getElementById('acct').style.display === 'flex' || wipeBox.style.display === 'flex' || gone) return;        // the account form has the keys; nothing after «Выход»
+    const c = e.code;
+    if (c === 'KeyP') { paused = !paused; e.preventDefault(); return; }
+    if (c === 'Period') { stepOnce = true; paused = true; e.preventDefault(); return; }
+    if (c === 'BracketLeft') { speed = SPEEDS[Math.max(0, SPEEDS.indexOf(speed) - 1)]; return; }
+    if (c === 'BracketRight') { speed = SPEEDS[Math.min(SPEEDS.length - 1, SPEEDS.indexOf(speed) + 1)]; return; }
+    if (play && window.META && META.PAUSE.isOpen) { pauseDo(META.PAUSE.key(c)); e.preventDefault(); return; }   // the pause menu owns the keys
+    if (c === 'Escape' && play && window.META && !play.over) { META.PAUSE.open(); for (const k in keys) keys[k] = 0; e.preventDefault(); return; }   // Esc in a shift: the pause menu
+    if (c === 'Escape' && (play || !window.META)) { toMenu(); return; }
+    if (!play && window.META) { const a = META.key(c); if (a === 'start') startRun(); else if (a === 'resume') resumeRun(); else if (a === 'quit') quit(); else if (a === 'wipe') wipeOpen(); e.preventDefault(); return; }   // the menu (meta.js) owns input between runs
+    keys[c] = 1;
+    const dg = /^Digit(\d)$/.exec(c); if (dg) pend.slot = +dg[1] || 10;                     // 1–9, 0 → inp.slot (hotbars)
+    if (c === 'Enter' || c === 'Space' || c === 'KeyX' || c === 'KeyJ') pend.ok = 1; if (c === 'KeyE') pend.use = 1;   // a tap shorter than a frame still reaches one step
+    if (!play || c === 'KeyR') { if (play && window.META) META.bank(play); startRun(); }
+    e.preventDefault();
+  });
+  addEventListener('keyup', (e) => { keys[e.code] = 0; });
+  // pointer in view pixels (VW×VH); click is true for exactly one sim step
+  const cv = document.getElementById('c'), ptr = { x: VW / 2, y: VH / 2, down: 0, click: 0 }, pend = { slot: 0, wheel: 0, ok: 0, use: 0 };
+  addEventListener('wheel', (e) => { if (play) { pend.wheel = Math.sign(e.deltaY); e.preventDefault(); } else if (window.META && META.wheel) META.wheel(e.deltaY); }, { passive: false });
+  addEventListener('contextmenu', (e) => e.preventDefault());
+  const toView = (e) => { const r = cv.getBoundingClientRect(); ptr.x = (e.clientX - r.left) / r.width * VW; ptr.y = (e.clientY - r.top) / r.height * VH; };
+  addEventListener('pointermove', (e) => { if (e.pointerType === 'touch') { touchMove(e); return; } TOUCH.on = false; toView(e); if (play && window.META && META.PAUSE.isOpen) META.PAUSE.move(ptr.x, ptr.y); if (!play && window.META) { META.move(ptr.x, ptr.y); if (ptr.down) META.drag(ptr.x); } });
+  addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') { touchDown(e); return; } toView(e); ptr.down = 1; ptr.click = 1;
+    if (play && !(window.META && META.PAUSE.isOpen) && window.SCENE && SCENE.hits && SCENE.hits.length) { const q = remap(ptr); ptr.x = q.x; ptr.y = q.y; }   // a forced compact interface with a mouse
+    if (play && window.META && META.PAUSE.isOpen) { ptr.click = 0; pauseDo(META.PAUSE.click(ptr.x, ptr.y)); return; }
+    if (!play) { ptr.click = 0; const a = window.META ? META.click(ptr.x, ptr.y) : 'start'; if (a === 'start') startRun(); else if (a === 'resume') resumeRun(); else if (a === 'quit') quit(); else if (a === 'wipe') wipeOpen(); } });
+  addEventListener('pointerup', (e) => { if (e.pointerType === 'touch') { touchUp(e); return; } ptr.down = 0; if (window.META) META.up(); });
+  addEventListener('pointercancel', (e) => { if (e.pointerType === 'touch') touchUp(e, true); });
+  // the interface's scale (stage 7б): compact menus (960×540 drawn 2×) on touch screens where the canvas is under 700 CSS px tall;
+  // ?ui=compact / ?ui=desktop force it
+  const uiQ = new URLSearchParams(location.search).get('ui');
+  const uiFit = () => { if (!window.META || !META.setUI) return; const h = cv.getBoundingClientRect().height, coarse = matchMedia('(pointer: coarse)').matches;
+    META.setUI(uiQ === 'compact' || (uiQ !== 'desktop' && coarse && h < 700) ? 2 : 1); };
+  uiFit(); addEventListener('resize', uiFit); addEventListener('orientationchange', () => setTimeout(uiFit, 200));
+  // ---------------- touch (stage 7a of docs/PLAN-FEEDBACK-27-10.md) ----------------
+  // In a shift: a floating stick where the left half is touched, the buttons «Рывок» and «E» on the right, the pause in the top-right
+  // corner; aiming is automatic (the nearest foe). Level-up cards, the tests and the results are taps. In menus a tap is a click when
+  // the finger is lifted without moving; a drag scrolls. The first touch asks for full screen (and landscape where the browser allows).
+  // SCENE draws the controls from TOUCH (view px); a key or a mouse move turns touch mode off.
+  const TOUCH = window.TOUCH = { on: false, stick: null, R: 120, dash: [VW - 470, VH - 190, 92], use: [VW - 250, VH - 270, 112], pause: [VW / 2 + 250, 64, 64], menu: [VW / 2 - 300, VH - 170, 600, 140], held: {} };
+  const tv = (e) => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * VW, y: (e.clientY - r.top) / r.height * VH }; };
+  const inC = (c, p, pad = 26) => Math.hypot(p.x - c[0], p.y - c[1]) < c[2] + pad, inRr = (r, p) => p.x >= r[0] && p.x <= r[0] + r[2] && p.y >= r[1] && p.y <= r[1] + r[3];
+  let full = false, tap = null;
+  // full screen on the first touch (the Android app is full screen already)
+  const goFull = () => { if (full || window.Capacitor) return; full = true; const d = document.documentElement, rq = d.requestFullscreen || d.webkitRequestFullscreen;
+    if (rq) Promise.resolve(rq.call(d, { navigationUI: 'hide' })).then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape')).catch(() => {}); };
+  const inShift = () => play && !play.over && !play.pick && !(play.ed && play.ed.active) && !(window.META && META.PAUSE.isOpen);
+  function touchDown(e) { TOUCH.on = true; goFull(); const p = tv(e);
+    if (inShift()) { if (inC(TOUCH.pause, p)) { META.PAUSE.open(); for (const k in keys) keys[k] = 0; TOUCH.stick = null; return; }
+      if (inC(TOUCH.use, p)) { pend.use = 1; TOUCH.held.use = e.pointerId; return; }
+      if (inC(TOUCH.dash, p)) { pend.ok = 1; TOUCH.held.dash = e.pointerId; return; }
+      if (p.x < VW * 0.55 && !TOUCH.stick) TOUCH.stick = { id: e.pointerId, x0: p.x, y0: p.y, x: p.x, y: p.y }; return; }
+    if (play && play.over && inRr(TOUCH.menu, p)) { toMenu(); return; }                                       // the results: «В меню»
+    if (play) { const q = remap(p); ptr.x = q.x; ptr.y = q.y; ptr.click = 1; if (window.META && META.PAUSE.isOpen) { ptr.click = 0; META.PAUSE.move(p.x, p.y); pauseDo(META.PAUSE.click(p.x, p.y)); } return; }   // cards, tests, results, pause
+    tap = { id: e.pointerId, x: p.x, y: p.y, y0: p.y, moved: 0 }; if (window.META) META.move(p.x, p.y); }   // a menu: decided on lift
+  function touchMove(e) { const p = tv(e), s = TOUCH.stick;
+    if (s && s.id === e.pointerId) { s.x = p.x; s.y = p.y; const dx = p.x - s.x0, dy = p.y - s.y0, d = Math.hypot(dx, dy); if (d > TOUCH.R) { s.x0 = p.x - dx / d * TOUCH.R; s.y0 = p.y - dy / d * TOUCH.R; } return; }   // the base follows past its edge
+    if (tap && tap.id === e.pointerId) { if (Math.abs(p.y - tap.y0) + Math.abs(p.x - tap.x) > 18) tap.moved = 1; const step = 46;
+      while (p.y - tap.y > step) { tap.y += step; if (window.META && META.wheel) META.wheel(-1); } while (tap.y - p.y > step) { tap.y -= step; if (window.META && META.wheel) META.wheel(1); } } }
+  function touchUp(e, cancel) { const p = tv(e);
+    if (TOUCH.stick && TOUCH.stick.id === e.pointerId) TOUCH.stick = null;
+    for (const k in TOUCH.held) if (TOUCH.held[k] === e.pointerId) delete TOUCH.held[k];
+    if (tap && tap.id === e.pointerId) { const t0 = tap; tap = null; if (cancel || t0.moved || play || !window.META) return;
+      const a = META.click(p.x, p.y); if (a === 'start') startRun(); else if (a === 'resume') resumeRun(); else if (a === 'quit') quit(); else if (a === 'wipe') wipeOpen(); } }
+  // the stick as an analog direction (dead zone 15 %)
+  // the compact level-up cards, tests and results (stage 7б) are drawn away from the sim's rects: a tap on one of them becomes a tap at
+  // the centre of the sim's rect for the same choice (SCENE.hits), a tap beside them none
+  const remap = (p) => { const M = window.SCENE && SCENE.hits; if (!M || !M.length) return p; for (const [r, s] of M) if (inRr(r, p)) return { x: s[0] + s[2] / 2, y: s[1] + s[3] / 2 }; return { x: -9999, y: -9999 }; };
+  const stickDir = () => { const s = TOUCH.stick; if (!s) return [0, 0]; const dx = (s.x - s.x0) / TOUCH.R, dy = (s.y - s.y0) / TOUCH.R, d = Math.hypot(dx, dy); return d < 0.15 ? [0, 0] : [dx / Math.max(1, d), dy / Math.max(1, d)]; };
+  let last = performance.now(), fpsAcc = 0, fpsN = 0;
+  // the FPS counter (Настройки → «Показывать FPS»): frames per second and the longest frame of the last second, raw (not clamped)
+  const fpsEl = document.getElementById('fps'), FT = window.__frames = []; let worst = 0, worstT = 0, fpsShown = 0;
+  const loop = () => {
+    const now = performance.now(), wall = Math.min(0.1, (now - last) / 1000); last = now;
+    fpsAcc += wall; fpsN++; if (fpsAcc > 0.5) { fps = fpsN / fpsAcc; fpsAcc = 0; fpsN = 0; }
+    { const raw = now - (loop.prev || now); loop.prev = now; FT.push(raw); if (FT.length > 600) FT.shift();
+      if (raw > worst || now - worstT > 1000) { worst = raw; worstT = now; }
+      const on = !!(window.META && META.data.ui && META.data.ui.fps); if (fpsEl.style.display !== (on ? 'block' : 'none')) fpsEl.style.display = on ? 'block' : 'none';
+      if (on && now - fpsShown > 250) { fpsShown = now; fpsEl.textContent = Math.round(fps) + ' FPS · худший кадр ' + Math.round(worst) + ' мс'; } }
+    const dt = paused ? (stepOnce ? 1 / 60 : 0) : wall * speed; stepOnce = false;
+    simT += dt;
+    if (play) {
+      if (!(window.META && META.PAUSE.isOpen)) acc += dt;                                   // the pause menu holds the shift
+      const sd = TOUCH.on ? stickDir() : null;
+      const inp = { ax: sd ? sd[0] : undefined, ay: sd ? sd[1] : undefined, auto: TOUCH.on && !play.pick && !(play.ed && play.ed.active) ? 1 : 0,
+        left: keys.ArrowLeft || keys.KeyA, right: keys.ArrowRight || keys.KeyD, up: keys.ArrowUp || keys.KeyW, down: keys.ArrowDown || keys.KeyS,
+        jump: keys.Space, act: keys.KeyX || keys.KeyJ || keys.Enter || pend.ok, use: keys.KeyE || pend.use, px: ptr.x, py: ptr.y, press: ptr.down, click: ptr.click, slot: pend.slot, wheel: pend.wheel };
+      while (acc >= SIM.DT) { SIM.step(play, inp); inp.click = ptr.click = 0; inp.slot = pend.slot = 0; inp.wheel = pend.wheel = 0; if (pend.ok || pend.use) { inp.act = keys.KeyX || keys.KeyJ || keys.Enter; inp.use = keys.KeyE; pend.ok = pend.use = 0; } acc -= SIM.DT; }
+      if (SIM.outOfPlay && SIM.outOfPlay(play)) play = SIM.respawn ? SIM.respawn(play, simT) : SIM.spawn(simT);
+      if (play.over && window.META) META.bank(play);                                       // once per run: codes, records, finds
+      else if (window.META) META.live(play);                                               // a goal met right now: a toast (once a second)
+      play.alpha = acc / SIM.DT;                                                           // draw between the last two sim steps
+      SCENE.state = play;
+    } else SCENE.state = null;
+    const curs = play && !play.pick && !play.over && !(play.ed && play.ed.active) && !(window.META && META.PAUSE.isOpen) ? 'none' : 'default'; if (cv.style.cursor !== curs) cv.style.cursor = curs;   // the game draws its crosshair only in play
+    try { SCENE.render(simT); } catch (e) { if (!window.__renderErr) { window.__renderErr = e; console.error(e); } }   // log once, keep the loop alive
+    if (!STATIC) dev.style.display = (paused || speed !== 1 || q.has('dev')) ? 'block' : 'none';   // debug line only when paused / slowed or with ?dev
+    if (!STATIC) dev.textContent = `LIVE  ${play ? 'play' : 'demo'}  ${paused ? 'PAUSED' : speed + '×'}  ${fps.toFixed(0)} fps   P pause  [ ] speed  . step  Esc demo  R restart`;
+    if (!gone) requestAnimationFrame(loop);
+  };
+  loop();
+  if (STATIC) { dev.style.display = 'none'; return; }
+  const WATCH = ['index.html', 'scene.js', 'sim.js', 'edu.js', 'course.js', 'cloud.js', 'firebase-config.js', 'ach.js', 'meta.js', 'lib.js', 'gl.js', 'assets.js', 'sizes.js', 'audio.js'], stamp = {};
+  const poll = async () => {
+    for (const f of WATCH) {
+      try { const r = await fetch(f + '?poll=' + Date.now(), { method: 'HEAD', cache: 'no-store' }); const m = r.headers.get('last-modified') + r.headers.get('content-length');
+        if (stamp[f] && stamp[f] !== m) { save(); location.reload(); return; } stamp[f] = m; } catch (e) {}
+    }
+    setTimeout(poll, 700);
+  };
+  poll();
+})().catch((e) => { console.error(e); document.body.insertAdjacentHTML('beforeend', '<pre style="color:#f88;position:absolute;top:0;left:0;background:#000c;padding:12px;font:13px monospace;white-space:pre-wrap">' + e.stack + '</pre>');
+  const f = ['scene.js', 'sim.js', 'lib.js', 'gl.js', 'assets.js', 'index.html'], st = {};               // keep polling: fixing the error reloads by itself
+  setInterval(async () => { for (const x of f) { try { const r = await fetch(x + '?p=' + Date.now(), { method: 'HEAD', cache: 'no-store' }); const m = r.headers.get('last-modified');
+    if (st[x] && st[x] !== m) location.reload(); st[x] = m; } catch (e) {} } }, 800); });
+</script></body></html>

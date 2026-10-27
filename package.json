@@ -1,0 +1,13 @@
+{
+  "name": "utreys-netsurvivors",
+  "private": true,
+  "description": "NetSurvivors: the ref2game slice; the Android app wraps the packed game (docs/ANDROID.md)",
+  "scripts": {
+    "android:apk": "node tools/android-build.cjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.5.3"
+  }
+}

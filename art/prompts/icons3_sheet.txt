@@ -1,0 +1,13 @@
+Use case: an ICON SET for the HUD of a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is the approved style of this game: match its near-black blue-teal bodies, flat pale cyan and mint light details, very dark navy outline, chunky cartoon shapes and cel shading exactly.
+Image 2 is the icon set already in the game: the new icons must sit next to these as one family.
+Draw 11 separate items in rows, each centred in its own cell, left to right, top to bottom:
+row 1: 1) a burst of small pale cyan square data packets flying in a stream to the right; 2) a forked pale cyan lightning bolt jumping between three small dark round network nodes;
+       3) a dark storm cloud made of network cables with two pale cyan lightning bolts striking down; 4) a small dark server cabinet with a short pale cyan gun barrel on top (a sentry turret icon);
+row 2: 5) a pale mint snowflake in front of a dark coolant nozzle spraying a cone of frost; 6) a dark round grenade with a pale cyan branching fork symbol splitting into three small grenades;
+       7) four pale cyan corner brackets expanding outward from a dot (area); 8) a dark data cube with two pale cyan ghost copies behind it (replication);
+row 3: 9) a dark hourglass with pale mint sand (duration); 10) an upgrade capsule: a chunky dark hexagonal container with glowing-looking pale mint seams and a mint plus sign on its lid, drawn bigger than the icons;
+       11) a SENTRY SERVER for the game floor: a short dark server cabinet on three stubby legs with a small rotating pale cyan turret head on top, seen in 3/4 view, drawn twice as tall as an icon.
+Light details are drawn as flat pale cyan or mint shapes, not glowing. Nothing warm: no brown, no beige, no orange.
+Composition: every item separate with very wide empty gaps, nothing touching, no frames or backgrounds behind icons.
+Constraints: no text, no letters, no numbers, no logos, no floor, no ground shadow, no glow.

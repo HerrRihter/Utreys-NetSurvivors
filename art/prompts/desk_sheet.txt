@@ -1,0 +1,8 @@
+Use case: a character PART SHEET for cut-out rig animation in a top-down 3/4 survivors-like game set inside a cyberpunk datacenter.
+Image 1 is the style reference only (line, shading, palette, light); do not copy its subjects.
+Image 2 is the ORIGINAL DESIGN of this enemy from the game this project continues: match its outer shape, frame and colour scheme closely so players recognise it.
+Image 3 is a sibling enemy already in the game: match its line weight, proportions and limb style, but make this one clearly its own character.
+Subject: the Pepsi service desk: a stationary blue support counter with a red stripe and a tall monitor on a stand above it (like Image 2), the monitor screen plain dark blue, a little ticket printer on the counter, a red alarm beacon on top of the monitor; it is a building, it has no legs and no arms.
+Give the monitor two angry cartoon eyes; no text, no letters.
+Draw ONE object only, centred, front 3/4 view, filling most of the canvas, empty margin on all sides.
+Constraints: no text, no letters, no logos, no numbers, no ground, no shadow, no glow.

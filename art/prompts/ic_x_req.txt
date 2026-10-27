@@ -1,0 +1,7 @@
+Use case: ONE item icon for the level-up cards and the HUD of a top-down survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is the approved icon set of this game: match its style exactly — chunky readable objects in dark graphite and navy metal with glowing flat light-cyan (#9ff7ff) parts, one even dark navy outline (#0b1622), flat cel shading, crisp clean edges.
+Subject: a requirements review: a dark graphite clipboard with a glowing light-cyan checklist of three lines with check marks, and a wide fan-shaped light-cyan sweep coming out of its right side
+It must look clearly different from every icon in Image 1.
+Composition: one single object, centred, filling about 80% of the canvas, readable at 64 px; transparent background.
+Constraints: no text, no letters, no numbers, no frame or card behind it, no ground, no drop shadow.
+This is the EVOLVED version of the item in Image 2: keep its design so it is clearly the same item, but stronger and richer: the clipboard carries a glowing light-cyan star badge for the key client and a small plus sign for healing.

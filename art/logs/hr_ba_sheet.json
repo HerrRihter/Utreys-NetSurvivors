@@ -1,0 +1,44 @@
+{
+  "name": "hr_ba_sheet",
+  "provider": "codex",
+  "status": "ok",
+  "started": "2026-10-25T18:49:06",
+  "model": "codex image_gen",
+  "size_requested": "1536x1024",
+  "size_sent": "1536x1024",
+  "quality": "high",
+  "seed": null,
+  "prompt_source": "art/prompts/hr_ba.txt",
+  "refs": [
+    {
+      "path": "art/gen/hero_sheet.png",
+      "label": "the hero Utrace: the design base of this sibling hero (body shape, eyes, limbs)"
+    },
+    {
+      "path": "art/gen/props_e_sheet.png",
+      "label": "approved style of this game: outline, cel shading and flat light details"
+    }
+  ],
+  "prompt": "REFERENCE IMAGES (attached in this order):\nImage 1 = the hero Utrace: the design base of this sibling hero (body shape, eyes, limbs)\nImage 2 = approved style of this game: outline, cel shading and flat light details\n\nSTYLE BIBLE v2 (cyber datacenter): hand-drawn comic-book 2D game art, chunky readable cartoon shapes, cel shading with 2-3 hard-edged tones and grain; even medium-weight ink outline in very dark navy (#061018) around every object and major interior forms.\nPalette: almost-black blue-teal bodies and metals (#071016, #0e1a22, #1a2a33, #2a3a44), matte, low saturation; light-emitting details (screens, LED strips, edge strips, indicator dots, power cores, cable ends) painted as FLAT pale cyan (#bff8ff) or pale mint (#c9fff0) shapes with a thin cyan (#00e5ff) border, no glow; warning details only in yellow (#ffd600) with black stripes; nothing warm, no brown, no beige, no orange metal.\nLight: dim cool ambient from above, key from the upper left, lit faces only slightly lighter; the cyan details are the brightest areas; no cast shadows painted on the ground.\nStrict top-down 3/4 view, camera about 50 degrees above the ground, orthographic, objects show their top and their front face.\nNo text, no letters, no numbers, no logos, no watermark, no glow, no light rays, no cast shadows, no frame.\n\nASSET:\nUse case: a character PART SHEET for cut-out rig animation in a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.\nImage 1 is the game's hero Utrace: a living Utrace logo \u2014 a navy U-shaped body with two cubes on top (one coral, one teal), big friendly eyes, stubby navy legs, white cartoon shoes and white mitten hands.\nImage 2 is the approved style of this game: match its dark navy outline, cel shading and the flat light details.\nDraw a SIBLING HERO of the same family: \u0411\u0410 (Business Analyst). Same U-shaped body, same proportions, same eyes, same limb style as Image 1, so it is clearly one family,\nbut recoloured and detailed as its own hero: the two cubes and the trims in warm gold (#f7ce70); distinguishing feature: a small chart panel with bars on its front and a requirement link: a short chain with a document tag hanging from one side.\nKeep the same parts layout as Image 1 but WITHOUT the scanner tool: body on top; below it, left to right: ONE leg (straight, hip at the top, no foot), ONE shoe (side view, toe right), ONE arm (straight, shoulder at the top, a mitten hand at the bottom).\nEvery part separate with very wide empty gaps, nothing touching or cut by the canvas edge.\nConstraints: no text, no letters, no logos other than the body shape itself, no numbers, no ground, no shadow, no glow.\n\nCanvas: 1536x1024 px (3:2 landscape); if that exact size is unavailable, use the closest size with the same aspect ratio.\n\nBackground: fully transparent (real alpha channel, PNG) everywhere outside the ASSET, with clean anti-aliased edges; no ground or cast shadow beyond what the ASSET describes, no frame, no checkerboard pattern",
+  "raw": "art/raw\\hr_ba_sheet.png",
+  "out": "art/gen\\hr_ba_sheet.png",
+  "request_id": "01a173f7-4474-7cf1-939f-fcc387eb1350",
+  "native_alpha_returned": true,
+  "size_raw": "1536x1024",
+  "size_final": "1536x1024",
+  "alpha": {
+    "requested": "native",
+    "plan": "native",
+    "validation": {
+      "ok": true,
+      "kind": "ok",
+      "has_alpha_channel": true,
+      "clear_frac": 0.7216,
+      "soft_edge_ratio": 1.634
+    },
+    "method": "native",
+    "fit": "none"
+  },
+  "warnings": [],
+  "seconds": 155.8
+}

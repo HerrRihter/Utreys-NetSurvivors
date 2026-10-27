@@ -1,0 +1,40 @@
+{
+  "name": "props_b_sheet",
+  "provider": "codex",
+  "status": "ok",
+  "started": "2026-10-25T01:51:09",
+  "model": "codex image_gen",
+  "size_requested": "1536x1024",
+  "size_sent": "1536x1024",
+  "quality": "high",
+  "seed": null,
+  "prompt_source": "art/prompts/props_b_sheet.txt",
+  "refs": [
+    {
+      "path": "ref.png",
+      "label": "style reference only: match its art style, rendering, palette and light; do not copy its composition"
+    }
+  ],
+  "prompt": "REFERENCE IMAGES (attached in this order):\nImage 1 = style reference only: match its art style, rendering, palette and light; do not copy its composition\n\nSTYLE BIBLE: hand-drawn comic-book 2D game art matching Image 1: chunky readable cartoon shapes with slightly exaggerated proportions; cel shading with 2-3 hard-edged tones per material plus a small hard highlight, light grainy brush texture inside fills; dark warm-brown ink outline (#261215) of even medium weight around every object and on major interior forms, thinner interior lines; desaturated night palette: cool blue-violet and slate shadows (#161624, #2a3550), muted grey-blue metals, warm amber-orange local light (#f6bc56) only where a lamp hits, small saturated accents on actors and props; detail only at focal points, big quiet shapes elsewhere; matte surfaces, not a 3D render, no photorealism.\nLight: soft cool ambient from above, key light from the upper left, lit faces slightly lighter and warmer, shadow sides cool blue; no cast shadows painted on the ground.\nStrict top-down 3/4 view, camera about 50 degrees above the ground, orthographic, objects show their top and their front face.\nNo text, no letters, no numbers, no logos, no watermark, no glow, no light rays, no cast shadows, no frame.\n\nASSET:\nUse case: a PROP KIT sheet for a top-down 3/4 survivors-like game set inside a datacenter at night (props stand on the floor).\nImage 1 is the style reference only (line, shading, palette, light); do not copy its subjects.\nDraw these separate props in one row, left to right, all on one shared invisible ground line, each showing its top and its front face:\n1) a low wide UPS battery cabinet (like a bench), slate grey with vertical battery slots and one small green dot;\n2) a small round grey PDU power bin with a yellow hazard plate on its front;\n3) a red pressurised coolant gas tank cylinder with a blank white label band and a valve on top;\n4) a parked server cart: a rounded rolling cart with a light blue shell and a dark inset tray of drives;\n5) a short section of dark metal safety railing fence.\nMatch the CHARACTERS' look, not a technical drawing: chunky simplified cartoon shapes, big quiet surfaces, a thick even dark warm-brown ink outline (#261215) around every prop, front-and-top 3/4 view (no visible side face), matte cel shading with grain.\nLamps and LEDs are drawn unlit-neutral (coloured dots and pale glass), not glowing.\nComposition: very wide empty gaps (at least 90 px) between props, nothing touching or overlapping, nothing cut by the canvas edge.\nConstraints: no text, no letters, no logos, no floor, no ground shadow, no glow.\n\nCanvas: 1536x1024 px (3:2 landscape); if that exact size is unavailable, use the closest size with the same aspect ratio.\n\nBackground: fully transparent (real alpha channel, PNG) everywhere outside the ASSET, with clean anti-aliased edges; no ground or cast shadow beyond what the ASSET describes, no frame, no checkerboard pattern",
+  "raw": "art/raw\\props_b_sheet.png",
+  "out": "art/gen\\props_b_sheet.png",
+  "request_id": "01a1701c-5f0a-74c1-864b-0101d60c2838",
+  "native_alpha_returned": true,
+  "size_raw": "2172x724",
+  "size_final": "1536x1024",
+  "alpha": {
+    "requested": "native",
+    "plan": "native",
+    "validation": {
+      "ok": true,
+      "kind": "ok",
+      "has_alpha_channel": true,
+      "clear_frac": 0.7101,
+      "soft_edge_ratio": 1.756
+    },
+    "method": "native",
+    "fit": "contain"
+  },
+  "warnings": [],
+  "seconds": 64.7
+}

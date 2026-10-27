@@ -1,0 +1,11 @@
+Use case: a PROP KIT sheet for a top-down 3/4 survivors-like game set inside a cyberpunk datacenter (props stand on the floor).
+Image 1 is the style reference only (line, shading, palette, light); do not copy its subjects.
+Match the characters' look: chunky simplified cartoon shapes, big quiet surfaces, a thick even dark warm-brown ink outline (#261215), front-and-top 3/4 view, matte cel shading with grain.
+Draw these separate props in one row, left to right, all on one shared invisible ground line:
+1) an ENERGY CELL cabinet: a squat dark battery cabinet with a big round window in front showing a pale cyan crystal power core inside, warning stripes on its base (it can overload and explode);
+2) a monitoring desk: a curved dark operator desk with three empty dark monitors on arms above it and a keyboard;
+3) a tape library cabinet: a tall dark grey cabinet with a glass front showing rows of small tape cartridges and a robot arm rail;
+4) a fibre patch column: a slim tall dark column with dozens of thin colourful fibre cables (cyan, magenta, yellow) hanging in loops down its front.
+Screens, LEDs and the power core are drawn unlit-neutral (pale flat colours), not glowing.
+Composition: very wide empty gaps (at least 90 px) between props, nothing touching or overlapping, nothing cut by the canvas edge.
+Constraints: no text, no letters, no logos, no floor, no ground shadow, no glow.

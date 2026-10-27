@@ -1,0 +1,6 @@
+Use case: ONE limb part for cut-out rig animation in a top-down 3/4 survivors-like game.
+Image 1 is the character's part sheet: copy the colours, materials, panel details and the clean finish of ITS LEG exactly.
+Draw ONLY that leg, as a rig part: perfectly STRAIGHT and VERTICAL, centred on the canvas — the hip end at the top is a plain rounded cap exactly as wide as the leg and centred on it (NO ball joint, NO side light or disc, nothing sticking out sideways); the thigh and the shin in ONE straight vertical line with a thin knee band in the middle, NO bend, NO angle; the ankle end at the bottom, NO foot, NO shoe.
+An even width from top to bottom, slim; the leg is about four times as long as it is wide.
+Line and finish: crisp clean vector-like linework, one even thin dark navy outline (#0b1622), smooth flat cel shading, no grain, no texture.
+Constraints: one single part, nothing else, no text, no shadow, no glow, transparent background, not cut by the canvas edge.

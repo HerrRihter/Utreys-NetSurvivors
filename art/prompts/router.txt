@@ -1,0 +1,5 @@
+Use case: a large SET PIECE for a top-down 3/4 survivors-like game inside a datacenter at night; it replaces the reference's carousel.
+Image 1 is the style reference: match its style, and take its carousel as the model for the shape and size, re-themed.
+Subject: a big round core network router built like a carousel: a wide circular dark metal base platform, a ring of ten coloured network modules (blue, amber, green, red, pink) on silver posts around the edge, a thick central core column with cable bundles, a red-and-white striped conical canopy on top with a row of small unlit bulbs along its rim. Seen from the game's 3/4 angle.
+Composition: the single object centred, filling most of the canvas, empty margin on all sides.
+Constraints: no text, no logos, no floor, no ground shadow, no glow.

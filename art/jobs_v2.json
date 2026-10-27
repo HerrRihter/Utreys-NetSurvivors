@@ -1,0 +1,74 @@
+[
+ {
+  "name": "node_sheet",
+  "prompt": "art/prompts/node_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "ref": [
+   "study/orig/l3.png=original design of this enemy: match its shape and colours"
+  ]
+ },
+ {
+  "name": "panel_sheet",
+  "prompt": "art/prompts/panel_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "ref": [
+   "study/orig/grafana_filter.png=original design of this enemy: match its shape and colours"
+  ]
+ },
+ {
+  "name": "orb_sheet",
+  "prompt": "art/prompts/orb_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "ref": [
+   "study/orig/pepsi.png=original design of this enemy: match its shape and colours"
+  ]
+ },
+ {
+  "name": "keg_sheet",
+  "prompt": "art/prompts/keg_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "ref": [
+   "study/orig/inbev.png=original design of this enemy: match its shape and colours"
+  ]
+ },
+ {
+  "name": "boss_sheet",
+  "prompt": "art/prompts/boss_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "ref": [
+   "study/orig/critical_incident.png=original design of this enemy: match its shape and colours"
+  ]
+ },
+ {
+  "name": "bug_sheet",
+  "prompt": "art/prompts/bug_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "ref": [
+   "study/orig/bug_import.png=original design of this enemy: match its shape and colours"
+  ]
+ },
+ {
+  "name": "core",
+  "prompt": "art/prompts/core.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ },
+ {
+  "name": "cage",
+  "prompt": "art/prompts/cage.txt",
+  "size": "1024x1536",
+  "alpha": "native"
+ },
+ {
+  "name": "props_c_sheet",
+  "prompt": "art/prompts/props_c_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ }
+]

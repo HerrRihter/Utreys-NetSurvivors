@@ -1,0 +1,46 @@
+[
+ {
+  "name": "hr_trc_sheet",
+  "prompt": "art/prompts/hr_trc.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hero_sheet.png=the hero Utrace: the design base of this sibling hero (body shape, eyes, limbs)",
+   "art/gen/props_e_sheet.png=approved style of this game: outline, cel shading and flat light details"
+  ]
+ },
+ {
+  "name": "hr_ser_sheet",
+  "prompt": "art/prompts/hr_ser.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hero_sheet.png=the hero Utrace: the design base of this sibling hero (body shape, eyes, limbs)",
+   "art/gen/props_e_sheet.png=approved style of this game: outline, cel shading and flat light details"
+  ]
+ },
+ {
+  "name": "hr_ba_sheet",
+  "prompt": "art/prompts/hr_ba.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hero_sheet.png=the hero Utrace: the design base of this sibling hero (body shape, eyes, limbs)",
+   "art/gen/props_e_sheet.png=approved style of this game: outline, cel shading and flat light details"
+  ]
+ },
+ {
+  "name": "hr_qa_sheet",
+  "prompt": "art/prompts/hr_qa.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hero_sheet.png=the hero Utrace: the design base of this sibling hero (body shape, eyes, limbs)",
+   "art/gen/props_e_sheet.png=approved style of this game: outline, cel shading and flat light details"
+  ]
+ }
+]

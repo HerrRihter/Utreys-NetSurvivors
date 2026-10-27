@@ -1,0 +1,11 @@
+Use case: a PROP KIT sheet for a top-down 3/4 survivors-like game set inside a datacenter at night (props stand on the floor).
+Image 1 is the style reference only (line, shading, palette, light); do not copy its subjects.
+Draw these separate props in one row, left to right, all on one shared invisible ground line, each showing its top and its front face:
+1) a tall server rack cabinet: dark slate metal, perforated front door, rows of server units with tiny blue, amber and green LED dots, a bundle of black cables hanging over the top;
+2) a second server rack of the same size with a glass front door, servers visible inside, a few loose cables;
+3) a short network terminal kiosk: a small monitor on a stand on top of a box base;
+4) a tall slim floor lamp pillar: a dark metal post with a lamp head and a pale glass bulb on top.
+Match the CHARACTERS' look, not a technical drawing: chunky simplified cartoon shapes, big quiet surfaces, a thick even dark warm-brown ink outline (#261215) around every prop, front-and-top 3/4 view (no visible side face), matte cel shading with grain.
+Lamps and LEDs are drawn unlit-neutral (coloured dots and pale glass), not glowing.
+Composition: very wide empty gaps (at least 90 px) between props, nothing touching or overlapping, nothing cut by the canvas edge.
+Constraints: no text, no letters, no logos, no floor, no ground shadow, no glow.
