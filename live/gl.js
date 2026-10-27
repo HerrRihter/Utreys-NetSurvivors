@@ -16,7 +16,9 @@
   };
 
   // nearest: NEAREST min/mag, no mipmaps (pixel art: crisp texels; lod bias has no effect)
-  G.load = (name, url, { repeat = false, nearest = false } = {}) => new Promise((res, rej) => {
+  // A failed image is asked again (tries in all, a pause between): on a phone's network one dropped request out of ~330 must not
+  // stop the game.
+  G.load = (name, url, { repeat = false, nearest = false, tries = 4 } = {}) => new Promise((res, rej) => {
     const im = new Image();
     im.onload = () => {
       const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
@@ -31,7 +33,11 @@
       const A = window.ASSETS && window.ASSETS[name];
       texs[name] = { t, w: A ? A.w : im.width, h: A ? A.h : im.height, nearest, repeat }; res(texs[name]);
     };
-    im.onerror = () => rej(new Error('failed to load ' + url)); im.src = url;
+    im.onerror = () => {
+      if (tries <= 1) { rej(new Error('failed to load ' + url)); return; }
+      setTimeout(() => G.load(name, url, { repeat, nearest, tries: tries - 1 }).then(res, rej), 600 * (5 - tries));
+    };
+    im.src = url;
   });
   G.canvasTex = (name, cv) => {
     const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
