@@ -720,7 +720,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
       const rules = rev ? ['Ответь верно на ' + ER.passing + ' из ' + ER.questions + ' — вернёшься в бой с ' + Math.round(ER.reviveHealth * 100) + '% здоровья и ' + ER.reviveInvulnerability + ' с неуязвимости.', 'Не сдашь — смена закончится. Возрождение одно на смену.']
         : [ER.questions + ' вопроса, нужно ' + ER.passing + ' верных. Игра стоит, пока идёт тест.', 'Сдал: терминал пройден, награда (' + ER.questions + ' верных — капсула и лечение, ' + ER.passing + ' — лечение).', 'Не сдал: терминал закрыт на ' + ER.failLock + ' с, волны усилены. Каждая ошибка зовёт аудит.'];
       rules.forEach((r, j) => { L.rrect(px0 + 60, y + j * 54 - 10, 12, 12, 3, rev ? CORAL : CYAN); label('qzr' + j, r, px0 + 90, y + j * 54, { size: 26, col: '#e6fdff' }); });
-      btn('Начать · Enter', true); return; }
+      btn('Начать' + kb(' · Enter'), true); return; }
     if (a.phase === 'result') { const ok = a.passed; label('qzt', ok ? 'ТЕСТ СДАН' : 'ТЕСТ НЕ СДАН', W / 2, py0 + 220, { size: 72, al: 0.5, col: ok ? '#64ffda' : '#ff6559' });
       label('qzc', 'Верных ответов: ' + a.correct + ' из ' + a.questions.length, W / 2, py0 + 320, { size: 34, al: 0.5, col: '#e6fdff' });
       const wrong = a.answered - a.correct, lines = rev ? [ok ? 'Возвращаешься в бой с ' + Math.round(ER.reviveHealth * 100) + '% здоровья.' : 'Смена окончена.']
@@ -728,7 +728,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
           .concat(wrong > 0 ? ['Аудит: ' + Math.min(ER.auditMax, wrong) * ER.auditPack + ' врагов идут на проверку.'] : []);
       lines.forEach((s, j) => label('qzl' + j, s, W / 2, py0 + 410 + j * 50, { size: 28, al: 0.5, col: j === 0 ? (ok ? '#c8fff0' : '#ffd6cf') : '#ffd6cf' }));
       label('qzp2', 'Очки обучения: ' + ed.points, W / 2, py0 + 560, { size: 30, al: 0.5, col: '#7ff6ff' });
-      btn(rev && !ok ? 'К итогам · Enter' : 'Продолжить · Enter', true); return; }
+      btn((rev && !ok ? 'К итогам' : 'Продолжить') + kb(' · Enter'), true); return; }
     const item = a.questions[a.index], q = EDU.question(ed, item.id), opt = (id) => q.options.find((o) => o.id === id).text;
     label('qzi', 'Вопрос ' + (a.index + 1) + ' из ' + a.questions.length + (q.type === 'multiple' ? ' · несколько верных ответов' : ''), px0 + 60, py0 + 100, { size: 24, col: q.type === 'multiple' ? '#ffd600' : '#7f9ea6' });
     para('qzq', q.text, px0 + 60, py0 + 148, 30, pw - 120, '#ffffff', 40, 4);
@@ -739,13 +739,13 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
         L.rrect(r[0] + 16, r[1] + r[3] / 2 - 22, 44, 44, q.type === 'multiple' ? 6 : 22, sel ? CYAN : [0.08, 0.16, 0.2]); label('qzk' + i, String(i + 1), r[0] + 38, r[1] + r[3] / 2, { size: 24, al: 0.5, col: sel ? '#02090d' : '#7ff6ff' });
         const ls = wrap(opt(id), fs, r[2] - 110).slice(0, Math.max(1, Math.floor((r[3] - 10) / (fs + 6)))), lh = fs + 6, y0 = r[1] + r[3] / 2 - (ls.length - 1) * lh / 2;
         ls.forEach((ln, j) => label('qzo' + i + '_' + j, ln, r[0] + 80, y0 + j * lh, { size: fs, col: sel ? '#ffffff' : '#cfe9ee' })); });
-      btn(a.selected.length ? 'Ответить · Enter' : 'Выберите ответ · 1–' + n, !!a.selected.length); return; }
+      btn(a.selected.length ? 'Ответить' + kb(' · Enter') : 'Выберите ответ' + kb(' · 1–' + n), !!a.selected.length); return; }
     // feedback: the verdict, what was picked, the key and the explanation
     const ok = a.lastCorrect; let y = py0 + 330; label('qzv', ok ? 'ВЕРНО' : 'НЕВЕРНО', px0 + 60, y, { size: 52, col: ok ? '#64ffda' : '#ff6559' }); y += 64;
     if (!ok) { label('qzyh', 'Ваш ответ:', px0 + 60, y, { size: 24, col: '#ff8f85' }); y += 34; a.selected.forEach((id, j) => { y += para('qzy' + j + '_', '— ' + opt(id), px0 + 80, y, 23, pw - 160, '#ffd6cf', 30, 2); }); y += 10; }
     label('qzch', ok ? 'Ответ:' : 'Верно:', px0 + 60, y, { size: 24, col: '#64ffda' }); y += 34; q.correct.forEach((id, j) => { y += para('qzc' + j + '_', '— ' + opt(id), px0 + 80, y, 23, pw - 160, '#c8fff0', 30, 2); }); y += 14;
     if (q.explanation) para('qze', q.explanation, px0 + 60, y, 24, pw - 120, '#a9c9cf', 33, 4);
-    btn(a.index + 1 < a.questions.length ? 'Следующий вопрос · Enter' : 'Итог теста · Enter', true); }
+    btn((a.index + 1 < a.questions.length ? 'Следующий вопрос' : 'Итог теста') + kb(' · Enter'), true); }
   // a minimap of a map's generated layout (map select): zones and solids for the data centre, walls, terminals and the door for the training centre
   const MINI = {}; function minimap(map, x, y, w, h) { const LV = MINI[map] || (MINI[map] = SIM.buildLevel(map, 7, 0)), k = Math.min(w / 8000, h / 6000), ox = x + (w - 8000 * k) / 2, oy = y + (h - 6000 * k) / 2;
     L.rrect(ox - 6, oy - 6, 8000 * k + 12, 6000 * k + 12, 6, [0.02, 0.05, 0.07], [0.01, 0.03, 0.05]);
@@ -782,6 +782,8 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
   // text) stays at 1. S.hits maps a compact rect (view px) to the sim's rect for the same choice: the page sends a tap there instead.
   S.hits = [];
   const uiCK = () => (window.META && META.view ? META.view().U : 1);
+  // key and mouse hints only without touch: a phone or tablet taps buttons and has no Enter, Esc or wheel
+  const KB = () => !(window.TOUCH && TOUCH.on), kb = (s) => (KB() ? s : '');
   const scaled = (k, fn) => { G.uiK = k; try { fn(SIM.VIEW.W / k, SIM.VIEW.H / k); } finally { G.uiK = 1; } };
   const hitMap = (k, r, simR) => S.hits.push([[r[0] * k, r[1] * k, r[2] * k, r[3] * k], simR]);
   function hud(ST, GT, t, combo, lvlUp, sx, sy) { const sx0 = sx, sy0 = sy, CK = uiCK(), HK = CK > 1 ? 1.6 : 1; S.hits = [];
@@ -792,7 +794,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
       P.items.forEach((o, i) => { const [x, y, w, h] = o.r, on = i === P.sel; L.uiBox('pz' + i, x, y, w, h, 8); frame(x, y, w, h, on ? 0.95 : 0.8, on ? CYAN : [0.13, 0.33, 0.39]);
         if (on) { L.rrect(x, y, w, h, 4, [0.0, 0.45, 0.55], [0.0, 0.3, 0.38], 0.22); L.rrect(x + 4, y + 8, 5, h - 16, 2, CYAN); }
         label('pzs' + i, o.s, x + w / 2, y + h / 2, { size: K > 1 ? 26 : 30, al: 0.5, col: on ? '#ffffff' : o.id === 'end' ? '#ffd6cf' : '#bfe3ea' }); });
-      if (K === 1) { L.uiBox('pzh', W / 2 - 460, 872, 920, 50, 6); label('pzh', '↑↓ или мышь — выбор · Enter — подтвердить · Esc — продолжить', W / 2, 897, { size: 22, al: 0.5, col: '#7f9ea6' }); } } finally { G.uiK = 1; }
+      if (K === 1 && KB()) { L.uiBox('pzh', W / 2 - 460, 872, 920, 50, 6); label('pzh', '↑↓ или мышь — выбор · Enter — подтвердить · Esc — продолжить', W / 2, 897, { size: 22, al: 0.5, col: '#7f9ea6' }); } } finally { G.uiK = 1; }
       return; }
     const hm = SIM.hpMax(ST);
     scaled(HK, (W, H) => {
@@ -900,7 +902,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
           L.rrect(bx, yy - 10, bw, 20, 6, [0.08, 0.14, 0.18]); if (tp.asked) L.rrect(bx, yy - 10, Math.max(8, bw * tp.score), 20, 6, tp.score >= 0.75 ? MINT : [1, 0.84, 0.2]);
           label('resn' + i, tp.asked ? Math.round(tp.score * 100) + '%' : '—', bx + bw + 16, yy, { size: 22, col: '#e6fdff', a }); }); }
       ex.forEach((s2, i) => label('resx' + i, s2, lx, py0 + 196 + lines.length * 56 + i * 48, { size: 28, al: 0.5, col: i === 0 ? '#7ff6ff' : '#64ffda', a }));
-      if (GT - ST.over.t > 1.4) label('resk', 'Пробел — новая смена · Esc — в меню', W / 2, py0 + ph - 50, { size: 28, al: 0.5, col: '#7ff6ff', a: 0.85 + 0.15 * Math.sin(t * 4) }); }
+      if (GT - ST.over.t > 1.4 && KB()) label('resk', 'Пробел — новая смена · Esc — в меню', W / 2, py0 + ph - 50, { size: 28, al: 0.5, col: '#7ff6ff', a: 0.85 + 0.15 * Math.sin(t * 4) }); }
     // level-up controls bought in the shop
     if (ST.pick && CK === 1 && (ST.rerolls > 0 || ST.skips > 0)) [['Перегенерация', ST.rerolls, 4], ['Пропустить выбор', ST.skips, 5]].forEach(([nm, n, k], i) => { if (!n) return; const [x, y, w, h] = SIM.ctlRect(i);
       L.uiBox('ctl' + i, x, y, w, h, 8); frame(x, y, w, h, 0.9, MINT); label('ctl' + i, '[' + k + '] ' + nm + ' ×' + n, x + w / 2, y + h / 2, { size: 26, al: 0.5, col: '#c8fff0' }); });
@@ -1046,7 +1048,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
       L.sprite('code_tex', W - w - 134, 82, { w: 48, h: 48 }); label('mw', s1, W - 50, 106, { size: 30, al: 1, col: '#7ff6ff' }); };
     const scrollBar = () => { const A = V.scrollArea; if (!C || !A || !A[2]) return; const [top, bottom, mx, v] = A, hgt = bottom - top, th = Math.max(40, hgt * hgt / (hgt + mx));
       L.rrect(W - 8, top, 5, hgt, 2, [0.1, 0.2, 0.24]); L.rrect(W - 8, top + (hgt - th) * v / mx, 5, th, 2, CYAN); };
-    const backBtn = () => { scrollBar(); btn('mback', V.back, C ? '‹ Назад' : 'Esc — назад', V.hovBack, C ? 24 : 26); };
+    const backBtn = () => { scrollBar(); btn('mback', V.back, C || !KB() ? '‹ Назад' : 'Esc — назад', V.hovBack, C ? 24 : 26); };
     if (V.scr === 'main' && C) {                                             // compact: two columns of lines, the player's panel on the right
       L.solid(0, 0, W, H, [0.01, 0.02, 0.04], 0, 0, 0, 0.55); L.uiBox('mt', 12, 12, 936, 80, 6); label('mt1', 'UTREYS // NETSURVIVORS', 20, 50, { size: 40, col: '#7ff6ff' });
       const P = window.AUDIO ? AUDIO.pref : { enabled: true, musicOn: true };
@@ -1075,7 +1077,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
       { const gs = ACH.next(D, 3); if (gs.length) { panel('mgp', W - 640, 830, 540, 170, 0.85); label('mgt', 'Ближайшие цели', W - 610, 858, { size: 24, col: '#7ff6ff' });   // as in the original's menu
         gs.forEach(({ x, p }, j) => { const fmt = (v) => (x.time ? mmss(v) : String(v)), s = x.title + ' · ' + fmt(p.v) + '/' + fmt(p.target); let ns = 21;
           while (ns > 15 && L.labelW('mg' + j, s, { size: ns, font: MONO }) > 480) ns--; label('mg' + j, s, W - 610, 900 + j * 34, { size: ns, col: Object.keys(x.unlocks).length ? '#64ffda' : '#cfe9ee' }); }); } }
-      L.uiBox('mhelp', 90, 930, 900, 60, 8); label('mhelp', '↑↓ или мышь — выбор · Enter — подтвердить · WASD — ходить в смене', 110, 960, { size: 24, col: '#7f9ea6' });
+      if (KB()) { L.uiBox('mhelp', 90, 930, 900, 60, 8); label('mhelp', '↑↓ или мышь — выбор · Enter — подтвердить · WASD — ходить в смене', 110, 960, { size: 24, col: '#7f9ea6' }); }
       return; }
     L.solid(0, 0, W, H, [0.01, 0.02, 0.04], 0, 0, 0, 0.8);
     if (V.scr === 'shop') { head('МАГАЗИН', V.tab === 'skin' ? 'Скины героев: другой облик героя, на игру не влияют' : V.tab === 'hero' ? 'Новые герои и их тренировки' : 'Постоянные улучшения за коды маркировки, действуют в каждой смене'); wallet();
@@ -1169,7 +1171,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
         else { panel('mcd', 260, 790, W - 520, 170, 0.85); label('mcdn', seen ? def.name : '???', 290, 830, { size: 32, col: '#e6fdff' });
           label('mcdd', desc, 290, 876, { size: 24, col: '#a9c9cf' }); if (rec) label('mcdr', rec, 290, 918, { size: 24, col: '#64ffda' }); } }
       backBtn(); return; }
-    if (V.scr === 'hero') { head('ВЫБОР ГЕРОЯ', 'Enter или клик — играть; закрытого героя можно купить здесь'); wallet();
+    if (V.scr === 'hero') { head('ВЫБОР ГЕРОЯ', (KB() ? 'Enter или клик' : 'Нажмите') + ' — играть; закрытого героя можно купить здесь'); wallet();
       each((o, i) => { if (!o.chip) { heroCard('mhs' + i, o, hot(i) || (V.focus === o.hero && it[V.sel] && it[V.sel].chip), 'pick'); return; }
         const [x, y, w, h] = o.r, k = o.chip === 'none' ? null : o.chip, Sk = k && SIM.SKINS[k], worn = (D.sel.skins[o.hero] || null) === k, own = !k || V.ownsSkin(k), on = hot(i);
         const shut = !own && !V.open('skin', k), rd = shut && ACH.ready(D, 'skin', k);
@@ -1179,7 +1181,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
         const g = shut && !rd && ACH.gate('skin', k);
         if (rd) label('mhkp' + i, C ? 'Открыть' : 'Нажмите — открыть', x + 38, y + 76, { size: 20, col: READY_C });
         else if (g) wrap('Откроется: ' + (g.short || g.desc).toLowerCase(), 16, w - 50).slice(0, 2).forEach((ln, j) => label('mhkg' + i + '_' + j, ln, x + 38, y + 68 + j * 22, { size: 16, col: LOCK_C }));
-        else label('mhkp' + i, worn ? '▶ надет' : own ? 'Enter — надеть' : Sk.price + ' кодов', x + 38, y + 76, { size: 20, col: worn ? '#64ffda' : own ? '#7ff6ff' : D.codes >= Sk.price ? '#7ff6ff' : '#ff8f85' }); });
+        else label('mhkp' + i, worn ? '▶ надет' : own ? (KB() ? 'Enter — надеть' : 'Нажмите — надеть') : Sk.price + ' кодов', x + 38, y + 76, { size: 20, col: worn ? '#64ffda' : own ? '#7ff6ff' : D.codes >= Sk.price ? '#7ff6ff' : '#ff8f85' }); });
       backBtn(); return; }
     if (V.scr === 'map' && C) { head('ВЫБОР КАРТЫ', 'Каждая смена строит карту заново');
       it.forEach((o, i) => { const [x, y, w, h] = o.r, on = hot(i), m = o.map, rec = D.byMap[m.id];
@@ -1216,7 +1218,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
         label('mcob' + i, 'Босс: ' + (bk ? SIM.FOE[bk].name : c.boss.unit) + ' · вопросов: ' + c.questions.filter((q) => q.type !== 'open').length, x + 30, y + 390, { size: 22, col: '#ff8f85' });
         label('mcor' + i, rec ? 'Лучшая оценка: ' + (rec.grade || '—') + (rec.best ? ' (' + Math.round(rec.best * 100) + '%)' : '') + ' · очки ' + rec.points : 'Курс ещё не проходился', x + 30, y + 450, { size: 22, col: '#64ffda' });
         if (rec) label('mcos' + i, 'Смен ' + rec.runs + ' · курс сдан ' + rec.wins, x + 30, y + 490, { size: 22, col: '#7ff6ff' });
-        label('mcog' + i, on ? 'Enter — начать' : '', x + w - 30, y + h - 40, { size: 24, al: 1, col: '#64ffda' }); });
+        label('mcog' + i, on ? (KB() ? 'Enter — начать' : 'Нажмите — начать') : '', x + w - 30, y + h - 40, { size: 24, al: 1, col: '#64ffda' }); });
       backBtn(); return; }
     if (V.scr === 'client') { head('КЛЮЧЕВОЙ КЛИЕНТ БА', 'Каждое убийство выбранного клиента даёт +1 HP и к максимуму до конца смены');
       each((o, i) => { const [x, y, w, h] = o.r, on = hot(i), k = o.client, n = artOf(k) === 'sdesk' ? 'sdesk_body' : artOf(k) + '_body', ph = 120, pw = L.hsz(n, ph);
@@ -1233,7 +1235,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
           label('msv' + i, Math.round(v * 100) + '%', x + w - 34, y + h / 2, { size: 28, al: 1, col: '#7ff6ff' }); }
         else { const v = o.id === 'fps' ? V.D.ui.fps : P[o.id], pw = 150, px2 = x + w - 34 - pw; L.rrect(px2, y + 22, pw, h - 44, (h - 44) / 2, v ? [0.0, 0.55, 0.62] : [0.12, 0.18, 0.22]);
           label('msv' + i, v ? 'ВКЛ' : 'ВЫКЛ', px2 + pw / 2, y + h / 2, { size: 26, al: 0.5, col: v ? '#ffffff' : '#7f9ea6' }); } });
-      if (!C) L.uiBox('msh', W / 2 - 640, 830, 1280, 50, 8); if (!C) label('msh', '↑↓ — выбор · ←→ или мышь — громкость · Enter — переключить · M / N — звук и музыка в смене', W / 2, 855, { size: 22, al: 0.5, col: '#7f9ea6' });
+      if (!C && KB()) L.uiBox('msh', W / 2 - 640, 830, 1280, 50, 8); if (!C && KB()) label('msh', '↑↓ — выбор · ←→ или мышь — громкость · Enter — переключить · M / N — звук и музыка в смене', W / 2, 855, { size: 22, al: 0.5, col: '#7f9ea6' });
       backBtn(); return; }
     if (V.scr === 'lead') { const cl = window.CLOUD, B = cl && cl.board, m = cl && cl.METRICS[B.metric], hn = (h) => (SIM.HEROES[h] ? SIM.HEROES[h].name : '');
       const sub = m ? m.title + ' · ' + (B.scope === 'all' ? 'все карты' : 'Дата-центр') + ' · ' + (B.hero ? hn(B.hero) : 'все герои') + (B.near ? ' · рядом со мной' : '') : ''; head('ЛИДЕРЫ', sub);
@@ -1258,7 +1260,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
         L.rrect(px0 + 20, py0 + 66, pw - 40, 2, 1, [0.13, 0.33, 0.39]);
         if (!rows.length) { const es = B.hero ? 'Этим героем пока никто не играл — сыграйте смену первым' : 'Пока никого — сыграйте смену первым'; label('mlempty', es, W / 2, py0 + (C ? 170 : 300), { size: fitL('mlempty', es, 26, pw - 40), al: 0.5, col: '#a9c9cf' }); }
         rows.slice(sc, sc + VIS).forEach((r, i) => row(i, plc(r.place), r.login, r.hero, cl.fmt(m, r.value), py0 + R0 + i * RH, r.uid === me));
-        if (rows.length > VIS) { const ss = (sc + 1) + '–' + Math.min(rows.length, sc + VIS) + ' из ' + rows.length + (C ? ' · листайте пальцем' : ' · колесо мыши или PgUp/PgDn'); label('mlsc', ss, C ? px0 + 20 : W / 2, C ? py0 + 278 : py0 + 620, { size: 18, al: C ? 0 : 0.5, col: '#7f9ea6' }); } }
+        if (rows.length > VIS) { const ss = (sc + 1) + '–' + Math.min(rows.length, sc + VIS) + ' из ' + rows.length + (C || !KB() ? ' · листайте пальцем' : ' · колесо мыши или PgUp/PgDn'); label('mlsc', ss, C ? px0 + 20 : W / 2, C ? py0 + 278 : py0 + 620, { size: 18, al: C ? 0 : 0.5, col: '#7f9ea6' }); } }
       if (B && (B.note || B.at)) { const ago = B.at ? Math.max(0, Math.round((Date.now() - B.at) / 1000)) : 0, s0 = B.note || (B.loading ? 'Обновление…' : 'Обновлено ' + (ago < 5 ? 'только что' : ago < 60 ? ago + ' с назад' : Math.floor(ago / 60) + ' мин назад'));
         if (!C || B.note) label('mlat', s0, C ? W - 30 : W - 320, C ? py0 + 278 : 212, { size: 18, al: 1, col: B.note ? '#ffd6a0' : '#7f9ea6' }); }
       backBtn(); return; }

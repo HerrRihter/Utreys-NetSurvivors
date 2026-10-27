@@ -171,7 +171,7 @@
   const pz = { open: false, sel: 0 };
   const cut = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
   const pauseItems = () => { const P = window.AUDIO ? AUDIO.pref : { musicOn: true, enabled: true, repeat: false }, tr = window.AUDIO && AUDIO.current;
-    return [['resume', 'Продолжить · Esc'], ['track', 'Трек: ' + cut(tr ? tr.title : '—', 24) + '  ▶▶'], ['repeat', 'Повтор трека: ' + (P.repeat ? 'вкл' : 'выкл')], ['music', 'Музыка: ' + (P.musicOn ? 'вкл' : 'выкл')],
+    return [['resume', 'Продолжить' + (window.TOUCH && TOUCH.on ? '' : ' · Esc')], ['track', 'Трек: ' + cut(tr ? tr.title : '—', 24) + '  ▶▶'], ['repeat', 'Повтор трека: ' + (P.repeat ? 'вкл' : 'выкл')], ['music', 'Музыка: ' + (P.musicOn ? 'вкл' : 'выкл')],
       ['sound', 'Звук: ' + (P.enabled ? 'вкл' : 'выкл')], ['menu', 'Выйти в меню · смена сохранится'], ['end', 'Завершить смену · коды зачтутся']]
       .map(([id, s], i) => ({ id, s, r: CP ? [W / 2 - 290, 70 + i * 66, 580, 62] : [W / 2 - 340, 286 + i * 82, 680, 68] })); };
   function pauseAct(i) { const it = pauseItems()[i]; if (!it) return null; sfx('ui');

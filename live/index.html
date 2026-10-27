@@ -166,8 +166,9 @@ const load = (src) => new Promise((res, rej) => { const s = document.createEleme
   // In a shift: a floating stick where the left half is touched, the buttons «Рывок» and «E» on the right, the pause in the top-right
   // corner; aiming is automatic (the nearest foe). Level-up cards, the tests and the results are taps. In menus a tap is a click when
   // the finger is lifted without moving; a drag scrolls. The first touch asks for full screen (and landscape where the browser allows).
-  // SCENE draws the controls from TOUCH (view px); a key or a mouse move turns touch mode off.
-  const TOUCH = window.TOUCH = { on: false, stick: null, R: 120, dash: [VW - 470, VH - 190, 92], use: [VW - 250, VH - 270, 112], pause: [VW / 2 + 250, 64, 64], menu: [VW / 2 - 300, VH - 170, 600, 140], held: {} };
+  // SCENE draws the controls from TOUCH (view px); a key or a mouse move turns touch mode off. A phone or tablet (no hover, a finger)
+  // starts in touch mode, so the menus never show key hints before the first tap.
+  const TOUCH = window.TOUCH = { on: !!(window.matchMedia && matchMedia('(hover: none) and (pointer: coarse)').matches), stick: null, R: 120, dash: [VW - 470, VH - 190, 92], use: [VW - 250, VH - 270, 112], pause: [VW / 2 + 250, 64, 64], menu: [VW / 2 - 300, VH - 170, 600, 140], held: {} };
   const tv = (e) => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * VW, y: (e.clientY - r.top) / r.height * VH }; };
   const inC = (c, p, pad = 26) => Math.hypot(p.x - c[0], p.y - c[1]) < c[2] + pad, inRr = (r, p) => p.x >= r[0] && p.x <= r[0] + r[2] && p.y >= r[1] && p.y <= r[1] + r[3];
   let full = false, tap = null;
