@@ -35,14 +35,13 @@
 - репозиторий в `D:\Utreys-NetSurvivors`, ветка `main`;
 - `core.autocrlf=false`: файлы проекта в формате LF;
 - коммиты: «Start the NetSurvivors repository», «Remove applied patch scripts, generation logs and old job lists».
-- **GitHub пока не подключён:** GitHub CLI на компьютере нет, а создать репозиторий на GitHub через git нельзя.
+- **GitHub:** `origin` — https://github.com/HerrRihter/Utreys-NetSurvivors (приватный, создан владельцем 27.10), ветка `main` отправлена.
 
 **Нужно решение владельца:**
 - **`study/` (7,5 МБ):** материалы разбора образца из скилла ref2game. `STYLE.md` и `PLAN.md` нужны: их берёт `pack.py`.
   Нарезки `tiles/`, `orig/`, `crops/`, `critique/` и картинки разбора — только история. Предлагаю удалить их, оставив `.md` и
   `palette.json`.
-- **GitHub:** создать пустой приватный репозиторий `HerrRihter/Utreys-NetSurvivors` на github.com, без README. Дальше я подключу
-  его и отправлю коммиты. Объём первой отправки около 300 МБ.
+- ~~GitHub~~ — сделано: репозиторий создан владельцем и подключён.
 
 ## Этапы 2–5
 
