@@ -1,0 +1,7 @@
+{
+  "about": "Музыка смены по кругу. Файлы (mp3 или ogg) кладутся в эту папку, сюда — строка на трек: file, title (видно в меню паузы), author, license. Заглушки ниже можно убрать, когда появятся свои треки.",
+  "tracks": [
+    { "file": "battle.mp3", "title": "Заглушка 1 · Battle Theme A", "author": "cynicmusic", "license": "CC0 1.0" },
+    { "file": "menu.mp3", "title": "Заглушка 2 · Corrupt Data Stream", "author": "Tsorthan Grove", "license": "см. CREDITS.md" }
+  ]
+}

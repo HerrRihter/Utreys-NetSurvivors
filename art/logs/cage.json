@@ -1,0 +1,40 @@
+{
+  "name": "cage",
+  "provider": "codex",
+  "status": "ok",
+  "started": "2026-10-25T08:59:59",
+  "model": "codex image_gen",
+  "size_requested": "1024x1536",
+  "size_sent": "1024x1536",
+  "quality": "high",
+  "seed": null,
+  "prompt_source": "art/prompts/cage.txt",
+  "refs": [
+    {
+      "path": "art/gen/props_e_sheet.png",
+      "label": "approved style of this game: match its palette, dark navy outline, cel shading and the flat pale-cyan light details exactly"
+    }
+  ],
+  "prompt": "REFERENCE IMAGES (attached in this order):\nImage 1 = approved style of this game: match its palette, dark navy outline, cel shading and the flat pale-cyan light details exactly\n\nSTYLE BIBLE v2 (cyber datacenter): hand-drawn comic-book 2D game art, chunky readable cartoon shapes, cel shading with 2-3 hard-edged tones and grain; even medium-weight ink outline in very dark navy (#061018) around every object and major interior forms.\nPalette: almost-black blue-teal bodies and metals (#071016, #0e1a22, #1a2a33, #2a3a44), matte, low saturation; light-emitting details (screens, LED strips, edge strips, indicator dots, power cores, cable ends) painted as FLAT pale cyan (#bff8ff) or pale mint (#c9fff0) shapes with a thin cyan (#00e5ff) border, no glow; warning details only in yellow (#ffd600) with black stripes; nothing warm, no brown, no beige, no orange metal.\nLight: dim cool ambient from above, key from the upper left, lit faces only slightly lighter; the cyan details are the brightest areas; no cast shadows painted on the ground.\nStrict top-down 3/4 view, camera about 50 degrees above the ground, orthographic, objects show their top and their front face.\nNo text, no letters, no numbers, no logos, no watermark, no glow, no light rays, no cast shadows, no frame.\n\nASSET:\nUse case: a large SET PIECE (a network cage room) for a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.\nImage 1 is the approved style of this game: match its near-black blue-teal bodies, flat pale cyan and mint light details, very dark navy outline, chunky cartoon shapes and cel shading exactly.\nSubject: a tall rectangular enclosure of near-black steel posts and dark wire-mesh walls, a mesh door at the front with a small pale cyan lock light, inside it a row of near-black server racks with pale cyan LED strips and tiny mint dots (cool light only), a flat dark roof frame with a cable tray on top. Seen from the game's 3/4 angle, front facing the viewer.\nLight details are drawn as flat pale cyan or mint shapes, not glowing. Warning details only in yellow with black stripes. Nothing warm: no brown, no beige, no orange, no warm interior light.\nComposition: the single object centred, filling most of the canvas height, empty margin on all sides.\nConstraints: no text, no letters, no numbers, no logos, no floor, no ground shadow, no glow.\n\nCanvas: 1024x1536 px (2:3 portrait); if that exact size is unavailable, use the closest size with the same aspect ratio.\n\nBackground: fully transparent (real alpha channel, PNG) everywhere outside the ASSET, with clean anti-aliased edges; no ground or cast shadow beyond what the ASSET describes, no frame, no checkerboard pattern",
+  "raw": "art/raw\\cage.png",
+  "out": "art/gen\\cage.png",
+  "request_id": "01a171db-e95a-72a0-9481-69bd0ee5018e",
+  "native_alpha_returned": true,
+  "size_raw": "1024x1536",
+  "size_final": "1024x1536",
+  "alpha": {
+    "requested": "native",
+    "plan": "native",
+    "validation": {
+      "ok": true,
+      "kind": "ok",
+      "has_alpha_channel": true,
+      "clear_frac": 0.2783,
+      "soft_edge_ratio": 15.263
+    },
+    "method": "native",
+    "fit": "none"
+  },
+  "warnings": [],
+  "seconds": 86.2
+}

@@ -1,0 +1,48 @@
+{
+  "name": "sk_trc_sapphire_armonly",
+  "provider": "codex",
+  "status": "ok",
+  "started": "2026-10-27T08:26:36",
+  "model": "codex image_gen",
+  "size_requested": "1024x1536",
+  "size_sent": "1024x1536",
+  "quality": "high",
+  "seed": null,
+  "prompt_source": "art/prompts/sk_trc_sapphire_arm.txt",
+  "refs": [
+    {
+      "path": "art/refs/schem_trc_arm.png",
+      "label": "SCHEMATIC: the exact shape, pose and position to fill"
+    },
+    {
+      "path": "art/gen/sk_trc_sapphire_bodyonly.png",
+      "label": "the skin body: colours, materials and style to match"
+    },
+    {
+      "path": "art/gen/hr_trc_arm.png",
+      "label": "the base hero part: the design of the part"
+    }
+  ],
+  "prompt": "REFERENCE IMAGES (attached in this order):\nImage 1 = SCHEMATIC: the exact shape, pose and position to fill\nImage 2 = the skin body: colours, materials and style to match\nImage 3 = the base hero part: the design of the part\n\nSTYLE BIBLE v2 (cyber datacenter): hand-drawn comic-book 2D game art, chunky readable cartoon shapes, cel shading with 2-3 hard-edged tones and grain; even medium-weight ink outline in very dark navy (#061018) around every object and major interior forms.\nPalette: almost-black blue-teal bodies and metals (#071016, #0e1a22, #1a2a33, #2a3a44), matte, low saturation; light-emitting details (screens, LED strips, edge strips, indicator dots, power cores, cable ends) painted as FLAT pale cyan (#bff8ff) or pale mint (#c9fff0) shapes with a thin cyan (#00e5ff) border, no glow; warning details only in yellow (#ffd600) with black stripes; nothing warm, no brown, no beige, no orange metal.\nLight: dim cool ambient from above, key from the upper left, lit faces only slightly lighter; the cyan details are the brightest areas; no cast shadows painted on the ground.\nStrict top-down 3/4 view, camera about 50 degrees above the ground, orthographic, objects show their top and their front face.\nNo text, no letters, no numbers, no logos, no watermark, no glow, no light rays, no cast shadows, no frame.\n\nASSET:\nUse case: ONE part of a hero SKIN for cut-out rig animation in a top-down 3/4 survivors-like game.\nImage 1 is a SCHEMATIC of this part: a flat grey silhouette with a dark outline. Fill EXACTLY this outline: the same shape, pose, size and position, the same proportions. It shows no details.\nImage 2 is the skin's body: match its colours, materials, light colour and style exactly, so the part belongs to it.\nImage 3 is the base hero \u041f\u043e\u043b\u043d\u0430\u044f \u043f\u0440\u043e\u0441\u043b\u0435\u0436\u0438\u0432\u0430\u0435\u043c\u043e\u0441\u0442\u044c's part: the design of the part (joints, bands, cuffs, the shoe's shape).\nSkin: \u0421\u0410\u041f\u0424\u0418\u0420 \u2014 the same design, only another colouring: serious and deep: the same design as Image 3, only recoloured: graphite (#2b3340) with steel-blue highlights and sapphire (#2350b8) lights; shoes silver-white with a sapphire light.\nDraw ONE ARM: perfectly straight and vertical, a round shoulder joint at the top on the arm's centre line, the upper arm and forearm in one straight line (NO bend), a thin cuff at the wrist, the white mitten hand directly below, centred.\nLine and finish: crisp clean vector-like linework, one even thin dark navy outline (#0b1622) around every shape, smooth flat cel shading with one shadow tone and one highlight tone, NO grain, NO texture, NO noise, NO wobbly or blobby edges.\nConstraints: one single part, centred, nothing else on the canvas, no text, no letters, no numbers, no ground, no shadow, no glow, transparent background, not cut by the canvas edge.\n\nCanvas: 1024x1536 px (2:3 portrait); if that exact size is unavailable, use the closest size with the same aspect ratio.\n\nBackground: fully transparent (real alpha channel, PNG) everywhere outside the ASSET, with clean anti-aliased edges; no ground or cast shadow beyond what the ASSET describes, no frame, no checkerboard pattern",
+  "raw": "art/raw\\sk_trc_sapphire_armonly.png",
+  "out": "art/gen\\sk_trc_sapphire_armonly.png",
+  "request_id": "01a17c0a-0eae-7f72-830b-b6bfc79ab73c",
+  "native_alpha_returned": true,
+  "size_raw": "1024x1536",
+  "size_final": "1024x1536",
+  "alpha": {
+    "requested": "native",
+    "plan": "native",
+    "validation": {
+      "ok": true,
+      "kind": "ok",
+      "has_alpha_channel": true,
+      "clear_frac": 0.8054,
+      "soft_edge_ratio": 1.421
+    },
+    "method": "native",
+    "fit": "none"
+  },
+  "warnings": [],
+  "seconds": 75.7
+}

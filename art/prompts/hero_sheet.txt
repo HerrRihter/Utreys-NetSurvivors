@@ -1,0 +1,12 @@
+Use case: a character PART SHEET for cut-out rig animation in a top-down 3/4 survivors-like game set inside a datacenter at night.
+Image 1 is the style reference only (line, shading, palette, light); do not copy its subjects.
+Subject: the mascot of a software company called Utrace: a chunky cartoon letter U standing upright; the left prong is coral red, the right prong is teal cyan, the rounded bowl at the bottom is dark navy; the prong tops are lighter flat caps; a simple friendly cartoon face (two big white eyes with black pupils and a small smile) sits on the front of the navy bowl.
+Draw the SAME character split into separate parts, front 3/4 view, all on one canvas:
+- top row, centred: the BODY alone, with NO legs and NO arms (the hip and shoulder areas are closed and complete), facing the viewer;
+- bottom row, left to right, each part drawn straight and vertical, complete:
+  1) ONE LEG: a single straight stubby leg (thigh and shin in one piece, a slight knee crease in the middle), hip end at the top, ankle at the bottom, NO foot, colour dark navy;
+  2) ONE FOOT: a single chunky cartoon shoe seen from the side, toe pointing right, colour off-white;
+  3) ONE ARM: a single straight arm hanging down, shoulder end at the top, a round mitten hand at the bottom, colour dark navy with a off-white hand;
+  4) A HANDHELD BARCODE SCANNER GUN pointing right: yellow-orange body, a red scan window at the right end, a dark grey grip hanging below the back of the body.
+Composition: every part separate with very wide empty gaps (at least 80 px) between parts, nothing touching or overlapping, nothing cut by the canvas edge.
+Constraints: no text, no letters, no logos, no numbers on any part, no ground, no shadow, no glow.

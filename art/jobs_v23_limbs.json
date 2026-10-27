@@ -1,0 +1,122 @@
+[
+ {
+  "name": "hero_v2_legfix",
+  "prompt": "art/prompts/hero_v2_leg.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hero_v2_sheet.png=the character part sheet: copy its leg (colours, details, finish)"
+  ]
+ },
+ {
+  "name": "sk_utrace_storm_legfix",
+  "prompt": "art/prompts/sk_utrace_storm_leg.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/sk_utrace_storm_sheet.png=the character part sheet: copy its leg (colours, details, finish)"
+  ]
+ },
+ {
+  "name": "sk_utrace_zen_legfix",
+  "prompt": "art/prompts/sk_utrace_zen_leg.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/sk_utrace_zen_sheet.png=the character part sheet: copy its leg (colours, details, finish)"
+  ]
+ },
+ {
+  "name": "sk_utrace_arctic_legfix",
+  "prompt": "art/prompts/sk_utrace_arctic_leg.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/sk_utrace_arctic_sheet.png=the character part sheet: copy its leg (colours, details, finish)"
+  ]
+ },
+ {
+  "name": "hr_trc_legfix",
+  "prompt": "art/prompts/hr_trc_leg.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_trc_sheet.png=the character part sheet: copy its leg (colours, details, finish)"
+  ]
+ },
+ {
+  "name": "hr_ser_legfix",
+  "prompt": "art/prompts/hr_ser_leg.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_ser_sheet.png=the character part sheet: copy its leg (colours, details, finish)"
+  ]
+ },
+ {
+  "name": "hr_ba_legfix",
+  "prompt": "art/prompts/hr_ba_leg.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_ba_sheet.png=the character part sheet: copy its leg (colours, details, finish)"
+  ]
+ },
+ {
+  "name": "hr_qa_legfix",
+  "prompt": "art/prompts/hr_qa_leg.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_qa_sheet.png=the character part sheet: copy its leg (colours, details, finish)"
+  ]
+ },
+ {
+  "name": "hr_trc_armfix",
+  "prompt": "art/prompts/hr_trc_arm.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_trc_sheet.png=the character part sheet: copy its arm (colours, details, finish)"
+  ]
+ },
+ {
+  "name": "hr_ser_armfix",
+  "prompt": "art/prompts/hr_ser_arm.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_ser_sheet.png=the character part sheet: copy its arm (colours, details, finish)"
+  ]
+ },
+ {
+  "name": "hr_ba_armfix",
+  "prompt": "art/prompts/hr_ba_arm.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_ba_sheet.png=the character part sheet: copy its arm (colours, details, finish)"
+  ]
+ },
+ {
+  "name": "hr_qa_armfix",
+  "prompt": "art/prompts/hr_qa_arm.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_qa_sheet.png=the character part sheet: copy its arm (colours, details, finish)"
+  ]
+ }
+]

@@ -1,0 +1,11 @@
+Use case: a PROP KIT sheet for a top-down 3/4 survivors-like game set inside a datacenter at night (props stand on the floor).
+Image 1 is the style reference only (line, shading, palette, light); do not copy its subjects.
+Match the characters' look: chunky simplified cartoon shapes, big quiet surfaces, a thick even dark warm-brown ink outline (#261215), front-and-top 3/4 view, matte cel shading with grain.
+Draw these separate props in one row, left to right, all on one shared invisible ground line:
+1) a big CRAC precision air-conditioning unit: a wide tall pale grey cabinet with large front grilles and two round fan vents on top;
+2) a floor-standing cable tray end: a short yellow cable ladder on two posts with cable bundles draped over it;
+3) a red fire-suppression gas cylinder rack holding two tall red cylinders;
+4) a short black network switch cabinet, waist high, with a row of tiny green port lights.
+LEDs are drawn unlit-neutral (coloured dots), not glowing.
+Composition: very wide empty gaps (at least 90 px) between props, nothing touching or overlapping, nothing cut by the canvas edge.
+Constraints: no text, no letters, no logos, no floor, no ground shadow, no glow.

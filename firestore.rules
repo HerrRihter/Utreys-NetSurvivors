@@ -1,0 +1,179 @@
+rules_version = '2';
+
+// NetSurvivors (plan stage 5): logins, profiles and run statistics for the leaderboards, after firestore.rules of utreys-survivors.
+// Tested on the emulator by `node tools/rules-check.mjs` (Firestore 8085, auth 9099).
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function owner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+    // Mirrors loginKey() in live/cloud.js. lower() changes only Latin letters, so Cyrillic capitals are replaced one by one.
+    function keyOf(login) {
+      return login.lower()
+        .replace('А', 'а').replace('Б', 'б').replace('В', 'в').replace('Г', 'г').replace('Д', 'д').replace('Е', 'е')
+        .replace('Ж', 'ж').replace('З', 'з').replace('И', 'и').replace('Й', 'й').replace('К', 'к').replace('Л', 'л')
+        .replace('М', 'м').replace('Н', 'н').replace('О', 'о').replace('П', 'п').replace('Р', 'р').replace('С', 'с')
+        .replace('Т', 'т').replace('У', 'у').replace('Ф', 'ф').replace('Х', 'х').replace('Ц', 'ц').replace('Ч', 'ч')
+        .replace('Ш', 'ш').replace('Щ', 'щ').replace('Ъ', 'ъ').replace('Ы', 'ы').replace('Ь', 'ь').replace('Э', 'э')
+        .replace('Ю', 'ю').replace('Я', 'я')
+        .replace('Ё', 'е').replace('ё', 'е');
+    }
+    function validKey(key) {
+      return key.matches('^[a-z0-9_-]{3,16}$') || key.matches('^[а-я0-9_-]{3,16}$');
+    }
+    function userDoc(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
+    // banned/{uid}: written only with the admin key. A banned player keeps playing but can no longer write here.
+    function allowed() {
+      return !exists(/databases/$(database)/documents/banned/$(request.auth.uid));
+    }
+
+    // logins/{key}: who owns a login. Created together with users/{uid}, never changed.
+    match /logins/{key} {
+      allow get: if signedIn();
+      allow create: if signedIn() && allowed()
+        && validKey(key)
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && getAfter(userDoc(request.auth.uid)).data.loginKey == key;
+      allow update, delete: if false;
+    }
+
+    // users/{uid}: the login as typed. Public, because the tables show it.
+    match /users/{uid} {
+      allow get: if true;
+      allow create: if owner(uid) && allowed()
+        && request.resource.data.keys().hasOnly(['login', 'loginKey', 'createdAt'])
+        && request.resource.data.login is string
+        && keyOf(request.resource.data.login) == request.resource.data.loginKey
+        && validKey(request.resource.data.loginKey)
+        && request.resource.data.createdAt == request.time
+        && getAfter(/databases/$(database)/documents/logins/$(request.resource.data.loginKey)).data.uid == uid;
+      allow update, delete: if false;
+    }
+
+    // stats/{uid}: run statistics, overall (`all`) and per map. One write per counted run.
+    match /stats/{uid} {
+      // Keep in step with MAPS in live/cloud.js (the training centre is not ranked).
+      function knownMaps() {
+        return ['dc'];
+      }
+      // Keep in step with HEROES in live/cloud.js.
+      function knownHeroes() {
+        return ['utrace', 'traceability', 'serialization', 'ba', 'qa'];
+      }
+      function statNumbers() {
+        return ['games', 'totalKills', 'totalCodes', 'bestTime', 'bestKills', 'bestCodes', 'bestLvl', 'victoryScore'];
+      }
+      function statLabels() {
+        return ['bestTimeHero', 'bestKillsHero', 'bestCodesHero', 'bestLvlHero', 'victoryHero'];
+      }
+      // Totals only grow and a run adds at most so much; records never drop.
+      function scopeOk(next, prev) {
+        return next.keys().hasAll(statNumbers())
+          && next.keys().hasOnly(statNumbers().concat(statLabels()))
+          && next.games is int && next.totalKills is int && next.totalCodes is int
+          && (next.games == prev.get('games', 0) || next.games == prev.get('games', 0) + 1)
+          && next.totalKills >= prev.get('totalKills', 0) && next.totalKills - prev.get('totalKills', 0) <= 100000
+          && next.totalCodes >= prev.get('totalCodes', 0) && next.totalCodes - prev.get('totalCodes', 0) <= 100000
+          && next.bestTime >= prev.get('bestTime', 0) && next.bestTime <= 21600
+          && next.bestKills >= prev.get('bestKills', 0) && next.bestKills <= 100000
+          && next.bestCodes >= prev.get('bestCodes', 0) && next.bestCodes <= 100000
+          && next.bestLvl >= prev.get('bestLvl', 0) && next.bestLvl <= 500
+          && next.victoryScore >= prev.get('victoryScore', 0) && next.victoryScore <= 36000;
+      }
+      // The run's map grew by exactly as much as the overall totals.
+      function sameGrowth(all, prevAll, map, prevMap) {
+        return all.games - prevAll.get('games', 0) == map.games - prevMap.get('games', 0)
+          && all.totalKills - prevAll.get('totalKills', 0) == map.totalKills - prevMap.get('totalKills', 0)
+          && all.totalCodes - prevAll.get('totalCodes', 0) == map.totalCodes - prevMap.get('totalCodes', 0);
+      }
+      // The run's hero's scope (docs/PLAN-FEEDBACK-27-10.md, stage 6): only that hero's changes, the same way as the overall one, by
+      // as much. One scope per hero over the ranked maps: with one ranked map it is that map's too (a per-map one would pass the
+      // rules' limit of 1000 expressions per request).
+      function heroesOk(next, prev, h, prevAll) {
+        let prevH = prev.get('heroes', {});
+        return next.heroes.diff(prevH).affectedKeys().hasOnly([h])
+          && scopeOk(next.heroes[h], prevH.get(h, {}))
+          && sameGrowth(next.all, prevAll, next.heroes[h], prevH.get(h, {}));
+      }
+      function statsOk(next, prev) {
+        let m = next.lastRun.map;
+        let h = next.lastRun.hero;
+        let prevAll = prev.get('all', {});
+        let prevMap = prev.get('maps', {}).get(m, {});
+        return next.keys().hasOnly(['login', 'all', 'maps', 'heroes', 'lastRun', 'updatedAt'])
+          && next.updatedAt == request.time
+          && next.lastRun.keys().hasOnly(['map', 'runId', 'hero'])
+          && h in knownHeroes()
+          && heroesOk(next, prev, h, prevAll)
+          && next.lastRun.runId is string
+          && next.lastRun.runId.size() > 0 && next.lastRun.runId.size() <= 40
+          && next.lastRun.runId != prev.get('lastRun', {}).get('runId', '')
+          && m in knownMaps()
+          && next.maps.diff(prev.get('maps', {})).affectedKeys().hasOnly([m])
+          && scopeOk(next.all, prevAll)
+          && scopeOk(next.maps[m], prevMap)
+          && sameGrowth(next.all, prevAll, next.maps[m], prevMap)
+          && next.login == get(userDoc(uid)).data.login;
+      }
+      allow get: if true;
+      // Tables read 50 rows; a player's place is a count query, exact up to 1000.
+      allow list: if request.query.limit <= 1000;
+      allow create: if owner(uid) && allowed() && statsOk(request.resource.data, {});
+      allow update: if owner(uid) && allowed() && statsOk(request.resource.data, resource.data);
+      allow delete: if false;
+    }
+
+    // progress/{uid}: the achievements done (docs/PLAN-ACHIEVEMENTS.md, stage 6). Private to its owner; the list only grows, and only
+    // with known ids. Written by CLOUD.syncAch in live/cloud.js.
+    match /progress/{uid} {
+      // Keep in step with ACH.LIST in live/ach.js (tools/rules-check.mjs compares them).
+      function knownAch() {
+        return [
+          'surv_60', 'surv_180', 'surv_300', 'surv_480', 'kills_100', 'kills_1000', 'kills_5000', 'kills_10000', 'runs_5', 'runs_10',
+          'runs_25', 'runs_100', 'win_1', 'wins_10', 'wins_50', 'bosses_1', 'bosses_10', 'bosses_50', 'cast_10', 'cast_50', 'cast_250',
+          'evo_1', 'evo_3', 'calm_180', 'win_noheal', 'lvl_20', 'lvl_30', 'edu_win', 'edu_top', 'codes_1000', 'codes_10000', 'foes_15',
+          'win_fast', 'win_nocast', 'foe_sdesk', 'foe_bug', 'foe_bugl', 'foe_bugg', 'foe_bugu', 'foe_buga', 'foe_crpt', 'foe_batch',
+          'foe_repl', 'foe_rstorm', 'foe_outage', 'evo_shield_x', 'evo_trace_x', 'evo_orbit_x', 'evo_homing_x', 'evo_mine_x',
+          'evo_ping_x', 'evo_retry_x', 'evo_cache_x', 'evo_udp_x', 'evo_chain_x', 'evo_storm_x', 'evo_turret_x', 'evo_cryo_x',
+          'evo_fork_x', 'evo_tchain_x', 'evo_packet_x', 'evo_req_x', 'evo_regress_x', 'edu_batch_accounting', 'edu_critical_incidents',
+          'runs5_utrace', 'win_utrace', 'wins3_utrace', 'runs5_traceability', 'win_traceability', 'wins3_traceability',
+          'runs5_serialization', 'win_serialization', 'wins3_serialization', 'runs5_ba', 'win_ba', 'wins3_ba', 'runs5_qa', 'win_qa',
+          'wins3_qa', 'heroes_all', 'all'];
+      }
+      // epoch: how many times the player reset their progress (docs/PLAN-FEEDBACK-27-10.md, stage 2). The list only grows within an
+      // epoch; a reset is the next epoch, and it may start from any list (an empty one).
+      function epochOf(d) {
+        return d.get('epoch', 0);
+      }
+      function progressOk(next) {
+        return next.keys().hasOnly(['ach', 'updatedAt', 'epoch'])
+          && next.updatedAt == request.time
+          && epochOf(next) is int
+          && next.ach is list
+          && next.ach.size() <= 128
+          && next.ach.hasOnly(knownAch())
+          && next.ach.toSet().size() == next.ach.size();
+      }
+      allow get: if owner(uid);
+      allow create: if owner(uid) && allowed() && exists(userDoc(uid)) && progressOk(request.resource.data) && epochOf(request.resource.data) == 0;
+      allow update: if owner(uid) && allowed() && progressOk(request.resource.data)
+        && ((epochOf(request.resource.data) == epochOf(resource.data) && request.resource.data.ach.hasAll(resource.data.ach))
+          || epochOf(request.resource.data) == epochOf(resource.data) + 1);
+      allow list, delete: if false;
+    }
+
+    match /banned/{uid} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

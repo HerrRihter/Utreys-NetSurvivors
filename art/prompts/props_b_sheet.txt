@@ -1,0 +1,12 @@
+Use case: a PROP KIT sheet for a top-down 3/4 survivors-like game set inside a datacenter at night (props stand on the floor).
+Image 1 is the style reference only (line, shading, palette, light); do not copy its subjects.
+Draw these separate props in one row, left to right, all on one shared invisible ground line, each showing its top and its front face:
+1) a low wide UPS battery cabinet (like a bench), slate grey with vertical battery slots and one small green dot;
+2) a small round grey PDU power bin with a yellow hazard plate on its front;
+3) a red pressurised coolant gas tank cylinder with a blank white label band and a valve on top;
+4) a parked server cart: a rounded rolling cart with a light blue shell and a dark inset tray of drives;
+5) a short section of dark metal safety railing fence.
+Match the CHARACTERS' look, not a technical drawing: chunky simplified cartoon shapes, big quiet surfaces, a thick even dark warm-brown ink outline (#261215) around every prop, front-and-top 3/4 view (no visible side face), matte cel shading with grain.
+Lamps and LEDs are drawn unlit-neutral (coloured dots and pale glass), not glowing.
+Composition: very wide empty gaps (at least 90 px) between props, nothing touching or overlapping, nothing cut by the canvas edge.
+Constraints: no text, no letters, no logos, no floor, no ground shadow, no glow.

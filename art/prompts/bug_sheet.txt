@@ -1,0 +1,9 @@
+Use case: a creature PART SHEET for cut-out rig animation in a top-down 3/4 survivors-like game set inside a datacenter at night.
+Image 1 is the style reference only (line, shading, palette, light); do not copy its subjects.
+Image 2 is the ORIGINAL DESIGN of this enemy (an import bug): a dark teal-black square box with a thick violet frame; match its shape and colours closely, re-rendered in the style of Image 1.
+Subject: the import bug as a living box-shaped bug: the dark teal-black box with the thick violet frame, front 3/4 view, two short violet antennae on top and two angry cartoon eyes on its front (no letters).
+Parts on one canvas:
+- left, large: the BODY (the box with antennae and eyes) with NO legs;
+- right: ONE LEG drawn straight and vertical: a thin violet insect leg in one piece with a joint in the middle, root at the top, a small pointed tip at the bottom.
+Composition: the two parts far apart with a very wide empty gap, nothing touching the canvas edge.
+Constraints: no text, no letters, no ground, no shadow, no glow.

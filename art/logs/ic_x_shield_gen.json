@@ -1,0 +1,44 @@
+{
+  "name": "ic_x_shield_gen",
+  "provider": "codex",
+  "status": "ok",
+  "started": "2026-10-27T10:38:00",
+  "model": "codex image_gen",
+  "size_requested": "1024x1024",
+  "size_sent": "1024x1024",
+  "quality": "high",
+  "seed": null,
+  "prompt_source": "art/prompts/ic_x_shield.txt",
+  "refs": [
+    {
+      "path": "art/gen/icons3_sheet.png",
+      "label": "approved icon style of this game"
+    },
+    {
+      "path": "art/gen/ic_shield_gen.png",
+      "label": "the base item, \u041e\u0442\u043a\u0430\u0437\u043e\u0443\u0441\u0442\u043e\u0439\u0447\u0438\u0432\u043e\u0441\u0442\u044c: its evolution keeps its design"
+    }
+  ],
+  "prompt": "REFERENCE IMAGES (attached in this order):\nImage 1 = approved icon style of this game\nImage 2 = the base item, \u041e\u0442\u043a\u0430\u0437\u043e\u0443\u0441\u0442\u043e\u0439\u0447\u0438\u0432\u043e\u0441\u0442\u044c: its evolution keeps its design\n\nSTYLE BIBLE v2 (cyber datacenter): hand-drawn comic-book 2D game art, chunky readable cartoon shapes, cel shading with 2-3 hard-edged tones and grain; even medium-weight ink outline in very dark navy (#061018) around every object and major interior forms.\nPalette: almost-black blue-teal bodies and metals (#071016, #0e1a22, #1a2a33, #2a3a44), matte, low saturation; light-emitting details (screens, LED strips, edge strips, indicator dots, power cores, cable ends) painted as FLAT pale cyan (#bff8ff) or pale mint (#c9fff0) shapes with a thin cyan (#00e5ff) border, no glow; warning details only in yellow (#ffd600) with black stripes; nothing warm, no brown, no beige, no orange metal.\nLight: dim cool ambient from above, key from the upper left, lit faces only slightly lighter; the cyan details are the brightest areas; no cast shadows painted on the ground.\nStrict top-down 3/4 view, camera about 50 degrees above the ground, orthographic, objects show their top and their front face.\nNo text, no letters, no numbers, no logos, no watermark, no glow, no light rays, no cast shadows, no frame.\n\nASSET:\nUse case: ONE item icon for the level-up cards and the HUD of a top-down survivors-like game set inside a dark cyberpunk datacenter.\nImage 1 is the approved icon set of this game: match its style exactly \u2014 chunky readable objects in dark graphite and navy metal with glowing flat light-cyan (#9ff7ff) parts, one even dark navy outline (#0b1622), flat cel shading, crisp clean edges.\nSubject: the evolved version of Image 2: a cluster of two overlapping hexagonal force-field shields, one in front of the other, brighter and bigger, with short light-cyan sparks between them; clearly the same item as Image 2, upgraded\nComposition: one single object, centred, filling about 80% of the canvas, readable at 64 px; transparent background.\nConstraints: no text, no letters, no numbers, no frame or card behind it, no ground, no drop shadow.\n\nCanvas: 1024x1024 px (1:1 square); if that exact size is unavailable, use the closest size with the same aspect ratio.\n\nBackground: fully transparent (real alpha channel, PNG) everywhere outside the ASSET, with clean anti-aliased edges; no ground or cast shadow beyond what the ASSET describes, no frame, no checkerboard pattern",
+  "raw": "art/raw\\ic_x_shield_gen.png",
+  "out": "art/gen\\ic_x_shield_gen.png",
+  "request_id": "01a17c82-5ce6-7f93-88bd-a621d8af3bb9",
+  "native_alpha_returned": true,
+  "size_raw": "1254x1254",
+  "size_final": "1024x1024",
+  "alpha": {
+    "requested": "native",
+    "plan": "native",
+    "validation": {
+      "ok": true,
+      "kind": "ok",
+      "has_alpha_channel": true,
+      "clear_frac": 0.435,
+      "soft_edge_ratio": 1.673
+    },
+    "method": "native",
+    "fit": "stretch"
+  },
+  "warnings": [],
+  "seconds": 113.1
+}

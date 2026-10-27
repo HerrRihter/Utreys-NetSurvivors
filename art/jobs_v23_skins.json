@@ -1,0 +1,122 @@
+[
+ {
+  "name": "sk_trc_sapphire_sheet",
+  "prompt": "art/prompts/sk_trc_sapphire.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_trc_sheet.png=the hero Полная прослеживаемость: the base design, the parts layout and the approved clean finish"
+  ]
+ },
+ {
+  "name": "sk_trc_still_sheet",
+  "prompt": "art/prompts/sk_trc_still.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_trc_sheet.png=the hero Полная прослеживаемость: the base design, the parts layout and the approved clean finish"
+  ]
+ },
+ {
+  "name": "sk_trc_intercept_sheet",
+  "prompt": "art/prompts/sk_trc_intercept.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_trc_sheet.png=the hero Полная прослеживаемость: the base design, the parts layout and the approved clean finish"
+  ]
+ },
+ {
+  "name": "sk_ser_cobalt_sheet",
+  "prompt": "art/prompts/sk_ser_cobalt.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_ser_sheet.png=the hero Сериализация: the base design, the parts layout and the approved clean finish"
+  ]
+ },
+ {
+  "name": "sk_ser_cloud_sheet",
+  "prompt": "art/prompts/sk_ser_cloud.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_ser_sheet.png=the hero Сериализация: the base design, the parts layout and the approved clean finish"
+  ]
+ },
+ {
+  "name": "sk_ser_breach_sheet",
+  "prompt": "art/prompts/sk_ser_breach.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_ser_sheet.png=the hero Сериализация: the base design, the parts layout and the approved clean finish"
+  ]
+ },
+ {
+  "name": "sk_ba_platinum_sheet",
+  "prompt": "art/prompts/sk_ba_platinum.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_ba_sheet.png=the hero БА: the base design, the parts layout and the approved clean finish"
+  ]
+ },
+ {
+  "name": "sk_ba_consult_sheet",
+  "prompt": "art/prompts/sk_ba_consult.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_ba_sheet.png=the hero БА: the base design, the parts layout and the approved clean finish"
+  ]
+ },
+ {
+  "name": "sk_ba_deadline_sheet",
+  "prompt": "art/prompts/sk_ba_deadline.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_ba_sheet.png=the hero БА: the base design, the parts layout and the approved clean finish"
+  ]
+ },
+ {
+  "name": "sk_qa_onyx_sheet",
+  "prompt": "art/prompts/sk_qa_onyx.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_qa_sheet.png=the hero QA: the base design, the parts layout and the approved clean finish"
+  ]
+ },
+ {
+  "name": "sk_qa_sandbox_sheet",
+  "prompt": "art/prompts/sk_qa_sandbox.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_qa_sheet.png=the hero QA: the base design, the parts layout and the approved clean finish"
+  ]
+ },
+ {
+  "name": "sk_qa_crash_sheet",
+  "prompt": "art/prompts/sk_qa_crash.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/hr_qa_sheet.png=the hero QA: the base design, the parts layout and the approved clean finish"
+  ]
+ }
+]

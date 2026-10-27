@@ -1,0 +1,74 @@
+[
+ {
+  "name": "hero_sheet",
+  "prompt": "art/prompts/hero_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ },
+ {
+  "name": "node_sheet",
+  "prompt": "art/prompts/node_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ },
+ {
+  "name": "panel_sheet",
+  "prompt": "art/prompts/panel_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ },
+ {
+  "name": "orb_sheet",
+  "prompt": "art/prompts/orb_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ },
+ {
+  "name": "keg_sheet",
+  "prompt": "art/prompts/keg_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ },
+ {
+  "name": "boss_sheet",
+  "prompt": "art/prompts/boss_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ },
+ {
+  "name": "bug_sheet",
+  "prompt": "art/prompts/bug_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ },
+ {
+  "name": "props_b_sheet",
+  "prompt": "art/prompts/props_b_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ },
+ {
+  "name": "router",
+  "prompt": "art/prompts/router.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ },
+ {
+  "name": "cage",
+  "prompt": "art/prompts/cage.txt",
+  "size": "1024x1536",
+  "alpha": "native"
+ },
+ {
+  "name": "ground_tex",
+  "prompt": "art/prompts/ground_tex.txt",
+  "size": "1024x1024",
+  "alpha": "none"
+ },
+ {
+  "name": "icons_sheet",
+  "prompt": "art/prompts/icons_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native"
+ }
+]

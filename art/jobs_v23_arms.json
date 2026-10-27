@@ -1,0 +1,12 @@
+[
+ {
+  "name": "sk_utrace_zen_armfix",
+  "prompt": "art/prompts/sk_utrace_zen_arm.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/sk_utrace_zen_sheet.png=the character part sheet: copy its arm (colours, details, finish)"
+  ]
+ }
+]

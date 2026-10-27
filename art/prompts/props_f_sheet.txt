@@ -1,0 +1,11 @@
+Use case: a PROP KIT sheet (props stand on the floor) for a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is the approved style of this game: match its near-black blue-teal bodies, flat pale cyan and mint light details, very dark navy outline, chunky cartoon shapes and cel shading exactly.
+Draw these separate props in one row, left to right, each showing its top and its front face:
+1) a small round dark power distribution bin (PDU) with a pale cyan ring on top and a small yellow-black hazard plate on its front;
+2) a floor-standing cable tray end: a short dark cable ladder on two posts with dark cable bundles draped over it, pale cyan cable ends;
+3) a fire-suppression rack holding two tall dark cylinders with pale mint bands and a small yellow-black warning stripe;
+4) a short waist-high near-black network switch cabinet with a row of tiny pale mint port lights;
+5) a parked server cart: a rounded rolling cart with a dark shell, a pale cyan edge strip and a tray of drives.
+Light details are drawn as flat pale cyan or mint shapes, not glowing. Warning details only in yellow with black stripes. Nothing warm: no brown, no beige, no orange, no warm interior light.
+Composition: separate props in one row on one shared invisible ground line, very wide empty gaps (at least 90 px) between them, nothing touching, nothing cut by the canvas edge.
+Constraints: no text, no letters, no numbers, no logos, no floor, no ground shadow, no glow.

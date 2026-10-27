@@ -1,0 +1,5 @@
+Use case: a seamless tileable FLOOR MATERIAL texture for a survivors-like game inside a datacenter at night.
+Image 1 is the style reference only (painted cel style, palette, grain); ignore its view: this texture is seen straight from above.
+Subject: a datacenter raised floor: a 4 by 4 grid of square slate blue-grey floor panels with thin dark seams and small corner screws; a few panels are perforated vent tiles with rows of round holes; light scuffs and scratches; quiet, low contrast, desaturated night blue.
+Composition: the texture fills the whole square canvas edge to edge and tiles seamlessly; flat even lighting.
+Constraints: no objects, no cables, no text, no vignette, no shadows, no perspective.

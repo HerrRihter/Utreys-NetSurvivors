@@ -1,0 +1,8 @@
+Use case: a character PART SHEET for cut-out rig animation in a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is the game's hero Utrace: a living Utrace logo — a navy U-shaped body with two cubes on top (one coral, one teal), big friendly eyes, stubby navy legs, white cartoon shoes and white mitten hands.
+Image 2 is the approved style of this game: match its dark navy outline, cel shading and the flat light details.
+Draw a SIBLING HERO of the same family: БА (Business Analyst). Same U-shaped body, same proportions, same eyes, same limb style as Image 1, so it is clearly one family,
+but recoloured and detailed as its own hero: the two cubes and the trims in warm gold (#f7ce70); distinguishing feature: a small chart panel with bars on its front and a requirement link: a short chain with a document tag hanging from one side.
+Keep the same parts layout as Image 1 but WITHOUT the scanner tool: body on top; below it, left to right: ONE leg (straight, hip at the top, no foot), ONE shoe (side view, toe right), ONE arm (straight, shoulder at the top, a mitten hand at the bottom).
+Every part separate with very wide empty gaps, nothing touching or cut by the canvas edge.
+Constraints: no text, no letters, no logos other than the body shape itself, no numbers, no ground, no shadow, no glow.

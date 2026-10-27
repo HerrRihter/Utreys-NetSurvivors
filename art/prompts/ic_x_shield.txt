@@ -1,0 +1,5 @@
+Use case: ONE item icon for the level-up cards and the HUD of a top-down survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is the approved icon set of this game: match its style exactly — chunky readable objects in dark graphite and navy metal with glowing flat light-cyan (#9ff7ff) parts, one even dark navy outline (#0b1622), flat cel shading, crisp clean edges.
+Subject: the evolved version of Image 2: a cluster of two overlapping hexagonal force-field shields, one in front of the other, brighter and bigger, with short light-cyan sparks between them; clearly the same item as Image 2, upgraded
+Composition: one single object, centred, filling about 80% of the canvas, readable at 64 px; transparent background.
+Constraints: no text, no letters, no numbers, no frame or card behind it, no ground, no drop shadow.

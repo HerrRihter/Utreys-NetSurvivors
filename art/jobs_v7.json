@@ -1,0 +1,22 @@
+[
+ {
+  "name": "bugl_sheet",
+  "prompt": "art/prompts/bugl_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "ref": [
+   "study/orig/bug_logistic.png=original design of this miniboss: keep its outer shape and colours",
+   "art/gen/buga_sheet.png=sibling enemy: match its line, proportions and limb style"
+  ]
+ },
+ {
+  "name": "bugg_sheet",
+  "prompt": "art/prompts/bugg_sheet.txt",
+  "size": "1536x1024",
+  "alpha": "native",
+  "ref": [
+   "study/orig/bug_goods.png=original design of this miniboss: keep its outer shape and colours",
+   "art/gen/buga_sheet.png=sibling enemy: match its line, proportions and limb style"
+  ]
+ }
+]

@@ -1,0 +1,6 @@
+Use case: a large SET PIECE (a network cage room) for a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is the approved style of this game: match its near-black blue-teal bodies, flat pale cyan and mint light details, very dark navy outline, chunky cartoon shapes and cel shading exactly.
+Subject: a tall rectangular enclosure of near-black steel posts and dark wire-mesh walls, a mesh door at the front with a small pale cyan lock light, inside it a row of near-black server racks with pale cyan LED strips and tiny mint dots (cool light only), a flat dark roof frame with a cable tray on top. Seen from the game's 3/4 angle, front facing the viewer.
+Light details are drawn as flat pale cyan or mint shapes, not glowing. Warning details only in yellow with black stripes. Nothing warm: no brown, no beige, no orange, no warm interior light.
+Composition: the single object centred, filling most of the canvas height, empty margin on all sides.
+Constraints: no text, no letters, no numbers, no logos, no floor, no ground shadow, no glow.

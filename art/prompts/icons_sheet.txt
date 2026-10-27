@@ -1,0 +1,8 @@
+Use case: an ICON SET for the HUD of a survivors-like game about a datacenter (weapon and skill icons), in the style of Image 1 (ink outline, cel shading), bold readable silhouettes.
+Draw 12 separate icons in a 4 by 3 grid, each centred in its cell, left to right, top to bottom:
+1) a yellow handheld barcode scanner firing a fan of red laser lines; 2) a small blue round scanner drone on an orbit ring; 3) a violet glowing data packet arrow with a tail; 4) a dark square plate with a white DataMatrix dot pattern (a mine);
+5) green ping signal waves around a dot; 6) an orange circular retry arrow; 7) an orange-hot rounded memory chip with heat; 8) a red heart with a small power plug;
+9) a white sneaker with blue speed lines; 10) a red horseshoe magnet; 11) a yellow lightning bolt; 12) a white stopwatch.
+Then a bottom row of 5 pickups: a green crystal gem, a blue crystal gem, a pink crystal gem, a gold bar ingot, a white first-aid box with a red cross.
+Composition: every item separate with very wide empty gaps, nothing touching.
+Constraints: no text, no letters, no numbers, no frames around icons, no glow.

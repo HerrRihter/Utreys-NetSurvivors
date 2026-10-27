@@ -1,0 +1,8 @@
+Use case: ONE part of a hero SKIN for cut-out rig animation in a top-down 3/4 survivors-like game.
+Image 1 is a SCHEMATIC of this part: a flat grey silhouette with a dark outline. Fill EXACTLY this outline: the same shape, pose, size and position, the same proportions. It shows no details.
+Image 2 is the skin's body: match its colours, materials, light colour and style exactly, so the part belongs to it.
+Image 3 is the base hero Сериализация's part: the design of the part (joints, bands, cuffs, the shoe's shape).
+Skin: ВЗЛОМ — an aggressive armoured hacker variant: sharp angular near-black graphite (#1d2126) armour plates with toxic neon green (#39ff88) edge lights; armoured boots with toxic neon green (#39ff88) soles.
+Draw ONE ARM: perfectly straight and vertical, a round shoulder joint at the top on the arm's centre line, the upper arm and forearm in one straight line (NO bend), a thin cuff at the wrist, the white mitten hand directly below, centred.
+Line and finish: crisp clean vector-like linework, one even thin dark navy outline (#0b1622) around every shape, smooth flat cel shading with one shadow tone and one highlight tone, NO grain, NO texture, NO noise, NO wobbly or blobby edges.
+Constraints: one single part, centred, nothing else on the canvas, no text, no letters, no numbers, no ground, no shadow, no glow, transparent background, not cut by the canvas edge.

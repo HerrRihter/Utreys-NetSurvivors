@@ -1,0 +1,5 @@
+Use case: a static prop for a top-down 3/4 survivors-like game set inside a datacenter at night.
+Image 1 is the style reference only (line, shading, palette, light); do not copy its subject or composition.
+Subject: one tall server rack cabinet seen from the top-down 3/4 view: dark slate metal frame, a perforated front door with rows of server units behind it, small unlit status LEDs (blue and amber dots), a bundle of cables hanging from the top, a few scuffs and a sticker-free surface. Unlit-neutral: LEDs are drawn as small coloured dots, not glowing.
+Composition: the single cabinet centred, filling about 70% of the canvas height, wide empty margin on every side, its footprint resting on an invisible ground line.
+Constraints: one object only, no floor, no ground shadow, no glow, no text.

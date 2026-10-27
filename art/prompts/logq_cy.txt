@@ -1,0 +1,11 @@
+Use case: a character PART SHEET for cut-out rig animation in a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is the approved style of this game: match its near-black blue-teal bodies, very dark navy outline, chunky cartoon shapes, cel shading and flat light details exactly.
+Image 2 is this character as it is in the game now: keep its exact silhouette, proportions, face, parts and their layout on the sheet; only repaint it.
+Subject: the Log Query: a living terminal window holding a magnifying glass.
+Repaint: the big body surfaces become dark blue-teal plates like the machines in Image 1, but the BRAND COLOURS (violet) are mandatory and strong:
+a THICK frame in the brand colour all around the main body plate (as thick as in Image 2), brand-coloured stripes or cuffs on every leg, arm and shoe,
+and brand-coloured details on the face plate. Together the brand colour covers about a third of what you see. Use exactly these brand colours, saturated
+and flat; never replace them with cyan or teal (cyan is reserved for the hero). The character must be recognisable by colour alone from far away.
+Keep any plain flat area on the body plain (the game prints the emblem there). Light details are flat colour shapes, not glowing.
+Keep the same parts layout as Image 2 (body on top; below it, left to right: leg, foot, arm), every part separate with very wide empty gaps.
+Constraints: no text, no letters, no logos, no numbers, no ground, no shadow, no glow.

@@ -1,0 +1,42 @@
+[
+ {
+  "name": "ic_tchain_gen",
+  "prompt": "art/prompts/ic_tchain.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/icons3_sheet.png=approved icon style of this game"
+  ]
+ },
+ {
+  "name": "ic_packet_gen",
+  "prompt": "art/prompts/ic_packet.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/icons3_sheet.png=approved icon style of this game"
+  ]
+ },
+ {
+  "name": "ic_req_gen",
+  "prompt": "art/prompts/ic_req.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/icons3_sheet.png=approved icon style of this game"
+  ]
+ },
+ {
+  "name": "ic_regress_gen",
+  "prompt": "art/prompts/ic_regress.txt",
+  "size": "1024x1024",
+  "alpha": "native",
+  "no_style_ref": true,
+  "ref": [
+   "art/gen/icons3_sheet.png=approved icon style of this game"
+  ]
+ }
+]

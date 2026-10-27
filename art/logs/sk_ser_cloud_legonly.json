@@ -1,0 +1,48 @@
+{
+  "name": "sk_ser_cloud_legonly",
+  "provider": "codex",
+  "status": "ok",
+  "started": "2026-10-27T08:31:50",
+  "model": "codex image_gen",
+  "size_requested": "1024x1536",
+  "size_sent": "1024x1536",
+  "quality": "high",
+  "seed": null,
+  "prompt_source": "art/prompts/sk_ser_cloud_leg.txt",
+  "refs": [
+    {
+      "path": "art/refs/schem_ser_leg.png",
+      "label": "SCHEMATIC: the exact shape, pose and position to fill"
+    },
+    {
+      "path": "art/gen/sk_ser_cloud_bodyonly.png",
+      "label": "the skin body: colours, materials and style to match"
+    },
+    {
+      "path": "art/gen/hr_ser_leg.png",
+      "label": "the base hero part: the design of the part"
+    }
+  ],
+  "prompt": "REFERENCE IMAGES (attached in this order):\nImage 1 = SCHEMATIC: the exact shape, pose and position to fill\nImage 2 = the skin body: colours, materials and style to match\nImage 3 = the base hero part: the design of the part\n\nSTYLE BIBLE v2 (cyber datacenter): hand-drawn comic-book 2D game art, chunky readable cartoon shapes, cel shading with 2-3 hard-edged tones and grain; even medium-weight ink outline in very dark navy (#061018) around every object and major interior forms.\nPalette: almost-black blue-teal bodies and metals (#071016, #0e1a22, #1a2a33, #2a3a44), matte, low saturation; light-emitting details (screens, LED strips, edge strips, indicator dots, power cores, cable ends) painted as FLAT pale cyan (#bff8ff) or pale mint (#c9fff0) shapes with a thin cyan (#00e5ff) border, no glow; warning details only in yellow (#ffd600) with black stripes; nothing warm, no brown, no beige, no orange metal.\nLight: dim cool ambient from above, key from the upper left, lit faces only slightly lighter; the cyan details are the brightest areas; no cast shadows painted on the ground.\nStrict top-down 3/4 view, camera about 50 degrees above the ground, orthographic, objects show their top and their front face.\nNo text, no letters, no numbers, no logos, no watermark, no glow, no light rays, no cast shadows, no frame.\n\nASSET:\nUse case: ONE part of a hero SKIN for cut-out rig animation in a top-down 3/4 survivors-like game.\nImage 1 is a SCHEMATIC of this part: a flat grey silhouette with a dark outline. Fill EXACTLY this outline: the same shape, pose, size and position, the same proportions. It shows no details.\nImage 2 is the skin's body: match its colours, materials, light colour and style exactly, so the part belongs to it.\nImage 3 is the base hero \u0421\u0435\u0440\u0438\u0430\u043b\u0438\u0437\u0430\u0446\u0438\u044f's part: the design of the part (joints, bands, cuffs, the shoe's shape).\nSkin: \u041e\u0411\u041b\u0410\u041a\u041e \u2014 a calm, soft variant: smooth soft rounded surfaces in matte pale blue-grey (#a9b8cc); white shoes with a soft sky blue (#a6d4ff) sole.\nDraw ONE LEG: perfectly straight and vertical, a plain rounded hip cap at the top (no ball joint), a thin knee band in the middle, the ankle end at the bottom, NO foot.\nLine and finish: crisp clean vector-like linework, one even thin dark navy outline (#0b1622) around every shape, smooth flat cel shading with one shadow tone and one highlight tone, NO grain, NO texture, NO noise, NO wobbly or blobby edges.\nConstraints: one single part, centred, nothing else on the canvas, no text, no letters, no numbers, no ground, no shadow, no glow, transparent background, not cut by the canvas edge.\n\nCanvas: 1024x1536 px (2:3 portrait); if that exact size is unavailable, use the closest size with the same aspect ratio.\n\nBackground: fully transparent (real alpha channel, PNG) everywhere outside the ASSET, with clean anti-aliased edges; no ground or cast shadow beyond what the ASSET describes, no frame, no checkerboard pattern",
+  "raw": "art/raw\\sk_ser_cloud_legonly.png",
+  "out": "art/gen\\sk_ser_cloud_legonly.png",
+  "request_id": "01a17c0e-db24-72b3-8dd5-d81d0bbac569",
+  "native_alpha_returned": true,
+  "size_raw": "1024x1536",
+  "size_final": "1024x1536",
+  "alpha": {
+    "requested": "native",
+    "plan": "native",
+    "validation": {
+      "ok": true,
+      "kind": "ok",
+      "has_alpha_channel": true,
+      "clear_frac": 0.8085,
+      "soft_edge_ratio": 1.505
+    },
+    "method": "native",
+    "fit": "none"
+  },
+  "warnings": [],
+  "seconds": 90.2
+}

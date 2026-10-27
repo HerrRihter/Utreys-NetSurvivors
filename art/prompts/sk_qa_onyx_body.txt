@@ -1,0 +1,7 @@
+Use case: ONE part — the BODY — of a hero SKIN for cut-out rig animation in a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is a SCHEMATIC of this part: a flat grey silhouette with a dark outline. Fill EXACTLY this outline: the same silhouette, the same size and position on the canvas, the same proportions. It shows no details.
+Image 2 is the base hero QA's body: keep its design — the U body, the two cubes, the eyes, the shield emblem with a checkmark on its front and the thin halo ring above its head — so the skin is clearly the same character.
+Skin: ОНИКС — the same design, only another colouring: serious and sharp: EXACTLY the same shapes, details and face as Image 2, nothing added or removed; only the colours change, muted and serious, no pastel: the body glossy onyx black (#14181d) with cool grey edge highlights, both cubes pure white (#f2f5f7) with a pale grey side, the shield emblem and the light strips mint (#5ef0c0), the halo ring white with a mint glow.
+Draw ONLY the body: no legs, no arms, the hip and shoulder areas closed and complete, facing the viewer.
+Line and finish: crisp clean vector-like linework, one even thin dark navy outline (#0b1622) around every shape, smooth flat cel shading with one shadow tone and one highlight tone, NO grain, NO texture, NO noise, NO wobbly or blobby edges.
+Constraints: one single part, centred, nothing else on the canvas, no text, no letters, no numbers, no ground, no shadow, no glow, transparent background, not cut by the canvas edge.

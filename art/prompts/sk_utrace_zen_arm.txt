@@ -1,0 +1,6 @@
+Use case: ONE limb part for cut-out rig animation in a top-down 3/4 survivors-like game.
+Image 1 is the character's part sheet: copy the colours, materials, panel details and the clean finish of ITS ARM exactly.
+Draw ONLY that arm, as a rig part: perfectly STRAIGHT and VERTICAL, centred on the canvas — a round shoulder joint at the top, sitting exactly on the arm's centre line; the upper arm and the forearm in ONE straight vertical line, NO bend at the elbow, NO angle, NO lean; a thin cuff at the wrist; the white mitten hand directly below the cuff, centred on the same axis, seen from the side, not wider than about one and a half times the arm.
+The arm is long and slim; the shoulder joint is about as wide as the arm.
+Line and finish: crisp clean vector-like linework, one even thin dark navy outline (#0b1622), smooth flat cel shading, no grain, no texture.
+Constraints: one single part, nothing else, no text, no shadow, no glow, transparent background, not cut by the canvas edge.

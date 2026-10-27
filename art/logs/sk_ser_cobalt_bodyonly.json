@@ -1,0 +1,44 @@
+{
+  "name": "sk_ser_cobalt_bodyonly",
+  "provider": "codex",
+  "status": "ok",
+  "started": "2026-10-27T08:18:34",
+  "model": "codex image_gen",
+  "size_requested": "1536x1024",
+  "size_sent": "1536x1024",
+  "quality": "high",
+  "seed": null,
+  "prompt_source": "art/prompts/sk_ser_cobalt_body.txt",
+  "refs": [
+    {
+      "path": "art/refs/schem_ser_body.png",
+      "label": "SCHEMATIC: the exact silhouette, size and position to fill"
+    },
+    {
+      "path": "art/gen/hr_ser_body.png",
+      "label": "the base hero body: the design to keep"
+    }
+  ],
+  "prompt": "REFERENCE IMAGES (attached in this order):\nImage 1 = SCHEMATIC: the exact silhouette, size and position to fill\nImage 2 = the base hero body: the design to keep\n\nSTYLE BIBLE v2 (cyber datacenter): hand-drawn comic-book 2D game art, chunky readable cartoon shapes, cel shading with 2-3 hard-edged tones and grain; even medium-weight ink outline in very dark navy (#061018) around every object and major interior forms.\nPalette: almost-black blue-teal bodies and metals (#071016, #0e1a22, #1a2a33, #2a3a44), matte, low saturation; light-emitting details (screens, LED strips, edge strips, indicator dots, power cores, cable ends) painted as FLAT pale cyan (#bff8ff) or pale mint (#c9fff0) shapes with a thin cyan (#00e5ff) border, no glow; warning details only in yellow (#ffd600) with black stripes; nothing warm, no brown, no beige, no orange metal.\nLight: dim cool ambient from above, key from the upper left, lit faces only slightly lighter; the cyan details are the brightest areas; no cast shadows painted on the ground.\nStrict top-down 3/4 view, camera about 50 degrees above the ground, orthographic, objects show their top and their front face.\nNo text, no letters, no numbers, no logos, no watermark, no glow, no light rays, no cast shadows, no frame.\n\nASSET:\nUse case: ONE part \u2014 the BODY \u2014 of a hero SKIN for cut-out rig animation in a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.\nImage 1 is a SCHEMATIC of this part: a flat grey silhouette with a dark outline. Fill EXACTLY this outline: the same silhouette, the same size and position on the canvas, the same proportions. It shows no details.\nImage 2 is the base hero \u0421\u0435\u0440\u0438\u0430\u043b\u0438\u0437\u0430\u0446\u0438\u044f's body: keep its design \u2014 the U body, the two cubes with their small windows, the eyes, the code panel with square marks on its front and the small scanner on each side \u2014 so the skin is clearly the same character.\nSkin: \u041a\u041e\u0411\u0410\u041b\u042c\u0422 \u2014 the same design, only another colouring: serious and cold: EXACTLY the same shapes, details and face as Image 2, nothing added or removed; only the colours change, muted and serious, no pastel: the body dark graphite (#262d36) with steel edge highlights, both cubes cobalt blue (#2a5fd6) with ice-blue windows, the code panel marks ice blue (#9fe0ff), the side scanners graphite with cobalt lights.\nDraw ONLY the body: no legs, no arms, the hip and shoulder areas closed and complete, facing the viewer.\nLine and finish: crisp clean vector-like linework, one even thin dark navy outline (#0b1622) around every shape, smooth flat cel shading with one shadow tone and one highlight tone, NO grain, NO texture, NO noise, NO wobbly or blobby edges.\nConstraints: one single part, centred, nothing else on the canvas, no text, no letters, no numbers, no ground, no shadow, no glow, transparent background, not cut by the canvas edge.\n\nCanvas: 1536x1024 px (3:2 landscape); if that exact size is unavailable, use the closest size with the same aspect ratio.\n\nBackground: fully transparent (real alpha channel, PNG) everywhere outside the ASSET, with clean anti-aliased edges; no ground or cast shadow beyond what the ASSET describes, no frame, no checkerboard pattern",
+  "raw": "art/raw\\sk_ser_cobalt_bodyonly.png",
+  "out": "art/gen\\sk_ser_cobalt_bodyonly.png",
+  "request_id": "01a17c02-b662-7332-ae01-b780e971a070",
+  "native_alpha_returned": true,
+  "size_raw": "1536x1024",
+  "size_final": "1536x1024",
+  "alpha": {
+    "requested": "native",
+    "plan": "native",
+    "validation": {
+      "ok": true,
+      "kind": "ok",
+      "has_alpha_channel": true,
+      "clear_frac": 0.5957,
+      "soft_edge_ratio": 1.605
+    },
+    "method": "native",
+    "fit": "none"
+  },
+  "warnings": [],
+  "seconds": 84.4
+}
