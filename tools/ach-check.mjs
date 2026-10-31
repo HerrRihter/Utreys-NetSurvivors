@@ -87,10 +87,21 @@ const none = { px: 960, py: 540 };
   META.click(...center(V().items[card].r)); ok(D.ach.surv_60 && D.codes === c2 + 5, 'a card claims «Быстрый пинг»: +5');
   META.click(...center(V().items[card].r)); ok(D.codes === c2 + 5, 'a second press pays nothing');
   META.click(...center(V().items.find((o) => o.claimAll).r)); ok(!ACH.waiting(D).length, '«Забрать всё» claims the rest');
-  // the cloud: an achievement done on another device waits here and pays no codes
-  META.mergeAch(['bosses_1']); const c3 = D.codes; ok(D.done.bosses_1 === 2, 'from the cloud: waiting'); META.claim('bosses_1');
-  ok(D.ach.bosses_1 && D.codes === c3 && ACH.isOpen(D, 'hero', 'ba'), 'claimed without codes, its content opens'); }
+  // an achievement an older version left waiting from another device (done = 2) pays no codes
+  D.done.bosses_1 = 2; const c3 = D.codes; META.claim('bosses_1');
+  ok(D.ach.bosses_1 && D.codes === c3 && ACH.isOpen(D, 'hero', 'ba'), 'claimed without codes, its content opens');
+  // the old cloud document's achievements join a save claimed, unpaid and unmarked (docs/PLAN-CLOUD-SAVE-31-10.md, stage 3)
+  const d4 = META.withAch(META.cloudSide().data, ['wins_10', 'nope']); ok(d4.ach.wins_10 && !d4.ach.nope && d4.codes === D.codes && !Object.keys(d4.fresh).some((k) => /wins_10/.test(k)), 'old cloud achievements join as claimed'); }
 function center(r) { return [r[0] + r[2] / 2, r[1] + r[3] / 2]; }
+
+// every achievement has a badge picture in the build (docs/PLAN-CLOUD-SAVE-31-10.md, stage 4): its own (ach_*), or the evolution's
+// icon, the foe's or the hero's drawing; a series' ranks run 1..of
+{ const { ACH, SIM } = page({}), A = {}; vm.runInContext(fs.readFileSync(path.join(live, 'assets.js'), 'utf8').replace('window.ASSETS', 'globalThis.A'), vm.createContext({ globalThis: A }));
+  const have = (n) => !!A.A[n], miss = [];
+  for (const x of ACH.LIST) { const b = x.badge || {}, n = b.hero ? (SIM.HEROES[b.hero].art || b.hero) + '_body' : b.foe ? b.foe + '_body' : b.evo ? SIM.WEAP[b.evo].ic : b.art;
+    if (!n || !have(n) || (b.art && b.rank && !(b.rank >= 1 && b.rank <= b.of))) miss.push(x.id + (n ? ':' + n : '')); }
+  ok(!miss.length, `every achievement has a badge (${ACH.LIST.length})` + (miss.length ? ': missing ' + miss.join(', ') : ''));
+  ok(new Set(ACH.LIST.filter((x) => x.badge.art).map((x) => x.badge.art)).size <= 22, 'own pictures: one per meaning, not per achievement'); }
 
 console.log(bad ? `\n${bad} FAILED` : '\nall ok');
 process.exitCode = bad ? 1 : 0;

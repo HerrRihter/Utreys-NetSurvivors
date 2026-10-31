@@ -4,7 +4,7 @@
 #     generation beside the sliced one) and *_bodyonly (skin bodies before their rig parts were cut);
 #  3. every other texture is resized to at most CAP px on its longer side. The game already draws them from an atlas capped at
 #     640 px (gl.js buildAtlas), and gl.js keeps the manifest's w × h as the logical size, so nothing moves on screen. Icons
-#     (ic_*, ab_*) get ICON_CAP: they are drawn at 200 px at most (the compact level-up card), so 320 keeps a 1.6× margin.
+#     (ic_*, ab_*, ach_*) get ICON_CAP: they are drawn at 200 px at most (the compact level-up card), so 320 keeps a 1.6× margin.
 #   python tools/shrink-assets.py [--cap 640] [--icon-cap 320] [--dry]   (safe to run again: it only shrinks what is still larger)
 import argparse, json, os, re
 from PIL import Image
@@ -19,7 +19,7 @@ if not a.dry:
     open('live/assets.js', 'w', encoding='utf-8', newline='').write('window.ASSETS = ' + json.dumps(man) + ';\n')
 shrunk = 0
 for n in man:
-    p = f'live/assets/{n}.png'; im = Image.open(p); w, h = im.size; k = (a.icon_cap if n.startswith(('ic_', 'ab_')) else a.cap) / max(w, h)
+    p = f'live/assets/{n}.png'; im = Image.open(p); w, h = im.size; k = (a.icon_cap if n.startswith(('ic_', 'ab_', 'ach_')) else a.cap) / max(w, h)
     if k >= 1: continue
     shrunk += 1
     if a.dry: continue

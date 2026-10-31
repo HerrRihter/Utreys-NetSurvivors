@@ -4,6 +4,6 @@
   "style_ref": ["ref.png"],
   "view": [1920, 1080],
   "prep": { "src": "art/gen", "dst": "live/assets", "manifest": "live/assets.js",
-            "notrim": ["bg_*", "*_tex"], "skip": ["*_sheet", "*_raw"], "max": 2048,
+            "notrim": ["bg_*", "*_tex"], "skip": ["*_sheet", "*_raw", "ach_*_gen"], "max": 2048,
             "walk": { "ground": 0.6, "ledge*": 0.45 } }
 }

@@ -1,19 +1,21 @@
-// Achievements in the Firebase profile (docs/PLAN-ACHIEVEMENTS.md, stage 6), end to end against the local emulators (?emu=1):
-// device 1 plays as a guest and earns achievements, then registers → they go up to progress/{uid}; device 2 (an empty save) signs
-// in → it gets them, without their codes; device 2 earns a new one → device 1 gets it after a reload.
+// Achievements in the account (docs/PLAN-ACHIEVEMENTS.md, stage 6; docs/PLAN-CLOUD-SAVE-31-10.md, stage 3), end to end against the
+// local emulators (?emu=1): device 1 plays as a guest, claims its achievements and registers → its save goes up to progress/{uid};
+// device 2 (an empty save) signs in → it gets them claimed, with nothing waiting and no «новое» mark device 1 already looked at;
+// device 2 earns a new one → device 1 gets it after a reload.
 //   firebase emulators:start --only auth,firestore --project demo-netsurvivors ; python tools/serve.py 8931 ; node tools/ach-cloud-flow.mjs
 const { chromium } = await import('file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs');
 const b = await chromium.launch(), url = 'http://localhost:8931/live/index.html?emu=1', login = 'ach' + String(Date.now()).slice(-8), out = {}, errs = [];
 const wait = (pg, f, arg) => pg.waitForFunction(f, arg, { timeout: 90000 });
 async function device() { const ctx = await b.newContext({ viewport: { width: 1600, height: 900 } }), pg = await ctx.newPage();
   pg.on('pageerror', (e) => errs.push(String(e))); await pg.goto(url); await wait(pg, () => window.META && window.CLOUD && CLOUD.state.status !== 'loading'); return pg; }
-const ach = (pg) => pg.evaluate(() => ({ ach: META.achIds().sort(), codes: META.data.codes }));
+const ach = (pg) => pg.evaluate(() => ({ ach: META.achIds().sort(), codes: META.data.codes, waiting: ACH.waiting(META.data).map((x) => x.id), fresh: Object.keys(META.data.fresh).sort() }));
 // a counted shift banked like the page does at its end
 const shift = (pg, fx, more) => pg.evaluate(([fx, more]) => { const S = SIM.spawn(5, META.mods(), META.runOpts()); Object.assign(S, { t: 60, kills: 20, lvl: 3, over: { k: 'dead', t: 60 } }, more); S.fx = Object.assign(S.fx, fx); META.bank(S); }, [fx, more]);
-const synced = (pg) => pg.waitForTimeout(500).then(() => pg.evaluate(() => CLOUD.syncAch()));
+const synced = (pg) => pg.waitForTimeout(500).then(() => pg.evaluate(() => CLOUD.sync()));
 
 const d1 = await device();
 await shift(d1, { cast: 10 }, { t: 200, kills: 150 });
+await d1.evaluate(() => { META.claimAll(); META.go('coll', true); META.go('main', true); });         // claimed, and the collection looked at
 out.guest = await ach(d1);
 await d1.evaluate(() => ACCOUNT_UI.open()); await d1.click('#acct-sw'); await d1.fill('#acct-l', login); await d1.fill('#acct-pw', 'secret77'); await d1.fill('#acct-r', 'secret77');
 await d1.click('#acct-go'); await wait(d1, () => CLOUD.state.status === 'signedIn'); await synced(d1);
@@ -35,7 +37,8 @@ const checks = [
   ['the guest earned achievements', out.guest.ach.length >= 4],
   ['an empty device has none', out.d2before.ach.length === 0],
   ['after sign-in it has the account\'s', out.guest.ach.every((id) => has(out.d2after, id))],
-  ['their codes were not paid again', out.d2after.codes === out.d2before.codes],
+  ['the wallet is the account\'s, not paid again', out.d2after.codes === out.guest.codes],
+  ['nothing waits to be claimed and nothing is marked again', !out.d2after.waiting.length && JSON.stringify(out.d2after.fresh) === JSON.stringify(out.guest.fresh)],
   ['device 2 earned «Первый разбор PIR»', has(out.d2new, 'bosses_1')],
   ['device 1 got it after a reload', has(out.d1reload, 'bosses_1')],
 ];
