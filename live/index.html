@@ -25,6 +25,12 @@ html,body{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-ta
 #wipe .box{border-color:#ff6b5e;box-shadow:0 0 40px #ff6b5e33}#wipe h2{color:#ff8f85}#wipe button[type=submit]{background:#4a1410;border-color:#ff6b5e}
 #bye{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#01060a;font:600 22px Consolas,'Cascadia Mono',monospace;color:#7f9ea6;z-index:6;text-align:center}
 #bye h2{margin:0;color:#7ff6ff;font-size:40px;letter-spacing:2px}#bye button{padding:14px 28px;min-height:48px;background:#063a44;border:1px solid #00e5ff;border-radius:6px;color:#fff;font:inherit;cursor:pointer}
+#pick{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#01060acc;font:600 18px Consolas,'Cascadia Mono',monospace;color:#e6fdff;z-index:5}
+#pick .box{width:min(640px,92vw);background:#03111a;border:2px solid #ffd166;border-radius:10px;padding:26px 30px;box-shadow:0 0 40px #ffd16633}
+#pick h2{margin:0 0 6px;color:#ffd166;font-size:28px;letter-spacing:1px}#pick p{margin:0 0 16px;color:#7f9ea6;font-size:15px;font-weight:400}#pick .row{display:flex;gap:10px;margin-top:14px}
+#pick button{flex:1;padding:12px 14px;min-height:44px;background:#063a44;border:1px solid #00e5ff;border-radius:6px;color:#fff;font:inherit;cursor:pointer;text-align:left}
+#pick button small{display:block;margin-top:8px;color:#a9c9cf;font-size:14px;font-weight:400;line-height:1.45;white-space:pre-line}#pick button.alt{background:transparent;border-color:#21545e;color:#a9c9cf;text-align:center}
+@media (max-height:520px){#pick{align-items:flex-start;overflow:auto}#pick .box{margin:12px 0;padding:16px 20px}}
 #flash{position:absolute;right:12px;bottom:10px;font:600 13px -apple-system,sans-serif;color:#9f9;background:#000a;padding:4px 10px;border-radius:6px;opacity:0;transition:opacity .6s}
 </style>
 </head><body><canvas id="c"></canvas>
@@ -33,7 +39,11 @@ html,body{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-ta
 <form id="acct-f" autocomplete="on"><input id="acct-l" placeholder="Логин" maxlength="16" autocomplete="username"><input id="acct-pw" type="password" placeholder="Пароль" autocomplete="current-password">
 <input id="acct-r" type="password" placeholder="Пароль ещё раз" autocomplete="new-password"><div class="err" id="acct-e"></div>
 <div class="row"><button type="submit" id="acct-go">Войти</button><button type="button" class="alt" id="acct-sw">Регистрация</button></div>
+<div class="row"><button type="button" id="acct-pick">Выбрать сохранение</button></div>
 <div class="row"><button type="button" class="alt" id="acct-out">Выйти из аккаунта</button><button type="button" class="alt" id="acct-x">Закрыть · Esc</button></div></form></div></div>
+<div id="pick"><div class="box"><h2>ДВА СОХРАНЕНИЯ</h2><p>Прогресс менялся и на этом устройстве, и в аккаунте. Оставьте одно — другое пропадёт. Коды не складываются.</p>
+<div class="row"><button type="button" id="pick-here">Это устройство<small id="pick-hs"></small></button><button type="button" id="pick-cloud">Аккаунт<small id="pick-cs"></small></button></div>
+<div class="row"><button type="button" class="alt" id="pick-x">Решить позже · Esc</button></div></div></div>
 <div id="wipe"><div class="box"><h2>СБРОС ПРОГРЕССА</h2><p id="wipe-p"></p>
 <form id="wipe-f" autocomplete="off"><input id="wipe-i" placeholder="Введите СБРОС" maxlength="12" autocomplete="off"><div class="err" id="wipe-e"></div>
 <div class="row"><button type="submit" id="wipe-go" disabled>Сбросить</button><button type="button" class="alt" id="wipe-x">Отмена · Esc</button></div></form></div></div>
@@ -89,7 +99,7 @@ const load = (src) => new Promise((res, rej) => { const s = document.createEleme
   const wipeBox = document.getElementById('wipe'), wipeIn = document.getElementById('wipe-i'), wipeGo = document.getElementById('wipe-go');
   const wipeOpen = () => { const cl = window.CLOUD, inn = cl && cl.state.status === 'signedIn', acct = META.data.cloud && META.data.cloud.uid;
     document.getElementById('wipe-p').textContent = 'Сотрутся коды, покупки, улучшения, достижения, рекорды и статистика' + (inn ? ' — на этом устройстве и в профиле ' + cl.state.login : acct ? ' — на этом устройстве и в профиле (при следующем входе)' : ' на этом устройстве') +
-      '. Таблицы лидеров и настройки останутся. Отменить можно в «Настройках» до следующей смены.';
+      '. Таблицы лидеров и настройки останутся. Отменить сброс нельзя.';
     wipeIn.value = ''; wipeGo.disabled = true; wipeBox.style.display = 'flex'; setTimeout(() => wipeIn.focus(), 0); };
   const wipeClose = () => { wipeBox.style.display = 'none'; document.activeElement && document.activeElement.blur(); };
   wipeIn.addEventListener('input', () => { wipeGo.disabled = wipeIn.value.trim().toUpperCase() !== 'СБРОС'; });
@@ -101,7 +111,7 @@ const load = (src) => new Promise((res, rej) => { const s = document.createEleme
   // screen; on the main menu a second press within 2 s quits
   { const App = window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App; let backT = 0;
     if (App && App.addListener) App.addListener('backButton', () => { const acct = document.getElementById('acct');
-      if (acct.style.display === 'flex') { ACCOUNT_UI.close(); return; } if (wipeBox.style.display === 'flex') { wipeClose(); return; } if (gone) return;
+      if (acct.style.display === 'flex') { ACCOUNT_UI.close(); return; } if (wipeBox.style.display === 'flex') { wipeClose(); return; } if (PICK_UI.isOpen) { PICK_UI.close(); return; } if (gone) return;
       if (play && window.META && META.PAUSE.isOpen) { META.PAUSE.close(); return; }
       if (play && !play.over && !play.demo) { META.PAUSE.open(); for (const k in keys) keys[k] = 0; TOUCH.stick = null; return; }
       if (play) { toMenu(); return; }
@@ -116,22 +126,39 @@ const load = (src) => new Promise((res, rej) => { const s = document.createEleme
       flash.style.opacity = 1; setTimeout(() => (flash.style.opacity = 0), 1200); } } catch (e) {}
   const save = () => { try { sessionStorage.setItem('live', JSON.stringify({ simT, speed, paused, play })); } catch (e) {} };
   // the account form (CLOUD): sign in / register / sign out; while it is open the keys belong to it
-  { const $ = (id) => document.getElementById(id), box = $('acct'); let reg = false;
-    const show = () => { const st = CLOUD.state, inn = st.status === 'signedIn'; $('acct-t').textContent = inn ? 'АККАУНТ' : reg ? 'РЕГИСТРАЦИЯ' : 'ВХОД';
-      $('acct-p').textContent = inn ? 'Вы вошли как ' + st.login + '. Забеги идут в таблицы лидеров.' : 'Логин: 3–16 символов, буквы одного алфавита, цифры, «_» и «-»';
+  // (docs/PLAN-CLOUD-SAVE-31-10.md, stage 2: the line under the login says how the progress stands with the account; signing out
+  // clears the device, and without a connection the second press of «Выйти» does it anyway)
+  { const $ = (id) => document.getElementById(id), box = $('acct'); let reg = false, outArmed = false;
+    const SYNC = { ok: 'Прогресс сохранён в аккаунте.', busy: 'Синхронизация…', wait: 'Прогресс ждёт связи и уйдёт в аккаунт позже.', pick: 'Нужно выбрать сохранение.' };
+    const show = () => { const st = CLOUD.state, inn = st.status === 'signedIn', sy = CLOUD.syncState; $('acct-t').textContent = inn ? 'АККАУНТ' : reg ? 'РЕГИСТРАЦИЯ' : 'ВХОД';
+      $('acct-p').textContent = inn ? 'Вы вошли как ' + st.login + '. ' + (SYNC[sy.status] || '') + ' Забеги идут в таблицы лидеров.' : 'Логин: 3–16 символов, буквы одного алфавита, цифры, «_» и «-». Прогресс сохраняется в аккаунте.';
       for (const id of ['acct-l', 'acct-pw', 'acct-go', 'acct-sw']) $(id).style.display = inn ? 'none' : ''; $('acct-r').style.display = !inn && reg ? '' : 'none';
-      $('acct-out').style.display = inn ? '' : 'none'; $('acct-go').textContent = reg ? 'Зарегистрироваться' : 'Войти'; $('acct-sw').textContent = reg ? 'У меня есть аккаунт' : 'Регистрация';
+      $('acct-pick').parentNode.style.display = inn && sy.pick ? '' : 'none';
+      $('acct-out').style.display = inn ? '' : 'none'; $('acct-out').textContent = outArmed ? 'Выйти без сохранения' : 'Выйти из аккаунта';
+      $('acct-go').textContent = reg ? 'Зарегистрироваться' : 'Войти'; $('acct-sw').textContent = reg ? 'У меня есть аккаунт' : 'Регистрация';
       $('acct-e').textContent = st.error || ''; for (const id of ['acct-go', 'acct-out']) $(id).disabled = !!st.busy; };
-    window.ACCOUNT_UI = { open: () => { box.style.display = 'flex'; CLOUD.state.error = ''; show(); setTimeout(() => (CLOUD.state.status === 'signedIn' ? $('acct-x') : $('acct-l')).focus(), 0); },
+    window.ACCOUNT_UI = { open: () => { box.style.display = 'flex'; CLOUD.state.error = ''; outArmed = false; show(); setTimeout(() => (CLOUD.state.status === 'signedIn' ? $('acct-x') : $('acct-l')).focus(), 0); },
       close: () => { box.style.display = 'none'; document.activeElement && document.activeElement.blur(); }, get open_() { return box.style.display === 'flex'; } };
     if (window.CLOUD) CLOUD.subscribe(() => { if (box.style.display === 'flex') { show(); if (CLOUD.state.status === 'signedIn' && !CLOUD.state.busy && !CLOUD.state.error && $('acct-out').style.display === 'none') ACCOUNT_UI.close(); } });
     $('acct-f').addEventListener('submit', async (e) => { e.preventDefault(); const l = $('acct-l').value, p = $('acct-pw').value;
       const done = reg ? await CLOUD.register(l, p, $('acct-r').value) : await CLOUD.signIn(l, p); if (done) { $('acct-pw').value = $('acct-r').value = ''; ACCOUNT_UI.close(); } });
-    $('acct-sw').onclick = () => { reg = !reg; CLOUD.state.error = ''; show(); }; $('acct-out').onclick = async () => { await CLOUD.signOut(); ACCOUNT_UI.close(); }; $('acct-x').onclick = () => ACCOUNT_UI.close();
+    $('acct-sw').onclick = () => { reg = !reg; CLOUD.state.error = ''; show(); }; $('acct-out').onclick = async () => { if (await CLOUD.signOut(outArmed)) { outArmed = false; ACCOUNT_UI.close(); } else if (CLOUD.state.error === CLOUD.OUT_UNSAVED) { outArmed = true; show(); } };
+    $('acct-pick').onclick = () => { ACCOUNT_UI.close(); PICK_UI.open(); }; $('acct-x').onclick = () => ACCOUNT_UI.close();
     box.addEventListener('keydown', (e) => { if (e.code === 'Escape') ACCOUNT_UI.close(); e.stopPropagation(); }); box.addEventListener('pointerdown', (e) => { if (e.target === box) ACCOUNT_UI.close(); e.stopPropagation(); }); }
+  // two saves (CLOUD.sync: this device and the account both changed since they last met): the player keeps one; «Решить позже» leaves
+  // both as they are (nothing goes up meanwhile), and the account form offers the choice again
+  { const $ = (id) => document.getElementById(id), box = $('pick'); let shown = false;
+    const line = (s) => 'Коды: ' + s.codes + '\nСмены: ' + s.runs + ' · победы: ' + s.wins + '\nГерои: ' + s.heroes + ' · достижения: ' + s.ach;
+    const close = () => { box.style.display = 'none'; document.activeElement && document.activeElement.blur(); };
+    window.PICK_UI = { open: () => { const p = window.CLOUD && CLOUD.syncState.pick; if (!p) return; $('pick-hs').textContent = line(p.here); $('pick-cs').textContent = line(p.cloud); box.style.display = 'flex';
+      setTimeout(() => $('pick-cloud').focus(), 0); }, close, get isOpen() { return box.style.display === 'flex'; } };
+    const choose = (w) => { close(); CLOUD.choose(w); if (window.AUDIO) AUDIO.effect('ui'); };
+    $('pick-here').onclick = () => choose('device'); $('pick-cloud').onclick = () => choose('cloud'); $('pick-x').onclick = close;
+    box.addEventListener('keydown', (e) => { if (e.code === 'Escape') close(); e.stopPropagation(); }); box.addEventListener('pointerdown', (e) => { if (e.target === box) close(); e.stopPropagation(); });
+    if (window.CLOUD) CLOUD.subscribe(() => { const p = CLOUD.syncState.pick; if (p && !shown) { shown = true; if (!ACCOUNT_UI.open_) PICK_UI.open(); } else if (!p) { shown = false; if (PICK_UI.isOpen) close(); } }); }
   const toMenu = () => { if (play && window.META) { META.bank(play); META.go('main', true); } play = null; SCENE.state = null; hint.style.opacity = window.META ? 0 : 1; };
   addEventListener('keydown', (e) => { TOUCH.on = false;
-    if (document.getElementById('acct').style.display === 'flex' || wipeBox.style.display === 'flex' || gone) return;        // the account form has the keys; nothing after «Выход»
+    if (document.getElementById('acct').style.display === 'flex' || wipeBox.style.display === 'flex' || PICK_UI.isOpen || gone) return;        // the account form has the keys; nothing after «Выход»
     const c = e.code;
     if (c === 'KeyP') { paused = !paused; e.preventDefault(); return; }
     if (c === 'Period') { stepOnce = true; paused = true; e.preventDefault(); return; }

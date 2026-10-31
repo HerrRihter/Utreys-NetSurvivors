@@ -17,6 +17,9 @@ SHEETS = {
     # round 29: own icons for the heroes' weapons, their evolutions and the E abilities, one generated image each
     **{f'{n}_gen': ([n], 'x', ['--dilate', '18']) for n in ['ic_tchain', 'ic_packet', 'ic_req', 'ic_regress', 'ic_x_tchain', 'ic_x_packet', 'ic_x_req', 'ic_x_regress',
                                                          'ab_overclock', 'ab_registry', 'ab_volley', 'ab_negotiate', 'ab_field']},
+    # round 31: the achievements' badges, one generated image each (tools/make_prompts_v31.py, docs/PLAN-CLOUD-SAVE-31-10.md, stage 4)
+    **{f'{n}_gen': ([n], 'x', ['--dilate', '18']) for n in ['ach_surv', 'ach_kills', 'ach_runs', 'ach_wins', 'ach_bosses', 'ach_cast', 'ach_lvl', 'ach_codes', 'ach_evo', 'ach_evo3',
+                                                         'ach_calm', 'ach_noheal', 'ach_fast', 'ach_nocast', 'ach_foes', 'ach_grad', 'ach_top', 'ach_team', 'ach_all', 'ach_c_batch', 'ach_c_incid']},
     # round 24: the other heroes' skins, every part generated alone against a schematic (tools/make_prompts_v24.py)
     'sk_trc_sapphire_bodyonly': (['sk_trc_sapphire_body'], 'x', ['--dilate', '12']), 'sk_trc_sapphire_legonly': (['sk_trc_sapphire_leg'], 'x'), 'sk_trc_sapphire_footonly': (['sk_trc_sapphire_foot'], 'x'), 'sk_trc_sapphire_armonly': (['sk_trc_sapphire_arm'], 'x'),
     'sk_trc_still_bodyonly': (['sk_trc_still_body'], 'x', ['--dilate', '12']), 'sk_trc_still_legonly': (['sk_trc_still_leg'], 'x'), 'sk_trc_still_footonly': (['sk_trc_still_foot'], 'x'), 'sk_trc_still_armonly': (['sk_trc_still_arm'], 'x'),

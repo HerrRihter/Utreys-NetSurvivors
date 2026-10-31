@@ -1,0 +1,6 @@
+Use case: ONE achievement badge picture for the achievements screen of a top-down survivors-like game set inside a dark cyberpunk datacenter.
+Image 1 is the approved icon set of this game: match its style exactly — chunky readable objects in dark graphite and navy metal with glowing flat light-cyan (#9ff7ff) parts, one even dark navy outline (#0b1622), flat cel shading, crisp clean edges.
+Subject: an early release: a dark graphite stopwatch with a glowing light-cyan rocket shooting past it, with short speed lines
+It must look clearly different from every icon in Image 1: it is an award, a little more symbolic and iconic than an item.
+Composition: one single object or a tight group, centred, filling about 75% of the canvas, readable at 64 px; transparent background.
+Constraints: no text, no letters, no numbers, no frame, no medal ribbon, no round badge or card behind it, no ground, no drop shadow.

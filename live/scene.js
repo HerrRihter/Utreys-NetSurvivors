@@ -904,6 +904,8 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
           L.rrect(bx, yy - 10, bw, 20, 6, [0.08, 0.14, 0.18]); if (tp.asked) L.rrect(bx, yy - 10, Math.max(8, bw * tp.score), 20, 6, tp.score >= 0.75 ? MINT : [1, 0.84, 0.2]);
           label('resn' + i, tp.asked ? Math.round(tp.score * 100) + '%' : '—', bx + bw + 16, yy, { size: 22, col: '#e6fdff', a }); }); }
       ex.forEach((s2, i) => label('resx' + i, s2, lx, py0 + 196 + lines.length * 56 + i * 48, { size: 28, al: 0.5, col: i === 0 ? '#7ff6ff' : '#64ffda', a }));
+      if (lb && lb.ach && lb.ach.length && a > 0.9) { const bn = Math.min(6, lb.ach.length), bx0 = W / 2 - (bn * 70 - 10) / 2;          // the shift's new achievements, on the panel's top edge
+        lb.ach.slice(0, bn).forEach((x, i) => badge(x, bx0 + i * 70, py0 - 30, 60, { ready: true })); }
       if (GT - ST.over.t > 1.4 && KB()) label('resk', 'Пробел — новая смена · Esc — в меню', W / 2, py0 + ph - 50, { size: 28, al: 0.5, col: '#7ff6ff', a: 0.85 + 0.15 * Math.sin(t * 4) }); }
     // level-up controls bought in the shop
     if (ST.pick && CK === 1 && (ST.rerolls > 0 || ST.skips > 0)) [['Перегенерация', ST.rerolls, 4], ['Пропустить выбор', ST.skips, 5]].forEach(([nm, n, k], i) => { if (!n) return; const [x, y, w, h] = SIM.ctlRect(i);
@@ -994,6 +996,22 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
   const readyMark = (id, r) => { const [x, y, w, h] = r, q = 0.5 + 0.5 * Math.sin(MT * 5); frame(x, y, w, h, 0.7 + 0.3 * q, MINT);   // under the labels: frame fills
     L.rrect(x, y, w, h, 4, [0.0, 0.45, 0.35], [0.0, 0.3, 0.25], 0.1 + 0.12 * q); };
   const newMark = (id, x, y) => { L.rrect(x, y, 86, 26, 6, [0.0, 0.5, 0.4], [0.0, 0.36, 0.29]); label(id, 'НОВОЕ', x + 43, y + 13, { size: 17, al: 0.5, col: '#ffffff' }); };
+  // an achievement's badge in an s × s square (x.badge, live/ach.js): a ring in its category's colour, or for a series its rank's
+  // (bronze … platinum, the last rank platinum) with pips for the ranks, the picture on a dark disc. Not done: grey; done: in colour;
+  // waiting to be claimed: the ring pulses mint. p: ACH.progress
+  const ACH_COL = { survival: CYAN, volume: [0.35, 0.6, 1], wins: [1, 0.82, 0.3], heroes: [0.72, 0.5, 1], bosses: CORAL, ability: MINT, mastery: [1, 0.6, 0.25], evo: [1, 0.4, 0.85], edu: [0.45, 0.95, 0.5], all: [0.92, 0.96, 1] };
+  const RANK_COL = [[0.78, 0.5, 0.3], [0.78, 0.86, 0.92], [1, 0.82, 0.3], [0.62, 1, 1]], BADGE = {};
+  const badgeArt = (x) => { if (BADGE[x.id]) return BADGE[x.id]; const b = x.badge || {};
+    let n = b.hero ? heroArt(b.hero) + '_body' : b.foe ? artOf(b.foe) + '_body' : b.evo ? icn(SIM.WEAP[b.evo].ic) : b.art; try { G.tex(n); } catch (_) { n = 'ic_power'; }
+    return (BADGE[x.id] = n); };
+  function badge(x, bx, by, s, p) { const b = x.badge || {}, on = p.claimed || p.ready, q = 0.5 + 0.5 * Math.sin(MT * 5), r = s / 2;
+    const c = b.rank ? RANK_COL[Math.min(3, b.rank - 1 + 4 - b.of)] : ACH_COL[x.cat] || CYAN, ring = p.ready ? MINT : on ? c : [0.2, 0.27, 0.3];
+    if (on) { G.blend('add'); L.glow(bx + r, by + r, r * 1.25, ring, p.ready ? 0.14 + 0.18 * q : 0.12, 2); G.blend(); }
+    L.rrect(bx, by, s, s, r, ring, ring, p.ready ? 0.65 + 0.35 * q : on ? 0.95 : 0.6);
+    L.rrect(bx + s * 0.06, by + s * 0.06, s * 0.88, s * 0.88, r * 0.88, [0.02, 0.07, 0.09], [0.01, 0.04, 0.06], 1);
+    const pad = s * (b.hero || b.foe ? 0.14 : 0.16); ico(badgeArt(x), bx + pad, by + pad, { w: s - 2 * pad, h: s - 2 * pad, u: { grade: on ? [1, 1, 0, 1] : [0, 0.42, 0, 1] } });
+    if (b.rank && s >= 60) { const d = Math.round(s * 0.08), g = d + 4, x0 = bx + r - (b.of * g - 4) / 2;                // the ranks: filled up to this one
+      for (let j = 0; j < b.of; j++) L.rrect(x0 + j * g, by + s - d - 3, d, d, d / 2, j < b.rank ? (on ? ring : [0.45, 0.52, 0.55]) : [0.08, 0.12, 0.14]); } }
   function heroCard(id, o, on, mode) { const V = META.view(), h = o.hero, H = SIM.HEROES[h], own = V.owns(h), [x, y, w, hh] = o.r, IDLE = [0.13, 0.33, 0.39];
     const shut = !own && !V.open('hero', h), rd = shut && ACH.ready(V.D, 'hero', h), g = shut && ACH.gate('hero', h);
     if (w < 240) {                                                            // the compact card (stage 7б)
@@ -1059,8 +1077,8 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
       ['Лучшее время: ' + mmss(D.best.time), 'Рекорд сбоев: ' + D.best.kills, 'Побед ' + D.wins + ' · смен ' + D.runs].forEach((r, i) => label('mi' + (i + 1), r, 628, 190 + i * 40, { size: 22, col: '#e6fdff' }));
       if (V.suspended) { const sp = V.suspended; L.uiBox('msusp', 612, 334, 332, 44, 4); label('msusp', 'Сохранена смена · ' + mmss(sp.t), 778, 356, { size: 20, al: 0.5, col: '#64ffda' }); }
       { const gs = ACH.next(D, 1); if (gs.length) { const { x, p } = gs[0], fmt = (v) => (x.time ? mmss(v) : String(v)), s0 = 'Цель: ' + x.title + ' · ' + fmt(p.v) + '/' + fmt(p.target);
-        L.uiBox('mgp', 612, 388, 332, 64, 4); label('mg0', s0, 620, 420, { size: fitW('mg0', s0, 20, 316, 13), col: '#cfe9ee' }); } }
-      { const cl = window.CLOUD, o = it.find((x) => x.acct), st = cl && cl.state, s0 = !cl || !cl.enabled ? 'Вход недоступен' : st.status === 'signedIn' ? 'Вы: ' + st.login : st.status === 'loading' ? 'Подключение…' : st.status === 'error' ? 'Нет связи' : 'Войти';
+        L.uiBox('mgp', 612, 388, 332, 64, 4); badge(x, 618, 396, 48, p); label('mg0', s0, 672, 420, { size: fitW('mg0', s0, 20, 264, 13), col: '#cfe9ee' }); } }
+      { const cl = window.CLOUD, o = it.find((x) => x.acct), st = cl && cl.state, s0 = !cl || !cl.enabled ? 'Вход недоступен' : st.status === 'signedIn' ? (cl.syncState && cl.syncState.pick ? 'Выбрать сохранение' : 'Вы: ' + st.login) : st.status === 'loading' ? 'Подключение…' : st.status === 'error' ? 'Нет связи' : 'Войти';
         if (o) btn('macct', o.r, s0, hot(it.indexOf(o)), 24, !cl || !cl.enabled ? '#6f8a90' : st.status === 'signedIn' ? '#64ffda' : null); }
       return; }
     if (V.scr === 'main') {
@@ -1072,13 +1090,14 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
       const rows = ['Коды маркировки: ' + D.codes, 'Лучшее время: ' + mmss(D.best.time), 'Рекорд сбоев: ' + D.best.kills, 'Побед: ' + D.wins + ' · смен: ' + D.runs];
       panel('mip', W - 640, 340, 540, 300, 0.85); L.sprite('code_tex', W - 610, 372, { w: 44, h: 44 });
       rows.forEach((r, i) => label('mi' + i, r, i ? W - 610 : W - 554, 394 + i * 66, { size: 30, col: i ? '#e6fdff' : '#7ff6ff' }));
-      { const cl = window.CLOUD, o = it.find((x) => x.acct), st = cl && cl.state, s = !cl || !cl.enabled ? 'Вход: Firebase не подключён' : st.status === 'signedIn' ? 'Вы вошли: ' + st.login : st.status === 'loading' ? 'Подключение…' : st.status === 'error' ? 'Нет связи с сервером' : 'Войти или зарегистрироваться';
+      { const cl = window.CLOUD, o = it.find((x) => x.acct), st = cl && cl.state, s = !cl || !cl.enabled ? 'Вход: Firebase не подключён' : st.status === 'signedIn' ? (cl.syncState && cl.syncState.pick ? 'Выбрать сохранение · ' + st.login : 'Вы вошли: ' + st.login) : st.status === 'loading' ? 'Подключение…' : st.status === 'error' ? 'Нет связи с сервером' : 'Войти или зарегистрироваться';
         if (o) btn('macct', o.r, s, hot(it.indexOf(o)), 26, !cl || !cl.enabled ? '#6f8a90' : st.status === 'signedIn' ? '#64ffda' : null); }
       if (V.suspended) { const sp = V.suspended, s = 'Сохранена смена: ' + (sp.map === 'edu' ? 'Учебный центр' : 'Дата-центр') + ' · ' + (SIM.HEROES[sp.hero] ? SIM.HEROES[sp.hero].name : '') + ' · ' + mmss(sp.t);
         L.uiBox('msusp', W - 640, 760, 540, 50, 6); label('msusp', s, W - 370, 785, { size: 20, al: 0.5, col: '#64ffda' }); }
       { const gs = ACH.next(D, 3); if (gs.length) { panel('mgp', W - 640, 830, 540, 170, 0.85); label('mgt', 'Ближайшие цели', W - 610, 858, { size: 24, col: '#7ff6ff' });   // as in the original's menu
         gs.forEach(({ x, p }, j) => { const fmt = (v) => (x.time ? mmss(v) : String(v)), s = x.title + ' · ' + fmt(p.v) + '/' + fmt(p.target); let ns = 21;
-          while (ns > 15 && L.labelW('mg' + j, s, { size: ns, font: MONO }) > 480) ns--; label('mg' + j, s, W - 610, 900 + j * 34, { size: ns, col: Object.keys(x.unlocks).length ? '#64ffda' : '#cfe9ee' }); }); } }
+          badge(x, W - 612, 885 + j * 34, 30, p);
+          while (ns > 15 && L.labelW('mg' + j, s, { size: ns, font: MONO }) > 444) ns--; label('mg' + j, s, W - 574, 900 + j * 34, { size: ns, col: Object.keys(x.unlocks).length ? '#64ffda' : '#cfe9ee' }); }); } }
       if (KB()) { L.uiBox('mhelp', 90, 930, 900, 60, 8); label('mhelp', '↑↓ или мышь — выбор · Enter — подтвердить · WASD — ходить в смене', 110, 960, { size: 24, col: '#7f9ea6' }); }
       return; }
     L.solid(0, 0, W, H, [0.01, 0.02, 0.04], 0, 0, 0, 0.8);
@@ -1127,14 +1146,15 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
           L.uiBox('mca', x, y, w, h, 8); readyMark('mcar', o.r); const cs = 'Забрать всё · ' + wn; label('mcat', cs, x + w / 2, y + h / 2, { size: fitW('mcat', cs, 21, w - 16, 14), al: 0.5, col: '#ffffff' }); return; }
         const x0 = o.ach, p = ACH.progress(D, x0), ok = p.claimed, rdy = p.ready, fmt = (v) => (x0.time ? mmss(v) : String(v));
         L.uiBox('ma' + i, x, y, w, h, 8); lit(o.r, on); if (ok) L.rrect(x, y, w, h, 4, [0.0, 0.35, 0.3], [0.0, 0.22, 0.2], 0.25); if (rdy) readyMark('mar' + i, o.r);
+        const bs = h - 20, tx = x + bs + 22; badge(x0, x + 10, y + 10, bs, p);                                // the badge on the left, the texts after it
         const rw = rdy ? 'Забрать +' + x0.reward : '+' + x0.reward + ' кодов', rwW = L.labelW('mar' + i, rw, { size: 19, font: MONO });
-        const tt = (ok ? '✓ ' : '') + x0.title; label('man' + i, tt, x + 18, y + 22, { size: fit('man' + i, tt, 22, w - 54 - rwW), col: ok || rdy ? '#64ffda' : '#ffffff' });
+        const tt = (ok ? '✓ ' : '') + x0.title; label('man' + i, tt, tx, y + 22, { size: fit('man' + i, tt, 22, x + w - 36 - rwW - tx), col: ok || rdy ? '#64ffda' : '#ffffff' });
         label('mar' + i, rw, x + w - 18, y + 22, { size: 19, al: 1, col: rdy ? '#ffffff' : ok ? '#64ffda' : '#7ff6ff' });
-        label('mad' + i, x0.desc, x + 18, y + 48, { size: fit('mad' + i, x0.desc, 17, w - 36, 12), col: '#a9c9cf' });
-        const bw = 300; L.rrect(x + 18, y + 64, bw, 10, 4, [0.08, 0.14, 0.18]); L.rrect(x + 18, y + 64, Math.max(8, bw * p.v / p.target), 10, 4, ok || rdy ? MINT : CYAN);
-        const ps = fmt(p.v) + ' / ' + fmt(p.target); label('map' + i, ps, x + 18 + bw + 14, y + 69, { size: 16, col: '#cfe9ee' });
+        label('mad' + i, x0.desc, tx, y + 48, { size: fit('mad' + i, x0.desc, 17, x + w - 18 - tx, 12), col: '#a9c9cf' });
+        const bw = Math.min(300, x + w - 160 - tx); L.rrect(tx, y + 64, bw, 10, 4, [0.08, 0.14, 0.18]); L.rrect(tx, y + 64, Math.max(8, bw * p.v / p.target), 10, 4, ok || rdy ? MINT : CYAN);
+        const ps = fmt(p.v) + ' / ' + fmt(p.target); label('map' + i, ps, tx + bw + 14, y + 69, { size: 16, col: '#cfe9ee' });
         const op = ACH.opened([x0]); if (op.length) { const s = (ok ? 'Открыто: ' : 'Откроет: ') + op.join(', ');                    // its own line under the progress
-          label('mao' + i, s, x + 18, y + 90, { size: fit('mao' + i, s, 16, w - 36, 11), col: ok || rdy ? '#64ffda' : LOCK_C }); } });
+          label('mao' + i, s, tx, y + 90, { size: fit('mao' + i, s, 16, x + w - 18 - tx, 11), col: ok || rdy ? '#64ffda' : LOCK_C }); } });
       backBtn(); return; }
     if (V.scr === 'coll' && V.ctab === 'foes') {                              // the enemy list: a foe opens with the first win over it
       const n = (k) => (D.st.foes && D.st.foes[k]) || 0, met = it.filter((o) => o.kind === 'f' && n(o.k) > 0).length, all = it.filter((o) => o.kind === 'f').length;
@@ -1231,7 +1251,7 @@ void main(){ vec2 w0 = v_px + u_cam, w = vec2(w0.x, w0.y / 0.62);
     if (V.scr === 'set') { head('НАСТРОЙКИ', 'Громкость, звук и FPS сохраняются на этом устройстве'); const P = window.AUDIO ? AUDIO.pref : { music: 0.6, effects: 0.65, musicOn: true, enabled: true };
       each((o, i) => { const [x, y, w, h] = o.r, on = hot(i); L.uiBox('mset' + i, x, y, w, h, 10); lit(o.r, on);
         label('msn' + i, o.s, x + 34, y + h / 2, { size: 30, col: o.id === 'wipe' ? (on ? '#ffd6cf' : '#ff8f85') : on ? '#ffffff' : '#bfe3ea' });
-        if (o.kind === 'action') label('msv' + i, o.id === 'wipe' ? 'коды, покупки, достижения ›' : 'вернуть прогресс до сброса ›', x + w - 34, y + h / 2, { size: 24, al: 1, col: o.id === 'wipe' ? '#ff8f85' : '#64ffda' });
+        if (o.kind === 'action') label('msv' + i, 'коды, покупки, достижения ›', x + w - 34, y + h / 2, { size: 24, al: 1, col: '#ff8f85' });
         else if (o.kind === 'slider') { const [bx, by, bw, bh] = o.bar, v = P[o.id]; L.rrect(bx, by, bw, bh, bh / 2, [0.05, 0.12, 0.15], [0.03, 0.08, 0.1]);
           L.rrect(bx, by, Math.max(bh, bw * v), bh, bh / 2, CYAN, [0.0, 0.6, 0.7]); L.rrect(bx + bw * v - 13, by - 9, 26, bh + 18, 9, [0.85, 1, 1], [0.6, 0.9, 0.95]);
           label('msv' + i, Math.round(v * 100) + '%', x + w - 34, y + h / 2, { size: 28, al: 1, col: '#7ff6ff' }); }

@@ -129,8 +129,9 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // progress/{uid}: the achievements done (docs/PLAN-ACHIEVEMENTS.md, stage 6). Private to its owner; the list only grows, and only
-    // with known ids. Written by CLOUD.syncAch in live/cloud.js.
+    // progress/{uid}: the account's save (docs/PLAN-CLOUD-SAVE-31-10.md, stage 2), private to its owner. data is the save without the
+    // device's fields, in the shape of fresh() in live/meta.js (tools/rules-check.mjs compares the keys); rev grows by one with every
+    // write. Written by CLOUD.sync in live/cloud.js.
     match /progress/{uid} {
       // Keep in step with ACH.LIST in live/ach.js (tools/rules-check.mjs compares them).
       function knownAch() {
@@ -146,25 +147,54 @@ service cloud.firestore {
           'runs5_serialization', 'win_serialization', 'wins3_serialization', 'runs5_ba', 'win_ba', 'wins3_ba', 'runs5_qa', 'win_qa',
           'wins3_qa', 'heroes_all', 'all'];
       }
-      // epoch: how many times the player reset their progress (docs/PLAN-FEEDBACK-27-10.md, stage 2). The list only grows within an
-      // epoch; a reset is the next epoch, and it may start from any list (an empty one).
+      // Keep in step with fresh() in live/meta.js, without its device fields ui and cloud.
+      function saveKeys() {
+        return ['v', 'st', 'ach', 'done', 'fresh', 'codes', 'up', 'runs', 'wins', 'kills', 'time', 'best', 'seen', 'heroes', 'skins', 'sel',
+          'maps', 'byMap', 'byHero', 'byCourse'];
+      }
+      function count(n) {
+        return n is int && n >= 0 && n <= 1000000000;
+      }
+      function dataOk(d) {
+        return d.keys().hasOnly(saveKeys())
+          && d.v == 4
+          && count(d.codes) && count(d.runs) && count(d.wins) && count(d.kills)
+          && d.time is number && d.time >= 0 && d.time <= 1000000000
+          && d.ach is map && d.ach.keys().hasOnly(knownAch())
+          && d.done is map && d.done.keys().hasOnly(knownAch())
+          && d.fresh is map && d.fresh.size() <= 256
+          && d.up is map && d.up.size() <= 64
+          && d.heroes is map && d.heroes.size() <= 32
+          && d.skins is map && d.skins.size() <= 128
+          && d.st is map && d.st.size() <= 32
+          && d.best is map && d.best.size() <= 8
+          && d.seen is map && d.seen.size() <= 8
+          && d.sel is map && d.sel.size() <= 16
+          && d.maps is map && d.maps.size() <= 16
+          && d.byMap is map && d.byMap.size() <= 16
+          && d.byHero is map && d.byHero.size() <= 32
+          && d.byCourse is map && d.byCourse.size() <= 16;
+      }
+      // epoch: how many times the player reset their progress (docs/PLAN-FEEDBACK-27-10.md, stage 2): the same, or the next one.
       function epochOf(d) {
         return d.get('epoch', 0);
       }
       function progressOk(next) {
-        return next.keys().hasOnly(['ach', 'updatedAt', 'epoch'])
+        return next.keys().hasOnly(['data', 'schema', 'rev', 'device', 'epoch', 'updatedAt'])
           && next.updatedAt == request.time
-          && epochOf(next) is int
-          && next.ach is list
-          && next.ach.size() <= 128
-          && next.ach.hasOnly(knownAch())
-          && next.ach.toSet().size() == next.ach.size();
+          && next.schema == 1
+          && next.epoch is int
+          && next.rev is int
+          && next.device is string && next.device.size() > 0 && next.device.size() <= 64
+          && next.data is map && dataOk(next.data);
       }
       allow get: if owner(uid);
-      allow create: if owner(uid) && allowed() && exists(userDoc(uid)) && progressOk(request.resource.data) && epochOf(request.resource.data) == 0;
+      allow create: if owner(uid) && allowed() && exists(userDoc(uid)) && progressOk(request.resource.data)
+        && request.resource.data.epoch == 0 && request.resource.data.rev == 1;
+      // the old document ({ ach, epoch }) has no rev: its first update in the new shape is rev 1
       allow update: if owner(uid) && allowed() && progressOk(request.resource.data)
-        && ((epochOf(request.resource.data) == epochOf(resource.data) && request.resource.data.ach.hasAll(resource.data.ach))
-          || epochOf(request.resource.data) == epochOf(resource.data) + 1);
+        && request.resource.data.rev == resource.data.get('rev', 0) + 1
+        && (request.resource.data.epoch == epochOf(resource.data) || request.resource.data.epoch == epochOf(resource.data) + 1);
       allow list, delete: if false;
     }
 

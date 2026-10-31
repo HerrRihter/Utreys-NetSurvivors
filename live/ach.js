@@ -72,6 +72,20 @@
   const N0 = LIST.length;
   LIST.push(a('all', 'all', 'Платина', 'Выполнить все остальные достижения', N0, (D) => LIST.slice(0, N0).filter((x) => D.ach[x.id] || (D.done && D.done[x.id])).length, 100));
 
+  // the badges (docs/PLAN-CLOUD-SAVE-31-10.md, stage 4; drawn by scene.js): a picture per meaning (art/gen/ach_*_gen.png,
+  // tools/make_prompts_v31.py), so a series shares one and its rank (1..of) is the ring; the evolutions, the bosses and the heroes show
+  // the game's own pictures. badge: { art, rank, of } | { evo } | { foe } | { hero }
+  const ART = { surv: 'ach_surv', kills: 'ach_kills', runs: 'ach_runs', win: 'ach_wins', wins: 'ach_wins', bosses: 'ach_bosses', cast: 'ach_cast', lvl: 'ach_lvl', codes: 'ach_codes',
+    evo_1: 'ach_evo', evo_3: 'ach_evo3', calm_180: 'ach_calm', win_noheal: 'ach_noheal', win_fast: 'ach_fast', win_nocast: 'ach_nocast', foes_15: 'ach_foes', edu_win: 'ach_grad',
+    edu_top: 'ach_top', heroes_all: 'ach_team', all: 'ach_all', edu_batch_accounting: 'ach_c_batch', edu_critical_incidents: 'ach_c_incid' };
+  const series = (id) => { const m = /^([a-z]+)_\d+$/.exec(id); return m && !ART[id] && ART[m[1]] ? ART[m[1]] : null; };
+  for (const x of LIST) { const id = x.id, h = /^(?:runs5|win|wins3)_(.+)$/.exec(id), s = series(id);
+    if (h && SIM.HEROES[h[1]]) x.badge = { hero: h[1] };
+    else if (x.cat === 'evo') x.badge = { evo: id.slice(4) };
+    else if (id.startsWith('foe_')) x.badge = { foe: id.slice(4) };
+    else if (s) { const sib = LIST.filter((y) => series(y.id) === s); x.badge = { art: s, rank: sib.indexOf(x) + 1, of: sib.length }; }
+    else x.badge = { art: ART[id] || null, rank: 0, of: 0 }; }
+
   const BY = Object.fromEntries(LIST.map((x) => [x.id, x]));
   // the achievement that opens a piece of content (kind, id), or null when it is open from the start
   const GATE = {}; for (const x of LIST) for (const kind in x.unlocks) for (const id of x.unlocks[kind]) GATE[kind + ':' + id] = x;

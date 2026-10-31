@@ -3,7 +3,7 @@
 // and the menu screens' state and layout. The scene draws the screens from META.view(); index.html routes input here while
 // no run is going and calls META.bank(run) once when a run ends or is left. Saved in localStorage ('ns_meta_v4'); the achievements are live/ach.js.
 (() => {
-  const KEY = 'ns_meta_v4', KEY_V3 = 'ns_meta_v3', KEY_V2 = 'ns_meta_v2', KEY_V1 = 'ns_meta_v1', KEY_BAK = 'ns_meta_backup';
+  const KEY = 'ns_meta_v4', KEY_V3 = 'ns_meta_v3', KEY_V2 = 'ns_meta_v2', KEY_V1 = 'ns_meta_v1';
   // the screens' logical size: 1920×1080, or 960×540 drawn 2× larger on phones and tablets (U = 2, stage 7б of docs/PLAN-FEEDBACK-27-10.md).
   // The page passes pointer positions in view px; they are divided by U here. CP: the compact layouts are in use.
   let U = 1, W = 1920, H = 1080, CP = false;
@@ -34,7 +34,8 @@
   const st0 = () => ({ bosses: 0, casts: 0, heals: 0, evos: 0, evoMax: 0, calmMax: 0, noHealWins: 0, eduWins: 0, eduTop: 0, foes: {}, codes: 0, noCastWins: 0, winMin: 0 });
   const fresh = () => ({ v: 4, st: st0(), ach: {}, done: {}, fresh: {}, codes: 0, up: {}, runs: 0, wins: 0, kills: 0, time: 0, best: { time: 0, kills: 0, lvl: 0 }, seen: { w: { trace: 1 }, e: {}, p: {} },
     heroes: { utrace: 1 }, skins: {}, sel: { hero: 'utrace', skin: null, skins: {}, map: 'dc', course: null }, maps: { dc: 1, edu: 1 }, byMap: {}, byHero: {}, byCourse: {}, ui: { fps: false },
-    cloud: { uid: '', epoch: 0, wipe: false } });   // cloud: the account this save last synced with, that account's reset count, a reset still to send
+    cloud: { uid: '', epoch: 0, wipe: false, rev: 0, fp: '' } });   // cloud: the account this save last synced with, that account's reset count, a reset still
+                                                                     // to send, the cloud's revision and this save's fingerprint at that sync
   // a loaded save, normalised against the current shape (missing fields get defaults, so older saves and future fields both load)
   const norm = (s) => { const f = fresh(); return Object.assign(f, s, { v: 4, st: Object.assign(f.st, s.st, { foes: Object.assign({}, s.st && s.st.foes) }), ach: Object.assign({}, s.ach), done: Object.assign({}, s.done), fresh: Object.assign({}, s.fresh), best: Object.assign(f.best, s.best), seen: Object.assign(f.seen, s.seen),
     heroes: Object.assign(f.heroes, s.heroes), skins: Object.assign({}, s.skins), sel: Object.assign(f.sel, s.sel, { skins: Object.assign({}, s.sel && s.sel.skins) }), maps: Object.assign(f.maps, s.maps),
@@ -44,32 +45,27 @@
   try { const rd = (k) => JSON.parse(localStorage.getItem(k) || 'null'), s4 = rd(KEY), s3 = s4 ? null : rd(KEY_V3), s2 = s4 || s3 ? null : rd(KEY_V2), s1 = s4 || s3 || s2 ? null : rd(KEY_V1);
     if (s4 && s4.v === 4) D = norm(s4); else if (s3 && s3.v === 3) D = norm(s3); else if (s2 && s2.v === 2) D = norm(s2); else if (s1 && s1.v === 1) D = norm(s1);
   } catch (_) {}
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (_) {} };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (_) {} if (window.CLOUD && CLOUD.soon) CLOUD.soon(); };   // the account gets it ~2 s later
+  // the copy an undo of a reset used to keep (there is no undo now)
+  try { localStorage.removeItem('ns_meta_backup'); } catch (_) {}
   // achievements already met by the loaded save (a v3 save's totals, or a list that grew) are done now, waiting to be claimed
   const achNew = window.ACH ? ACH.check(D) : [];
   if (achNew.length) save();
-  // the cloud's side (CLOUD.syncAch): this device's done ids, and the cloud's merged in. The cloud's wait to be claimed here without
-  // codes (paid on the device that did them); returns how many this then completed here, so the cloud gets them too.
+  // the ids of the achievements met (claimed or waiting)
   const achIds = () => (window.ACH ? [...new Set([...Object.keys(D.ach), ...Object.keys(D.done)])].filter((id) => ACH.BY[id]) : []);
   // the reset of progress (docs/PLAN-FEEDBACK-27-10.md, stage 2): everything but the device's settings starts over. The save before it
-  // is kept for one undo (until the next counted shift). The account's cloud list is reset too: here (a reset to send on the next
-  // sync, if this save belongs to an account), or from another device (CLOUD sees the account's reset count grow, remote: true).
+  // is not kept: a reset cannot be undone (owner, 31.10). The account's save is reset too: here (a reset to send on the next sync, if
+  // this save belongs to an account), or from another device (CLOUD sees the account's reset count grow, remote: true).
   const note = (s) => { const h = typeof document !== 'undefined' && document.getElementById('hint'); if (!h) return; clearTimeout(note.t); h.textContent = s; h.style.opacity = 1;
     if (CP) Object.assign(h.style, { top: '0', bottom: 'auto', background: '#01060ae0', padding: '8px 12px' }); else h.style.bottom = '10vh';   // above «Esc — назад»; on phones at the top
     note.t = setTimeout(() => { h.style.opacity = 0; Object.assign(h.style, { top: '', bottom: '', background: '', padding: '' }); }, 5000); };
   function wipe(o = {}) {
-    try { localStorage.setItem(KEY_BAK, JSON.stringify(D)); } catch (_) {}
     const ui = D.ui, cl = D.cloud; D = fresh(); D.ui = ui;
-    D.cloud = o.remote ? { uid: cl.uid, epoch: o.epoch, wipe: false } : { uid: cl.uid, epoch: cl.epoch, wipe: !!cl.uid };
+    D.cloud = o.remote ? { uid: cl.uid, epoch: o.epoch, wipe: false, rev: 0, fp: '' } : { uid: cl.uid, epoch: cl.epoch, wipe: !!cl.uid, rev: cl.rev, fp: '' };
     last = null; banked = null; liveShown = new Set(); if (!o.remote) go('set', true); save();
     dispatchEvent(new Event('ns-wipe'));                                                            // the page drops a kept shift
-    if (o.remote) note('Прогресс аккаунта сброшен на другом устройстве · отменить можно в «Настройках»');
-    else if (window.CLOUD && CLOUD.syncAch) CLOUD.syncAch();
+    if (o.remote) note('Прогресс аккаунта сброшен на другом устройстве');
   }
-  const canUndo = () => { try { return !!localStorage.getItem(KEY_BAK); } catch (_) { return false; } };
-  function undoWipe() { let b = null; try { b = JSON.parse(localStorage.getItem(KEY_BAK) || 'null'); } catch (_) {} if (!b) return false;
-    const cl = D.cloud; D = norm(b); D.cloud = { uid: cl.uid, epoch: cl.epoch, wipe: false };      // the cloud's reset stands; the list grows back on the sync
-    try { localStorage.removeItem(KEY_BAK); } catch (_) {} save(); if (window.CLOUD && CLOUD.syncAch) CLOUD.syncAch(); return true; }
   // a claim (a press on a done achievement, or on the content it opens): codes, content opened and marked new; a line under the menu
   function claim(id) { const r = window.ACH && ACH.claim(D, id); if (!r) return null; save(); sfx('level');
     note('Получено: «' + r.x.title + '»' + (r.codes ? ' · +' + r.codes + ' кодов' : '') + (r.opened.length ? ' · открыто: ' + r.opened.join(', ') : '')); return r; }
@@ -87,12 +83,28 @@
   const waitingN = () => (window.ACH ? ACH.waiting(D).length : 0);
   const shopNews = () => Object.keys(D.fresh).some((k) => /^(hero|skin|u|ranks):/.test(k)) || (window.ACH && ACH.waiting(D).some((x) => ['hero', 'skin', 'u', 'ranks'].some((kd) => x.unlocks[kd])));
   const collNews = () => Object.keys(D.fresh).some((k) => /^(w|p):/.test(k)) || (window.ACH && ACH.waiting(D).some((x) => x.unlocks.w || x.unlocks.p));
-  // CLOUD.syncAch's view of this save, and what it settled
-  const cloudSide = () => Object.assign({ ids: achIds() }, D.cloud);
-  const cloudSet = (o) => { Object.assign(D.cloud, o); save(); };
-  function mergeAch(ids) { if (!window.ACH) return 0; let n = 0;
-    for (const id of ids || []) if (ACH.BY[id] && !D.ach[id] && !D.done[id]) { D.done[id] = 2; n++; }
-    const more = ACH.check(D); if (n || more.length) save(); return more.length; }
+  // ---------------- the account's save (docs/PLAN-CLOUD-SAVE-31-10.md, stages 2–3; CLOUD.sync) ----------------
+  // Everything but the device's own fields (ui: FPS; cloud: the sync's bookkeeping; the sound is ns_audio) goes to the account, «новое»
+  // marks and achievements waiting to be claimed included, so nothing another device saw or claimed is marked or waits again.
+  const SYNCED = Object.keys(fresh()).filter((k) => k !== 'ui' && k !== 'cloud');
+  const synced = (d) => JSON.parse(JSON.stringify(Object.fromEntries(SYNCED.map((k) => [k, d[k]]))));
+  const canon = (v) => (v && typeof v === 'object' ? (Array.isArray(v) ? '[' + v.map(canon).join(',') + ']' : '{' + Object.keys(v).sort().map((k) => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}') : JSON.stringify(v));
+  const print = (d) => { const s = canon(synced(d)); let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 0x01000193) >>> 0; return h.toString(16) + '.' + s.length; };
+  // nothing worth asking about: a new device, or a guest who has not played (a shift, a purchase or an achievement makes it worth it)
+  const empty = (d) => !d.runs && !d.codes && !Object.keys(d.ach).length && !Object.keys(d.done).length && !Object.keys(d.up).length && !Object.keys(d.skins).length && Object.keys(d.heroes).length <= 1;
+  const summary = (d) => ({ codes: d.codes | 0, runs: d.runs | 0, wins: d.wins | 0, heroes: Object.keys(d.heroes || {}).length, ach: Object.keys(d.ach || {}).length });
+  // CLOUD's view of this save: the account it last synced with, its data and whether it changed since
+  const cloudSide = () => Object.assign({}, D.cloud, { data: synced(D), now: print(D), empty: empty(D), sum: summary(D) });
+  // this save went up as revision rev (data: what went up; if the save changed meanwhile, the next sync sends that too)
+  const cloudSet = (o) => { D.cloud = { uid: o.uid, epoch: o.epoch, wipe: false, rev: o.rev, fp: print(norm(o.data)) }; save(); };
+  // the account's save replaces this one (the device's settings stay); achievements it meets here wait as usual and go up next
+  function adopt(data, o) { const ui = D.ui; D = norm(data); D.ui = ui; D.cloud = { uid: o.uid, epoch: o.epoch, wipe: false, rev: o.rev, fp: print(D) };
+    if (window.ACH) ACH.check(D); last = null; banked = null; liveShown = new Set(); save(); }
+  // the old cloud document held only the achievements done (codes stayed per device): they join a save as claimed, unpaid and unmarked
+  const withAch = (data, ids) => { const d = synced(norm(data)); for (const id of ids || []) if (window.ACH && ACH.BY[id] && !d.ach[id]) { d.ach[id] = 1; delete d.done[id]; } return d; };
+  // signing out leaves nothing of the account on the device (owner, 31.10): the next sign-in brings it back
+  function signedOut() { const ui = D.ui; D = fresh(); D.ui = ui; last = null; banked = null; liveShown = new Set(); go('main', true); save(); dispatchEvent(new Event('ns-wipe')); }
+  const unsynced = () => !!D.cloud.uid && (D.cloud.wipe || print(D) !== D.cloud.fp);
   const lvl = (id) => D.up[id] || 0;
   const price = (u) => 30 * (lvl(u.id) + 1);
   const locked = (u) => !lvl(u.id) && !open('u', u.id);                                 // ranks bought before stay; the rest waits for its achievement
@@ -117,7 +129,7 @@
     for (const k in S.got || {}) { const evo = SIM.WEAP[k] && SIM.WEAP[k].evo, box = evo ? D.seen.e : D.seen.w; if (!box[k]) { box[k] = 1; finds.push(k); } }
     for (const k in S.ps || {}) if (S.ps[k] > 0 && !D.seen.p[k]) { D.seen.p[k] = 1; finds.push(k); }
     D.codes += earned; D.st.codes += earned; const counted = !!S.over || (S.t || 0) >= 10;                     // as in the original: a run quit before 10 s is not counted
-    if (counted) { D.runs++; D.kills += S.kills || 0; D.time += S.t || 0; if (win) D.wins++; try { localStorage.removeItem(KEY_BAK); } catch (_) {} }
+    if (counted) { D.runs++; D.kills += S.kills || 0; D.time += S.t || 0; if (win) D.wins++; }
     D.best.time = Math.max(D.best.time, S.t || 0); D.best.kills = Math.max(D.best.kills, S.kills || 0); D.best.lvl = Math.max(D.best.lvl, S.lvl || 0);
     if (counted) for (const [box, k] of [[D.byMap, S.map || 'dc'], [D.byHero, S.hero || 'utrace']]) { const r = box[k] = Object.assign(rec0(), box[k]);
       r.time = Math.max(r.time, S.t || 0); r.kills = Math.max(r.kills, S.kills || 0); r.lvl = Math.max(r.lvl, S.lvl || 0); r.runs++; if (win) r.wins++; }
@@ -136,7 +148,6 @@
     const ach = window.ACH ? ACH.check(D) : [];                                                     // done by this run, waiting to be claimed
     last = { over: S.over, earned, base, total: D.codes, rec: rec.time || rec.kills, finds, win, edu, map: S.map, ach, opened: [] };
     if (counted && window.CLOUD) CLOUD.onRun({ map: S.map || 'dc', time: S.t || 0, kills: S.kills || 0, codes: earned, lvl: S.lvl || 0, win, hero: S.hero });
-    if (ach.length && window.CLOUD && CLOUD.syncAch) CLOUD.syncAch();                                 // the new achievements into the profile
     save();
   }
 
@@ -187,7 +198,7 @@
     view: () => ({ open: pz.open, sel: pz.sel, items: pauseItems() }) };
   // settings rows: volumes are sliders (arrows ←→, click or drag on the bar), the rest are switches
   const SET = [['music', 'Громкость музыки', 'slider'], ['effects', 'Громкость эффектов', 'slider'], ['musicOn', 'Музыка', 'toggle'], ['enabled', 'Звуки', 'toggle'], ['fps', 'Показывать FPS', 'toggle'],
-    ['wipe', 'Сбросить прогресс', 'action'], ['undo', 'Отменить сброс', 'action']];
+    ['wipe', 'Сбросить прогресс', 'action']];
   const bar = (r) => [r[0] + 470, r[1] + 23, 430, 26];
   const A = () => window.AUDIO || null;
   const COLL = () => { const W0 = Object.keys(SIM.WEAP).filter((k) => !SIM.WEAP[k].evo), E0 = Object.keys(SIM.WEAP).filter((k) => SIM.WEAP[k].evo), P0 = Object.keys(SIM.PASS);
@@ -228,7 +239,7 @@
       const xs = ACH.LIST.filter((x) => x.cat === acat);
       return scrolled([...tabs, { id: 'claimall', claimAll: 1, s: 'Забрать всё', r: [776, 92, 172, 130] },
         ...grid(xs, 1, 936, 106, 10, 232, (x) => ({ id: 'a_' + x.id, ach: x }))], 232, 540); }
-    if (scr === 'set') return scrolled(SET.filter(([id]) => id !== 'undo' || canUndo()).map(([id, s, kind], i) => { const r = [24, CT + i * 70, 912, 62]; return { id, s, kind, r, bar: [r[0] + 420, r[1] + 18, 340, 26], sc: 1 }; }), CT, 540);
+    if (scr === 'set') return scrolled(SET.map(([id, s, kind], i) => { const r = [24, CT + i * 70, 912, 62]; return { id, s, kind, r, bar: [r[0] + 420, r[1] + 18, 340, 26], sc: 1 }; }), CT, 540);
     if (scr === 'shop') { const tabs = [TAB('tab_up', { tab: 'up', s: 'Улучшения' }, 12, 220), TAB('tab_hero', { tab: 'hero', s: 'Герои' }, 240, 220), TAB('tab_skin', { tab: 'skin', s: 'Скины' }, 468, 220)];
       if (tab === 'skin') return scrolled([...tabs, ...grid(Object.keys(SIM.SKINS), 4, 210, 340, 16, 166, (k) => ({ id: 's_' + k, skin: k }))], 166, 540);
       if (tab === 'hero') return [...tabs, ...grid(Object.keys(SIM.HEROES), 5, 180, 360, 9, 166, (h) => ({ id: 'h_' + h, hero: h }))].map((o) => Object.assign(o, { sc: 0 }));
@@ -267,7 +278,7 @@
       const xs = ACH.LIST.filter((x) => x.cat === acat), cw = 560, ch = 106, cg = 16, x0 = (W - (3 * cw + 2 * cg)) / 2;   // the largest category (18) is 6 rows
       return [...tabs, { id: 'claimall', claimAll: 1, s: 'Забрать всё', r: [1610, 186, 200, 52] },
         ...xs.map((x, i) => ({ id: 'a_' + x.id, ach: x, r: [x0 + (i % 3) * (cw + cg), 256 + Math.floor(i / 3) * (ch + 10), cw, ch] }))]; }
-    if (scr === 'set') return SET.filter(([id]) => id !== 'undo' || canUndo()).map(([id, s, kind], i) => { const r = [W / 2 - 520, 220 + i * 86, 1040, 72]; return { id, s, kind, r, bar: bar(r) }; });
+    if (scr === 'set') return SET.map(([id, s, kind], i) => { const r = [W / 2 - 520, 220 + i * 86, 1040, 72]; return { id, s, kind, r, bar: bar(r) }; });
     if (scr === 'shop') { const tabs = [{ id: 'tab_up', tab: 'up', s: 'Улучшения', r: [110, 186, 260, 52] }, { id: 'tab_hero', tab: 'hero', s: 'Герои', r: [386, 186, 260, 52] }, { id: 'tab_skin', tab: 'skin', s: 'Скины', r: [662, 186, 260, 52] }];
       if (tab === 'skin') { const ks = Object.keys(SIM.SKINS), per = 8, cw = 210, ch = 340, g = 16, x0 = (W - (per * cw + (per - 1) * g)) / 2;
         return [...tabs, ...ks.map((k, i) => ({ id: 's_' + k, skin: k, r: [x0 + (i % per) * (cw + g), 262 + Math.floor(i / per) * (ch + 16), cw, ch] }))]; }
@@ -298,7 +309,7 @@
   // activate the item i on the current screen; returns 'start' to begin a run
   function act(i) {
     const it = items()[i]; if (!it) return null;
-    if (it.acct) { const cl = C(); if (cl && cl.enabled && window.ACCOUNT_UI) window.ACCOUNT_UI.open(); else sfx('deny'); return null; }
+    if (it.acct) { const cl = C(); if (cl && cl.enabled && cl.syncState.pick && window.PICK_UI) PICK_UI.open(); else if (cl && cl.enabled && window.ACCOUNT_UI) window.ACCOUNT_UI.open(); else sfx('deny'); return null; }
     if (scr === 'lead') { const cl = C(); if (!cl) { sfx('deny'); return null; } const B = cl.board;                          // the leaderboard's filters
       if (it.scrollD) { if (!scrollBoard(it.scrollD * 6)) sfx('deny'); else sfx('ui'); return null; }
       if (it.refresh) cl.loadBoard({}, true); else if (it.metric !== undefined) cl.loadBoard({ metric: it.metric }); else if (it.scope) cl.loadBoard({ scope: it.scope });
@@ -315,7 +326,6 @@
         : it.u ? (locked(it.u) ? ACH.ready(D, 'u', it.u.id) : lvl(it.u.id) >= cap(it.u) ? ACH.ready(D, 'ranks', 'up') : null) : (it.kind === 'w' || it.kind === 'p') ? ACH.ready(D, it.kind, it.k) : null;
       if (rd && window.ACH) { claim(rd.id); return null; } }
     if (scr === 'set' && it.id === 'wipe') { sfx('ui'); return 'wipe'; }                          // the page asks for «СБРОС» first
-    if (scr === 'set' && it.id === 'undo') { if (undoWipe()) { sel = Math.max(0, sel - 1); sfx('magic'); note('Сброс отменён · прогресс возвращён'); } else sfx('deny'); return null; }
     if (scr === 'set') { if (it.id === 'fps') { D.ui.fps = !D.ui.fps; save(); sfx('ui'); } else if (it.kind === 'toggle' && A()) { A().toggle(it.id === 'musicOn' ? 'music' : 'sound'); sfx('ui'); } return null; }
     if (scr === 'hero' && !it.chip) { const h = it.hero, H = SIM.HEROES[h];
       if (!owns(h)) { if (!open('hero', h) || D.codes < H.price) { sfx('deny'); return null; } D.codes -= H.price; D.heroes[h] = 1; focus = h; save(); sfx('pickup'); return null; }   // buy here, then press again to play
@@ -389,6 +399,6 @@
   const view = () => ({ U, LW: W, LH: H, compact: CP, get scrollArea() { return CP ? area.slice() : null; }, scr, sel, hovBack, tab, focus, skinsOf, ownsSkin, suspended: susp, items: items(), D, last, back: back(), armedReset, spent: spent(), price, lvl, locked, owns, trPrice, TR_MAX, open, cap, ctab, acat });
 
   const runOpts = () => ({ map: D.maps[D.sel.map] ? D.sel.map : 'dc', hero: owns(D.sel.hero) ? D.sel.hero : 'utrace', client: D.sel.client, skin: D.sel.skins[owns(D.sel.hero) ? D.sel.hero : 'utrace'] || null, lock: window.ACH ? ACH.lock(D) : undefined, course: COURSE.courses[D.sel.course] ? D.sel.course : COURSE.order[0] });
-  window.META = { UPG, MAPS, PAUSE, setSuspended: (o) => { susp = o; }, get suspended() { return susp; }, tab: (x) => { tab = x; }, ctab: (x) => { ctab = x; }, acat: (x) => { acat = x; }, unlockAll: () => { Object.keys(SIM.HEROES).forEach((h) => (D.heroes[h] = 1)); }, mods, runOpts, bank, key, click: (x, y) => click(x / U, y / U), move: (x, y) => move(x / U, y / U), drag: (x) => drag(x / U), up, wheel, view, go, setUI, get U() { return U; }, get data() { return D; }, get last() { return last; }, get achOnLoad() { return achNew; }, live, achIds, mergeAch, claim, claimAll, wipe, undoWipe, canUndo, cloudSide, cloudSet, reset: () => { D = fresh(); save(); } };
-  if (window.CLOUD && CLOUD.syncAch) CLOUD.syncAch();                                              // the account may have signed in first
+  window.META = { UPG, MAPS, PAUSE, setSuspended: (o) => { susp = o; }, get suspended() { return susp; }, tab: (x) => { tab = x; }, ctab: (x) => { ctab = x; }, acat: (x) => { acat = x; }, unlockAll: () => { Object.keys(SIM.HEROES).forEach((h) => (D.heroes[h] = 1)); }, mods, runOpts, bank, key, click: (x, y) => click(x / U, y / U), move: (x, y) => move(x / U, y / U), drag: (x) => drag(x / U), up, wheel, view, go, setUI, get U() { return U; }, get data() { return D; }, get last() { return last; }, get achOnLoad() { return achNew; }, live, achIds, claim, claimAll, wipe, cloudSide, cloudSet, adopt, withAch, signedOut, unsynced, summary, SYNCED, reset: () => { D = fresh(); save(); } };
+  if (window.CLOUD && CLOUD.sync) CLOUD.sync();                                                    // the account may have signed in first
 })();

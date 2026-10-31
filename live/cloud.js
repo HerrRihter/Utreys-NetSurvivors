@@ -82,7 +82,12 @@
   const signIn = (login, pass) => act(async () => { if (loginError(login) || !pass) throw fail('Неверный логин или пароль');
     const s = await sdk().catch(() => { throw fail('Нет связи с сервером'); }); typed = normalizeLogin(login);
     try { await s.authApi.signInWithEmailAndPassword(s.auth, loginEmail(login), pass); } catch (e) { throw fail(errText(e)); } });
-  const signOut = () => act(async () => { const s = await sdk(); typed = ''; await s.authApi.signOut(s.auth); });
+  // signing out clears the device (META.signedOut): the last changes go up first; without a connection the player is warned and
+  // signs out only on a second press (force)
+  const OUT_UNSAVED = 'Нет связи: несохранённое в аккаунт пропадёт. Нажмите «Выйти» ещё раз';
+  const signOut = (force) => act(async () => {
+    if (!force && window.META && META.unsynced) { await syncNow(); if (META.unsynced() || sync.pick) throw fail(OUT_UNSAVED); }
+    const s = await sdk(); typed = ''; await s.authApi.signOut(s.auth); if (window.META && META.signedOut) META.signedOut(); });
 
   // ---------------- run statistics (src/systems/run-records.js, src/services/run-stats.js) ----------------
   const scope0 = () => Object.fromEntries([...TOTALS, ...RECORDS].map((k) => [k, 0]));
@@ -127,29 +132,54 @@
   // after signing in from a results screen, its run is sent too
   listeners.add(() => { if (state.status === 'signedIn' && guestRun) { writeQ(readQ().concat([{ uid: state.uid, entry: guestRun }])); guestRun = null; last.guest = false; flush(); } });
 
-  // ---------------- achievements (docs/PLAN-ACHIEVEMENTS.md, stage 6) ----------------
-  // progress/{uid}: the ids of the achievements done, readable only by their owner; the rules let the list only grow. A sync joins the
-  // cloud's list and this device's both ways: the cloud gets this device's, META marks the cloud's as done (their codes were paid on
-  // the device where they were done), and whatever that completes here (Платина) goes up on the next pass. Codes stay per device.
-  // A reset of progress (stage 2 of docs/PLAN-FEEDBACK-27-10.md) is the document's next epoch: a reset made on this device for this
-  // account replaces the list; a newer epoch than this device last saw for the account means another device reset it, and this
-  // device resets too. A save that has not synced with this account yet just joins it (a guest's progress is kept on sign-in).
-  let achBusy = null, achAgain = false;
-  function syncAch() { if (state.status !== 'signedIn' || !window.META || !META.achIds) return Promise.resolve(); if (achBusy) { achAgain = true; return achBusy; }
-    achBusy = (async () => { do { achAgain = false; const uid = state.uid, s = await sdk(), { doc, runTransaction, serverTimestamp } = s.fs, ref = doc(s.db, 'progress', uid);
-      const r = await runTransaction(s.db, async (tx) => { const snap = await tx.get(ref), d = snap.exists() ? snap.data() : {}, had = d.ach || [], ep = d.epoch || 0, L = META.cloudSide(), mine = L.uid === uid;
-        if (mine && L.wipe) { tx.set(ref, { ach: [...L.ids].sort(), epoch: snap.exists() ? ep + 1 : 0, updatedAt: serverTimestamp() }); return { k: 'wiped', ep: snap.exists() ? ep + 1 : 0, had: [] }; }
-        if (mine && ep > L.epoch) return { k: 'remote', ep, had };
-        const all = [...new Set([...had, ...L.ids])].sort();
-        if (!snap.exists() || all.length > had.length) tx.set(ref, { ach: all, epoch: ep, updatedAt: serverTimestamp() }); return { k: 'joined', ep, had }; });
+  // ---------------- the account's save (docs/PLAN-CLOUD-SAVE-31-10.md, stages 2–3) ----------------
+  // progress/{uid} = { data, schema, rev, device, epoch, updatedAt }, readable only by its owner, after the original's cloud-progress.js:
+  // data is the whole save but the device's own fields (META.SYNCED); rev grows by one with every write; the device remembers the rev
+  // and the fingerprint of the save it last synced (META's D.cloud). Only the cloud changed → the cloud's is taken; only the device →
+  // it goes up; both → the player chooses (sync.pick), and nothing is written until then. Codes are never added up, so two devices
+  // cannot double them. A device with nothing to keep (new, or a guest who has not played) takes the account's as it is.
+  // epoch counts the account's resets (stage 2 of docs/PLAN-FEEDBACK-27-10.md): a reset here goes up as the next epoch; a newer epoch
+  // than this device saw means another device reset it, and this one resets too. The old document ({ ach, epoch }: the achievements
+  // done, codes per device) is read once: its achievements join this device's save as claimed.
+  const SCHEMA = 1;
+  const device = (() => { try { let d = localStorage.getItem('ns_device'); if (!d) { d = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)).replace(/-/g, '').slice(0, 24); localStorage.setItem('ns_device', d); } return d; }
+    catch (_) { return 'device'; } })();
+  // status: '' (signed out) | 'busy' | 'ok' | 'wait' (no connection, retried) | 'pick' (pick: the two saves' summaries)
+  const sync = { status: '', pick: null };
+  let syncBusy = null, syncAgain = false, force = '', soonT = null, retryS = null;
+  function syncNow(choice) { if (choice) force = choice;
+    if (state.status !== 'signedIn' || !window.META || !META.cloudSide || (sync.pick && !force)) return Promise.resolve(); if (syncBusy) { syncAgain = true; return syncBusy; }
+    clearTimeout(soonT); clearTimeout(retryS); sync.status = 'busy'; emit();
+    syncBusy = (async () => { do { syncAgain = false; const uid = state.uid, how = force, s = await sdk(), { doc, runTransaction, serverTimestamp } = s.fs, ref = doc(s.db, 'progress', uid);
+      const r = await runTransaction(s.db, async (tx) => { const snap = await tx.get(ref), d = snap.exists() ? snap.data() : null, L = META.cloudSide(), mine = L.uid === uid;
+        const ep = d ? d.epoch || 0 : 0, rev = d ? d.rev || 0 : 0;
+        const put = (k, data, epoch) => { tx.set(ref, { data, schema: SCHEMA, rev: rev + 1, device, epoch, updatedAt: serverTimestamp() }); return { k, data, rev: rev + 1, epoch }; };
+        if (mine && L.wipe) return put('up', L.data, d ? ep + 1 : 0);
+        if (mine && ep > L.epoch) return { k: 'remote', epoch: ep };
+        if (!d) return put('up', L.data, 0);
+        if (!d.data) return put('down', META.withAch(L.data, d.ach), ep);                             // the old document
+        const cloudNew = !mine || d.rev !== L.rev, hereNew = !L.empty && (!mine || L.now !== L.fp);
+        if (how === 'device' || (hereNew && !cloudNew)) return put('up', L.data, ep);
+        if (how === 'cloud' || cloudNew && !hereNew) return { k: 'down', data: d.data, rev, epoch: ep };
+        if (!cloudNew) return { k: 'same', rev, epoch: ep };
+        return { k: 'pick', here: L.sum, cloud: META.summary(d.data) }; });
       if (state.uid !== uid) continue;
-      if (r.k === 'remote') { META.wipe({ remote: true, epoch: r.ep }); achAgain = true; continue; }     // then join what the account has done since
-      META.cloudSet({ uid, epoch: r.ep, wipe: false }); if (META.mergeAch(r.had)) achAgain = true; } while (achAgain); })()
-      .catch((e) => { console.warn('achievements not synced', e && (e.code || e.message)); }).finally(() => { achBusy = null; });
-    return achBusy; }
-  // once per sign-in (META also syncs when it loads, in case the account was ready first)
+      if (how && how === force) force = '';
+      if (r.k === 'remote') { META.wipe({ remote: true, epoch: r.epoch }); syncAgain = true; continue; }   // then take what the account has done since
+      if (r.k === 'pick') { sync.pick = { here: r.here, cloud: r.cloud }; continue; }
+      sync.pick = null;
+      if (r.k === 'up') META.cloudSet({ uid, epoch: r.epoch, rev: r.rev, data: r.data });
+      else if (r.k === 'down') META.adopt(r.data, { uid, epoch: r.epoch, rev: r.rev });
+      clearTimeout(soonT); } while (syncAgain); sync.status = sync.pick ? 'pick' : META.unsynced() ? 'wait' : 'ok'; })()
+      .catch((e) => { console.warn('progress not synced', e && (e.code || e.message)); sync.status = 'wait'; clearTimeout(retryS); retryS = setTimeout(syncNow, 60000); })
+      .finally(() => { syncBusy = null; emit(); });
+    return syncBusy; }
+  // META saves after every change: the account gets it ~2 s later (a run of purchases goes up as one write)
+  const soon = () => { if (state.status !== 'signedIn' || sync.pick) return; clearTimeout(soonT); soonT = setTimeout(syncNow, 2000); };
+  // once per sign-in (META also syncs when it loads, in case the account was ready first), on coming back to the tab and online
   let syncedUid = '';
-  listeners.add(() => { if (state.status !== 'signedIn') syncedUid = ''; else if (state.uid !== syncedUid) { syncedUid = state.uid; syncAch(); } });
+  listeners.add(() => { if (state.status !== 'signedIn') { syncedUid = ''; sync.status = ''; sync.pick = null; } else if (state.uid !== syncedUid) { syncedUid = state.uid; syncNow(); } });
+  if (typeof document !== 'undefined') { document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') syncNow(); }); addEventListener('online', () => syncNow()); }
 
   // ---------------- leaderboards (src/services/leaderboard.js) ----------------
   // a table is a metric over a scope: all maps or one, every hero or one (stage 6 of docs/PLAN-FEEDBACK-27-10.md: heroes.<h>). A hero's scope
@@ -193,7 +223,7 @@
   }
   const fmt = (m, v) => (m.fmt === 'time' ? `${String(Math.floor(v / 60)).padStart(2, '0')}:${String(v % 60).padStart(2, '0')}` : m.fmt === 'victory' ? (() => { const t = VICTORY_BASE - v; return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`; })() : String(v));
 
-  window.CLOUD = { enabled, emulator: EMU, state, last, board, METRICS, MAPS, HEROES, start, register, signIn, signOut, onRun, flush, loadBoard, syncAch, fmt, subscribe: (f) => (listeners.add(f), () => listeners.delete(f)),
+  window.CLOUD = { enabled, emulator: EMU, state, last, board, METRICS, MAPS, HEROES, start, register, signIn, signOut, OUT_UNSAVED, onRun, flush, loadBoard, sync: () => syncNow(), soon, choose: (w) => syncNow(w), syncState: sync, fmt, subscribe: (f) => (listeners.add(f), () => listeners.delete(f)),
     // pure helpers for the tests
     _: { loginError, passwordError, loginKey, applyRun, normScope } };
   if (enabled) start();
