@@ -21,3 +21,5 @@ __pycache__/
 art/raw/
 art/logs/
 art/jobs_*.json
+# the shell, built from shell/ by Vite (npm run shell)
+live/shell/

@@ -14,6 +14,12 @@ const root = path.join(__dirname, '..');
 const live = path.join(root, 'live');
 const out = path.resolve(root, process.argv[2] || path.join('dist', 'pages'));
 
+// the shell (shell/ → live/shell/, Vite) first: it is copied with the rest of live/
+const vite = path.join(root, 'node_modules', 'vite', 'bin', 'vite.js');
+if (!fs.existsSync(vite)) throw new Error('No Vite: run npm ci first.');
+const shell = spawnSync(process.execPath, [vite, 'build', '--logLevel', 'warn'], { cwd: root, stdio: 'inherit' });
+if (shell.status !== 0) throw new Error('the shell did not build (npm run shell)');
+
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
 for (const f of fs.readdirSync(live)) {

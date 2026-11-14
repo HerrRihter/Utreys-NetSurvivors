@@ -278,6 +278,7 @@ Enter, Esc и колесо не показываются, кнопки подп�
 npm ci                                                     # один раз: инструменты проекта (Capacitor, Firebase CLI, Playwright, тесты правил)
 npm run check                                              # контент и все проверки без браузера
 npm run check:rules                                        # правила Firestore на эмуляторе (нужна Java)
+npm run shell:watch                                        # оболочка (shell/ → live/shell/, Vite); урок: /live/shell/index.html
 export PLAYWRIGHT="C:/Users/Herr_Rihter/.claude/skills/ref2game/scripts/node_modules/playwright" PYTHONUTF8=1   # для qa и livecheck скилла
 node ~/.claude/skills/ref2game/scripts/qa.mjs            # рига, прицел, интерфейс — должно быть "qa: ok"
 node ~/.claude/skills/ref2game/scripts/livecheck.mjs     # ошибки и fps
