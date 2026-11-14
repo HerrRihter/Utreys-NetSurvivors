@@ -20,22 +20,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - name: Check the game's scripts
         run: for f in live/*.js tools/pages-build.cjs; do node --check "$f"; done
       - name: Run the checks that need no browser
         run: for t in edu ability aim defense ach; do echo "== $t"; node tools/$t-check.mjs || exit 1; done
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
       - name: Install Pillow (the textures are converted to WebP)
         run: pip install pillow==13.0.0
       - name: Build the site
         run: node tools/pages-build.cjs
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist/pages
 
@@ -48,4 +48,4 @@ jobs:
     steps:
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
