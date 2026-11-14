@@ -10,14 +10,15 @@ const live = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'live
 const ctx = { console, Math, Date, JSON }; ctx.window = ctx; ctx.globalThis = ctx; vm.createContext(ctx);
 for (const f of ['course.js', 'edu.js', 'sim.js']) vm.runInContext(fs.readFileSync(path.join(live, f), 'utf8'), ctx, { filename: f });
 const { SIM, EDU, COURSE } = ctx;
-const N = +(process.argv[2] || 200), bad = []; let tries = 0, maxTries = 0;
+let bad = 0; const ok = (c, s) => { console.log((c ? 'ok   ' : 'FAIL ') + s); if (!c) bad++; };
+const N = +(process.argv[2] || 200), broken = []; let tries = 0, maxTries = 0;
 for (let s = 0; s < N; s++) for (let room = 0; room < COURSE.rooms.length; room++) {
   const L = SIM.buildLevel('edu', 1000 + s * 131, room), p = SIM.validate(L); tries += L.tries; maxTries = Math.max(maxTries, L.tries);
-  if (p.length) bad.push(`seed ${1000 + s * 131} room ${room}: ${p.join('; ')}`); }
-console.log(`levels: ${N * COURSE.rooms.length}, failing ${bad.length}, mean tries ${(tries / N / COURSE.rooms.length).toFixed(2)}, max ${maxTries}`); bad.slice(0, 8).forEach((b) => console.log('  ' + b));
+  if (p.length) broken.push(`seed ${1000 + s * 131} room ${room}: ${p.join('; ')}`); }
+ok(!broken.length, `levels: ${N * COURSE.rooms.length}, failing ${broken.length}, mean tries ${(tries / N / COURSE.rooms.length).toFixed(2)}, max ${maxTries}`); broken.slice(0, 8).forEach((b) => console.log('  ' + b));
 for (const id of COURSE.order) { const c = COURSE.courses[id], ed = EDU.fresh(id); const per = c.topics.map((t, i) => EDU.testable(ed).filter((q) => q.topic === i).length);
   const sets = c.topics.map((t, i) => [0, 1, 2].map((k) => EDU.terminalQuestions(ed, 4242, i, k).map((q) => q.id))), flat = sets.flat(2);
-  console.log(`${id}: testable per topic ${per.join('/')}, terminal sets disjoint: ${new Set(flat).size === flat.length && flat.length === 27}`); }
+  ok(new Set(flat).size === flat.length && flat.length === 27, `${id}: testable per topic ${per.join('/')}, terminal sets disjoint`); }
 
 // a scripted run: the hero is teleported next to terminal 1, waits out the workaround, opens the test, answers right
 const S = SIM.spawn(5, {}, { map: 'edu', hero: 'utrace', course: 'batch-accounting' }); S.hp = 1e6; S.mods.regen = 0;
@@ -27,25 +28,27 @@ const run = (sec, inp = none) => { for (let i = 0; i < sec * 120; i++) { SIM.ste
 console.log(`room ${S.room}: ${L.TERMS.length} terminals, entry ${L.START}, door ${L.EXIT}, guards ${S.E.filter((e) => e.term).length}`);
 S.E.forEach((e) => { if (e.term) e.hp = e.mhp = 1e9; });                      // guards cannot die: test the workaround
 S.x = tm.cx; S.y = tm.cy; let held = 0; while (!S.nodes[0].st && held < 45) { run(1); held++; }
-console.log(`workaround after ${held}s (hit-stop frames pause it): terminal st=${S.nodes[0].st}, guard gone ${!S.E.some((e) => e.term === 1)}`);
+ok(S.nodes[0].st === 1 && !S.E.some((e) => e.term === 1), `workaround after ${held}s (hit-stop frames pause it): terminal st=${S.nodes[0].st}, guard gone ${!S.E.some((e) => e.term === 1)}`);
 S.E = S.E.filter((e) => e.term !== 2 && e.term !== 3 || true); S.x = tm.x; S.y = tm.y; S.graceT = 1e9; unpick(); S.x = tm.x; S.y = tm.y;
-SIM.step(S, Object.assign({ use: 1 }, none)); console.log(`E at the terminal: test open ${!!S.ed.active}, phase ${S.ed.active && S.ed.active.phase}`);
+SIM.step(S, Object.assign({ use: 1 }, none)); ok(!!S.ed.active, `E at the terminal: test open ${!!S.ed.active}, phase ${S.ed.active && S.ed.active.phase}`);
 const press = (k) => { SIM.step(S, Object.assign({}, none, k)); for (let i = 0; i < 40; i++) SIM.step(S, none); };
 for (let i = 0; i < 40; i++) SIM.step(S, none); press({ jump: 1 });                // (a page takes 0.25 s before it can be turned) intro → question
 let right = 0; for (let qi = 0; qi < 3; qi++) { const a = S.ed.active, q = EDU.question(S.ed, a.questions[a.index].id);
   const want = qi < 2 ? q.correct : [a.questions[a.index].options.find((o) => !q.correct.includes(o))];   // two right, one wrong
   for (const o of want) press({ slot: a.questions[a.index].options.indexOf(o) + 1 });
   press({ jump: 1 }); right += S.ed.active.lastCorrect ? 1 : 0; press({ jump: 1 }); }
-console.log(`answered: right ${right}, phase ${S.ed.active && S.ed.active.phase}, passed ${S.ed.active && S.ed.active.passed}`);
-const t0 = S.t; press({ jump: 1 }); console.log(`closed: terminal st=${S.nodes[0].st}, audits owed ${S.ed.audits}, heal drops ${S.Gm.filter((g) => g.b === 2).length}, chests ${S.Gm.filter((g) => g.b === 3).length}, time stood still ${Math.abs(S.t - t0) < 1}`);
-run(0.2); console.log(`after a step: audits ${S.ed.audits}, foes ${S.E.length}, toast "${S.toast && S.toast.s}"`);
+ok(right === 2 && S.ed.active && S.ed.active.passed, `answered: right ${right}, phase ${S.ed.active && S.ed.active.phase}, passed ${S.ed.active && S.ed.active.passed}`);
+const t0 = S.t; press({ jump: 1 }); ok(S.nodes[0].st === 2 && Math.abs(S.t - t0) < 1, `closed: terminal st=${S.nodes[0].st}, audits owed ${S.ed.audits}, heal drops ${S.Gm.filter((g) => g.b === 2).length}, chests ${S.Gm.filter((g) => g.b === 3).length}, time stood still ${Math.abs(S.t - t0) < 1}`);
+run(0.2); ok(/АУДИТ/.test(S.toast && S.toast.s), `after a step (one wrong answer calls the audit): audits ${S.ed.audits}, foes ${S.E.length}, toast "${S.toast && S.toast.s}"`);
 // the revival: a lethal hit opens the revival test; failing it ends the run
 S.graceT = 0; S.iT = -9; S.dashT = -9; S.hp = 1; const hit = S.E.find((e) => !e.term); S.ed.reviveUsed = false;
 (function () { const f = SIM.FOE; })(); S.hp = 1;
 const before = !!S.ed.active; SIM.step(S, none); S.hp = 0.5;
 // force damage through the public path: put the hero inside a mortar mark about to land
 S.MK.push({ x: S.x, y: S.y, r: 200, delay: 0, t0: S.t - 1, dmg: 999 }); SIM.step(S, none);
-console.log(`lethal hit: revival test open ${!!(S.ed.active && S.ed.active.reason === 'revive')} (was open before: ${before}), over ${!!S.over}`);
+ok(!!(S.ed.active && S.ed.active.reason === 'revive') && !before && !S.over, `lethal hit: revival test open ${!!(S.ed.active && S.ed.active.reason === 'revive')} (was open before: ${before}), over ${!!S.over}`);
 if (S.ed.active) { for (let i = 0; i < 40; i++) SIM.step(S, none); press({ jump: 1 }); for (let qi = 0; qi < 3; qi++) { const a = S.ed.active, q = EDU.question(S.ed, a.questions[a.index].id); press({ slot: a.questions[a.index].options.indexOf(q.correct[0]) + 1 }); if (q.type === 'multiple') for (const o of q.correct.slice(1)) press({ slot: a.questions[a.index].options.indexOf(o) + 1 }); press({ jump: 1 }); press({ jump: 1 }); }
-  press({ jump: 1 }); console.log(`revival passed: hp ${Math.round(S.hp)} of ${Math.round(SIM.hpMax(S))}, over ${!!S.over}`); }
+  press({ jump: 1 }); ok(Math.round(S.hp) === Math.round(SIM.hpMax(S) / 2) && !S.over, `revival passed: hp ${Math.round(S.hp)} of ${Math.round(SIM.hpMax(S))}, over ${!!S.over}`); }
 console.log('summary', JSON.stringify(EDU.summary(S.ed)));
+console.log(bad ? `\n${bad} FAILED` : '\nall ok');
+process.exitCode = bad ? 1 : 0;

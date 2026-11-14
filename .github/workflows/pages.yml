@@ -1,4 +1,4 @@
-# The web version on GitHub Pages: every push to main (and a manual run) checks the game's scripts, builds dist/pages with
+# The web version on GitHub Pages: every push to main (and a manual run) checks the game's scripts, runs the headless checks, builds dist/pages with
 # tools/pages-build.cjs and publishes it. Pages must use «GitHub Actions» as its source (Settings → Pages).
 name: Pages
 
@@ -26,6 +26,8 @@ jobs:
           node-version: '22'
       - name: Check the game's scripts
         run: for f in live/*.js tools/pages-build.cjs; do node --check "$f"; done
+      - name: Run the checks that need no browser
+        run: for t in edu ability aim defense ach; do echo "== $t"; node tools/$t-check.mjs || exit 1; done
       - name: Build the site
         run: node tools/pages-build.cjs
       - uses: actions/upload-pages-artifact@v3

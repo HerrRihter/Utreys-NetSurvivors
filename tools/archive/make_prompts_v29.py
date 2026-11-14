@@ -1,9 +1,9 @@
 # Round 29 (user: "some evolutions and weapons seem to have the same icons"): own icons for the heroes' weapons, their evolutions and the
 # E abilities, which borrowed other items' icons. One request per icon (parallel Codex jobs swap outputs: run with --jobs 1); Image 1 =
 # the approved icon set, an evolution also gets its base icon (Image 2). Writes art/prompts/ic_*.txt and art/jobs_v29*.json.
-#   python3 tools/make_prompts_v29.py base|evo|abil
+#   python3 tools/archive/make_prompts_v29.py base|evo|abil
 import json, os, sys
-os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(os.path.join(os.path.dirname(__file__), '..', '..'))
 STYLE = """Use case: ONE item icon for the level-up cards and the HUD of a top-down survivors-like game set inside a dark cyberpunk datacenter.
 Image 1 is the approved icon set of this game: match its style exactly — chunky readable objects in dark graphite and navy metal with glowing flat light-cyan (#9ff7ff) parts, one even dark navy outline (#0b1622), flat cel shading, crisp clean edges.
 Subject: {subj}

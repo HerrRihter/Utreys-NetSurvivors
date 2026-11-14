@@ -1,9 +1,9 @@
 # Round 30 (docs/PLAN-FEEDBACK-27-10.md, stage 5): the «Дата-центр» map gets three bosses of its own, new designs (not repaints).
 # Environment bible (default ref2game.json), no_style_ref. Image 1 = the approved props sheet (style), Image 2 = the current final
 # boss's sheet (parts layout and scale only). Writes art/prompts/<name>_v30.txt and art/jobs_v30.json (only the names given, or all).
-#   python3 tools/make_prompts_v30.py [name ...]
+#   python3 tools/archive/make_prompts_v30.py [name ...]
 import json, os, sys
-os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(os.path.join(os.path.dirname(__file__), '..', '..'))
 STYLE = 'art/gen/props_e_sheet.png=approved style of this game: match its palette, dark navy outline, cel shading and the flat pale-cyan light details exactly'
 LAYOUT_REF = 'art/gen/boss_sheet.png=layout and scale reference only: copy the parts layout (body on top; below it leg, foot, arm) and the chunky proportions, NOT its design or colours'
 # name: (what it is, accent colour words)

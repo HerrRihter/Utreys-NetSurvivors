@@ -1,7 +1,7 @@
 # Round 28: the icons of the defensive items, one request per icon (user's rule: separate requests with concrete references).
 # Image 1 = an approved icon sheet (style); the evolution also gets its base icon (Image 2). Writes art/prompts/ic_*.txt, art/jobs_v28.json.
 import json, os, sys
-os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(os.path.join(os.path.dirname(__file__), '..', '..'))
 STYLE = """Use case: ONE item icon for the level-up cards and the HUD of a top-down survivors-like game set inside a dark cyberpunk datacenter.
 Image 1 is the approved icon set of this game: match its style exactly — chunky readable objects in dark graphite and navy metal with glowing flat light-cyan (#9ff7ff) parts, one even dark navy outline (#0b1622), flat cel shading, crisp clean edges.
 Subject: {subj}

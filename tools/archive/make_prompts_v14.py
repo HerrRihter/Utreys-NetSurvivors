@@ -1,9 +1,9 @@
 # Round 14 (user chose "redraw" for point 5): the cast repainted in the cyber palette, same designs.
 # Environment bible (default ref2game.json), no_style_ref. Image 1 = the approved props sheet (style), Image 2 = the character's
 # current sheet (design to keep). Writes art/prompts/<name>_cy.txt and art/jobs_v14.json (only the names given, or all).
-#   python3 tools/make_prompts_v14.py [name ...]
+#   python3 tools/archive/make_prompts_v14.py [name ...]
 import json, os, sys
-os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(os.path.join(os.path.dirname(__file__), '..', '..'))
 STYLE = 'art/gen/props_e_sheet.png=approved style of this game: match its palette, dark navy outline, cel shading and the flat pale-cyan light details exactly'
 # name: (what it is, brand / accent colour words)
 CAST = {

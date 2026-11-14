@@ -1,7 +1,7 @@
 # Round 11 (2026-10-25): icons for the new weapons, passives, the capsule, the sentry server and the 13 evolutions.
 # Environment bible (default ref2game.json), no_style_ref; Image 1 = the approved props sheet, Image 2 = the current icon sheet.
 import json, os
-os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(os.path.join(os.path.dirname(__file__), '..', '..'))
 REF = ['art/gen/props_e_sheet.png=approved style of this game: match its palette, dark navy outline, cel shading and the flat pale-cyan light details exactly',
        'art/gen/icons2_sheet.png=the icon set already in the game: match its size, chunky silhouettes, line weight and level of detail']
 HEAD = """Use case: an ICON SET for the HUD of a top-down 3/4 survivors-like game set inside a dark cyberpunk datacenter.

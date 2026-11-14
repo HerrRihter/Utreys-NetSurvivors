@@ -7,7 +7,7 @@ SK = os.path.expanduser('~/.claude/skills/ref2game/scripts')
 SHEETS = {
     # round 23: the sheets draw the arms and legs bent (legs: a hip ball off to the side); every limb is redrawn alone, straight
     # round 23: the sheets draw the arm bent with the shoulder off its axis (the rig hangs it crooked); every arm is redrawn alone, straight
-    # (tools/make_prompts_v23.py arms), and the sheet's own arm is sliced as '_bentarm' and dropped
+    # (tools/archive/make_prompts_v23.py arms), and the sheet's own arm is sliced as '_bentarm' and dropped
     'hero_v2_armfix': (['hero_arm'], 'x'), 'sk_utrace_storm_armfix': (['sk_utrace_storm_arm'], 'x'), 'sk_utrace_zen_armfix': (['sk_utrace_zen_arm'], 'x'), 'sk_utrace_arctic_armfix': (['sk_utrace_arctic_arm'], 'x'),
     'hero_v2_legfix': (['hero_leg'], 'x'), 'sk_utrace_storm_legfix': (['sk_utrace_storm_leg'], 'x'), 'sk_utrace_zen_legfix': (['sk_utrace_zen_leg'], 'x'), 'sk_utrace_arctic_legfix': (['sk_utrace_arctic_leg'], 'x'),
     'hr_trc_legfix': (['hr_trc_leg'], 'x'), 'hr_ser_legfix': (['hr_ser_leg'], 'x'), 'hr_ba_legfix': (['hr_ba_leg'], 'x'), 'hr_qa_legfix': (['hr_qa_leg'], 'x'),
@@ -20,7 +20,7 @@ SHEETS = {
     # round 31: the achievements' badges, one generated image each (tools/make_prompts_v31.py, docs/PLAN-CLOUD-SAVE-31-10.md, stage 4)
     **{f'{n}_gen': ([n], 'x', ['--dilate', '18']) for n in ['ach_surv', 'ach_kills', 'ach_runs', 'ach_wins', 'ach_bosses', 'ach_cast', 'ach_lvl', 'ach_codes', 'ach_evo', 'ach_evo3',
                                                          'ach_calm', 'ach_noheal', 'ach_fast', 'ach_nocast', 'ach_foes', 'ach_grad', 'ach_top', 'ach_team', 'ach_all', 'ach_c_batch', 'ach_c_incid']},
-    # round 24: the other heroes' skins, every part generated alone against a schematic (tools/make_prompts_v24.py)
+    # round 24: the other heroes' skins, every part generated alone against a schematic (tools/archive/make_prompts_v24.py)
     'sk_trc_sapphire_bodyonly': (['sk_trc_sapphire_body'], 'x', ['--dilate', '12']), 'sk_trc_sapphire_legonly': (['sk_trc_sapphire_leg'], 'x'), 'sk_trc_sapphire_footonly': (['sk_trc_sapphire_foot'], 'x'), 'sk_trc_sapphire_armonly': (['sk_trc_sapphire_arm'], 'x'),
     'sk_trc_still_bodyonly': (['sk_trc_still_body'], 'x', ['--dilate', '12']), 'sk_trc_still_legonly': (['sk_trc_still_leg'], 'x'), 'sk_trc_still_footonly': (['sk_trc_still_foot'], 'x'), 'sk_trc_still_armonly': (['sk_trc_still_arm'], 'x'),
     'sk_trc_intercept_bodyonly': (['sk_trc_intercept_body'], 'x', ['--dilate', '12']), 'sk_trc_intercept_legonly': (['sk_trc_intercept_leg'], 'x'), 'sk_trc_intercept_footonly': (['sk_trc_intercept_foot'], 'x'), 'sk_trc_intercept_armonly': (['sk_trc_intercept_arm'], 'x'),

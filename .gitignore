@@ -17,3 +17,7 @@ node_modules/
 __pycache__/
 .idea/
 .vscode/
+# art pipeline scratch: raw generations before review, generator logs, per-round job lists (art/gen keeps the accepted results)
+art/raw/
+art/logs/
+art/jobs_*.json

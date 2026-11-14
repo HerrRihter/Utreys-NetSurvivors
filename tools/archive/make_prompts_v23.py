@@ -2,9 +2,9 @@
 # in different styles: aggressive, calmer, just another colouring"). Phase 'hero': Utrace redrawn in the clean style of its four
 # siblings (hr_*_sheet), with a slimmer scanner. Phase 'skins': the Utrace pilot skins, each a full part sheet of the SAME character
 # (same silhouette, same rig parts) in its own style, made from the new Utrace sheet. Writes art/prompts/*.txt and art/jobs_v23*.json.
-#   python3 tools/make_prompts_v23.py hero|skins
+#   python3 tools/archive/make_prompts_v23.py hero|skins
 import json, os, sys
-os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(os.path.join(os.path.dirname(__file__), '..', '..'))
 phase = sys.argv[1] if len(sys.argv) > 1 else 'hero'
 LAYOUT = """Draw the character split into separate parts, front 3/4 view, all on one canvas:
 - top row, centred: the BODY alone, with NO legs and NO arms (the hip and shoulder areas closed and complete), facing the viewer;

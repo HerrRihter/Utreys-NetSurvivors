@@ -2,7 +2,7 @@
 # coral and teal faces, a navy side — with its own details). Image 1 = the hero sheet (design base), Image 2 = the approved props
 # sheet (style). Parts: body, leg, foot, arm (they share Utrace's scanner). Writes art/prompts/hr_*.txt and art/jobs_v17.json.
 import json, os
-os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(os.path.join(os.path.dirname(__file__), '..', '..'))
 HEROES = {
     'hr_trc': ("Полная прослеживаемость (Full Traceability)", "mint-teal (#6de2cd)", "a ring orbit of three small glowing link nodes joined by thin lines circling around its top, like a traceability chain"),
     'hr_ser': ("Сериализация (Serialization)", "coral red (#fa5946)", "a flat code panel with rows of small square marks on its front and a small barcode scanner mounted on each side of the body"),

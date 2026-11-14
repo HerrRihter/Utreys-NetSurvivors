@@ -5,9 +5,9 @@
 #   Image 2 — for the body: the base hero's body (the design to keep); for a limb: the skin's own body made in phase 'body' (colours,
 #             materials, style to match);
 #   Image 3 — for a limb: the base hero's part (the design of the part).
-#   python3 tools/make_prompts_v24.py schem|body|limbs [skin prefix ...]
+#   python3 tools/archive/make_prompts_v24.py schem|body|limbs [skin prefix ...]
 import json, os, sys
-os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(os.path.join(os.path.dirname(__file__), '..', '..'))
 phase, only = (sys.argv[1] if len(sys.argv) > 1 else 'body'), sys.argv[2:]
 HEROES = {'trc': ('Полная прослеживаемость', 'hr_trc', 'the U body, the two cubes, the eyes and its ring orbit of three small link nodes around its top'),
           'ser': ('Сериализация', 'hr_ser', 'the U body, the two cubes with their small windows, the eyes, the code panel with square marks on its front and the small scanner on each side'),

@@ -8,6 +8,9 @@ const live = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'live
 const ctx = { console, Math, Date, JSON }; ctx.window = ctx; ctx.globalThis = ctx; vm.createContext(ctx);
 for (const f of ['course.js', 'edu.js', 'sim.js']) vm.runInContext(fs.readFileSync(path.join(live, f), 'utf8'), ctx, { filename: f });
 const { SIM } = ctx, none = { px: 1200, py: 500 };
+let bad = 0; const ok = (c, s) => { console.log((c ? 'ok   ' : 'FAIL ') + s); if (!c) bad++; };
+// what each ability must visibly do (utrace's Оверклокинг only speeds up: covered by the cast and the cooldown)
+const EFFECT = { traceability: (r) => r.jumps > 6, serialization: (r) => r.pk === 12, ba: (r) => r.truce > 0, qa: (r) => r.stunned > 0 };
 for (const h of Object.keys(SIM.HEROES)) {
   const S = SIM.spawn(3, {}, { hero: h }); S.hp = 1e6; S.nextSwarm = 1e9;
   for (let i = 0; i < 16; i++) { const a = i / 16 * 6.283, d = 160 + (i % 3) * 90; const e = SIM.mkFoe(S, 'node', S.x + Math.cos(a) * d, S.y + Math.sin(a) * d * 0.7); e.hp = e.mhp = 5000; }
@@ -17,5 +20,8 @@ for (const h of Object.keys(SIM.HEROES)) {
     for (const ev of S.ev) if (ev.k === 'chain' && ev.t === S.t) jumps = Math.max(jumps, ev.pts.length - 1); }
   SIM.step(S, Object.assign({ use: 1 }, none)); const recast = S.ab.cd < A.cd - 1;                // still cooling down: a second E does nothing
   const card = SIM.rollPick(Object.assign(S, { abR: 0 })).length >= 0 && [...Array(40)].some(() => SIM.rollPick(S).some((o) => o.k === 'ab'));
-  console.log(`${h.padEnd(14)} ${A.name.padEnd(12)} cast ${castOk}, cooling ${recast}, packets ${pk}, pacified ${truce}, frozen max ${stunned}, chain max ${jumps}, rank card offered ${card}`);
+  ok(castOk && recast && card && (!EFFECT[h] || EFFECT[h]({ pk, truce, stunned, jumps })),
+    `${h.padEnd(14)} ${A.name.padEnd(12)} cast ${castOk}, cooling ${recast}, packets ${pk}, pacified ${truce}, frozen max ${stunned}, chain max ${jumps}, rank card offered ${card}`);
 }
+console.log(bad ? `\n${bad} FAILED` : '\nall ok');
+process.exitCode = bad ? 1 : 0;

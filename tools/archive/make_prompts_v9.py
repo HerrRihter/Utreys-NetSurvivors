@@ -1,7 +1,7 @@
 # Round 9 (2026-10-25): the rest of the original roster in the character style (run with art/style_bible_chars.txt swapped in).
 # Image 2 = the original sprite (study/orig), Image 3 = the Mars sheet as a sibling. Writes art/prompts/*.txt and art/jobs_v9.json.
 import json, os
-os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(os.path.join(os.path.dirname(__file__), '..', '..'))
 SIB = 'art/gen/mars_sheet.png=sibling enemy already in the game: match its line weight, proportions, limb style and level of detail'
 LIMBS = """Draw the SAME character split into separate parts, front 3/4 view, all on one canvas:
 - top row, centred: the BODY alone, with NO legs and NO arms (closed and complete where limbs attach), facing the viewer;

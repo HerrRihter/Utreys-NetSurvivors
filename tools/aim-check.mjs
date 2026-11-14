@@ -9,6 +9,7 @@ const live = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'live
 const ctx = { console, Math, Date, JSON }; ctx.window = ctx; ctx.globalThis = ctx; vm.createContext(ctx);
 for (const f of ['course.js', 'edu.js', 'sim.js']) vm.runInContext(fs.readFileSync(path.join(live, f), 'utf8'), ctx, { filename: f });
 const { SIM } = ctx;
+let bad = 0; const ok = (c, s) => { console.log((c ? 'ok   ' : 'FAIL ') + s); if (!c) bad++; };
 for (const [name, dy] of [['above', -380], ['below', 300], ['close above', -140]]) {
   const S = SIM.spawn(1, {}, { hero: 'utrace' }); S.E = []; S.nextSwarm = 1e9; S.spawnAcc = -1e9; S.hp = 1e6;
   for (let i = 0; i < 240; i++) SIM.step(S, { px: 960, py: 540 });                           // the camera settles
@@ -17,6 +18,8 @@ for (const [name, dy] of [['above', -380], ['below', 300], ['close above', -140]
   for (let off = -150; off <= 150; off += 6) { let restFlips = 0, f0 = S.face;
     for (let i = 0; i < 30; i++) { const wx = S.x + off, wy = S.y + dy; SIM.step(S, { px: wx - S.cam[0], py: wy - S.cam[1] }); if (S.face !== prev) { flips++; if (i > 0) restFlips++; prev = S.face; } }
     if (S.face !== f0) crossings++; if (restFlips) jitter++; }
-  console.log(`${name.padEnd(12)} facing changes ${flips}, while resting ${jitter}  (expected: 1 change, 0 while resting)`);
+  ok(flips === 1 && jitter === 0, `${name.padEnd(12)} facing changes ${flips}, while resting ${jitter}  (expected: 1 change, 0 while resting)`);
 }
-console.log('demo still plays its moment:', SIM.demoCheck(SIM.at(23.9)));
+ok(SIM.demoCheck(SIM.at(23.9)), 'demo still plays its moment');
+console.log(bad ? `\n${bad} FAILED` : '\nall ok');
+process.exitCode = bad ? 1 : 0;
