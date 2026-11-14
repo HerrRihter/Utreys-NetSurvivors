@@ -80,9 +80,12 @@ LEARN.question(courseId, qid)             // вопрос
 LEARN.make(q, rng)                        // экземпляр для показа: варианты перемешаны, шаблон развёрнут
 LEARN.check(q, answer)                    // → { correct, score, detail }
 LEARN.pick(state, { course, topic?, count, kinds, rng, today, exclude? })   // → [вопрос], без повторов
-LEARN.record(state, qid, correct, today)  // → новое состояние (исходное не меняется)
-LEARN.snapshot(state, course)             // → освоение курса для смены: { qid: коробка }
-LEARN.mastery(state, course)              // → по темам: { asked, mastered, due, weak }
+LEARN.record(state, course, qid, correct, today)  // → новое состояние (исходное не меняется)
+LEARN.snapshot(state, course)             // → для смены: { qid: ранг }, 0 — ошибся в прошлый раз, 1 — новый, 2–5 — коробка
+LEARN.rank(snap, qid)                     // ранг вопроса в снимке (нет в снимке — 1, новый)
+LEARN.mastery(state, course, today)       // → по темам: { total, asked, mastered, due, weak, done }
+LEARN.courses({ stubs })                  // видимые курсы; заглушки — только в сборке для разработки
+LEARN.GEN[name] = (params, rng) => вопрос // генераторы шаблонов (live/learn/templates.js)
 LEARN.day(date)                           // номер дня по местному времени (для повторов)
 ```
 
@@ -91,7 +94,7 @@ LEARN.day(date)                           // номер дня по местно
 
 ## Освоение (Лейтнер)
 
-Состояние: `{ v: 1, q: { [qid]: [коробка, день следующего повтора, верных, всего] } }`.
+Состояние: `{ v: 1, q: { ['курс:qid']: [коробка, день следующего повтора, верных, всего] } }`.
 - Коробки 0–5. Новый вопрос — коробка 0. Верно — коробка +1, повтор через 1, 2, 4, 8, 16 дней (по коробке). Неверно —
   коробка 1, повтор завтра.
 - Тема освоена, когда 80 % её вопросов в коробке 3 и выше.

@@ -29,7 +29,7 @@ jobs:
       - name: Check the course content
         run: node tools/build-content.mjs --check
       - name: Run the checks that need no browser
-        run: for t in edu ability aim defense ach; do echo "== $t"; node tools/$t-check.mjs || exit 1; done
+        run: for t in learn edu ability aim defense ach; do echo "== $t"; node tools/$t-check.mjs || exit 1; done
       - uses: actions/setup-python@v7
         with:
           python-version: '3.13'

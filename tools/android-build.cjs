@@ -50,6 +50,10 @@ function main([kind = 'debug']) {
   if (!fs.existsSync(path.join(root, 'live', 'firebase-config.js'))) console.warn('No live/firebase-config.js: the APK will play without an account.');
   const env = toolchain();
   run('python', [PACK, '--name', 'app', '--out', 'dist'], { cwd: root, env });
+  // pack.py copies live/*.js, fonts/ and audio/ only: the game's other script folders (learn/) go in here
+  const game = path.join(root, 'dist', 'app', 'game');
+  for (const d of fs.readdirSync(path.join(root, 'live'), { withFileTypes: true }))
+    if (d.isDirectory() && d.name !== 'assets' && !fs.existsSync(path.join(game, d.name))) fs.cpSync(path.join(root, 'live', d.name), path.join(game, d.name), { recursive: true });
   run('python', [path.join(__dirname, 'webp-assets.py'), path.join(root, 'dist', 'app', 'game')], { cwd: root, env });   // textures as WebP
   run('node', [CAP, 'sync', 'android'], { cwd: root, env });
   // clean first: an incremental build keeps assets that were removed from the game (an APK of 150 MB after the textures shrank)
