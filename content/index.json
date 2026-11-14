@@ -1,0 +1,4 @@
+{
+  "about": "Курсы обучения (docs/DESIGN-LEARN-CORE.md). order — курсы Учебного центра в порядке карточек; курс вне order доступен только урокам. После правок: node tools/build-content.mjs",
+  "order": ["batch-accounting", "critical-incidents"]
+}

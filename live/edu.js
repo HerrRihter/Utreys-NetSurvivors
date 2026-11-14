@@ -1,6 +1,6 @@
 // live/edu.js: the training centre (Учебный центр), ported from utreys-survivors: the maze generator (src/world/maze.js), the
 // tests at the terminals and the revival test (src/systems/learning.js, queries/learning.js) and the report card. The course data
-// itself (questions, keys, explanations, rules, grading) comes unchanged from live/course.js (tools/build-course.mjs).
+// itself (questions, keys, explanations, rules, grading) comes from live/course.js (built from content/ by tools/build-content.mjs).
 // Everything here is a pure function of its arguments or of the state passed in, so runs stay deterministic: the sim hands in its
 // own random source for anything drawn during play.
 (() => {
