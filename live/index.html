@@ -61,7 +61,7 @@ const STATIC = !!window.__STATIC__, V = (STATIC && window.__BUILD__) || Date.now
 const load = (src) => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src + '?v=' + V; s.onload = res; s.onerror = () => rej(new Error('failed ' + src)); document.head.appendChild(s); });
 (async () => {
   // sizes.js: window.SIZES (display size per sprite in view px, engine.md §7); audio.js: sound from the event bus (stub until used)
-  for (const f of ['assets.js', 'sizes.js', 'gl.js', 'lib.js', 'firebase-config.js', 'cloud.js', 'course.js', 'learn/core.js', 'edu.js', 'sim.js', 'ach.js', 'meta.js', 'scene.js', 'audio.js']) await load(f);
+  for (const f of ['assets.js', 'sizes.js', 'gl.js', 'lib.js', 'firebase-config.js', 'cloud.js', 'course.js', 'learn/core.js', 'learn/templates.js', 'edu.js', 'sim.js', 'ach.js', 'meta.js', 'scene.js', 'audio.js']) await load(f);
   const q = new URLSearchParams(location.search), render = q.has('render');
   const VW = (SIM.VIEW || {}).W || 1920, VH = (SIM.VIEW || {}).H || 1080;             // view size and aspect come from the sim
   document.documentElement.style.setProperty('--ar', VW / VH); // the keys under the loading game; a phone or tablet has none to press
@@ -264,7 +264,7 @@ const load = (src) => new Promise((res, rej) => { const s = document.createEleme
   };
   loop();
   if (STATIC) { dev.style.display = 'none'; return; }
-  const WATCH = ['index.html', 'scene.js', 'sim.js', 'edu.js', 'course.js', 'learn/core.js', 'cloud.js', 'firebase-config.js', 'ach.js', 'meta.js', 'lib.js', 'gl.js', 'assets.js', 'sizes.js', 'audio.js'], stamp = {};
+  const WATCH = ['index.html', 'scene.js', 'sim.js', 'edu.js', 'course.js', 'learn/core.js', 'learn/templates.js', 'cloud.js', 'firebase-config.js', 'ach.js', 'meta.js', 'lib.js', 'gl.js', 'assets.js', 'sizes.js', 'audio.js'], stamp = {};
   const poll = async () => {
     for (const f of WATCH) {
       try { const r = await fetch(f + '?poll=' + Date.now(), { method: 'HEAD', cache: 'no-store' }); const m = r.headers.get('last-modified') + r.headers.get('content-length');

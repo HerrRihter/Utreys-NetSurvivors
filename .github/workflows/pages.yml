@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '22'
       - name: Check the game's scripts
-        run: for f in live/*.js tools/pages-build.cjs; do node --check "$f"; done
+        run: for f in live/*.js live/learn/*.js tools/pages-build.cjs; do node --check "$f"; done
       - name: Check the course content
         run: node tools/build-content.mjs --check
       - name: Run the checks that need no browser

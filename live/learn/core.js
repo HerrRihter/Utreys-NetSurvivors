@@ -63,6 +63,18 @@
     throw new Error('unknown question type ' + q.type);
   }
 
+  // a right answer in the shape check() takes (for «show the answer» and for the checks): the first accepted text of a gap, the centre
+  // of the first right area of a hotspot, a right answer per step of a case
+  function answerOf(q) {
+    switch (q.type) {
+      case 'gap': return q.accept[0];
+      case 'hotspot': { const r = q.areas.find((a) => a.id === q.correct[0]).rect; return [r[0] + r[2] / 2, r[1] + r[3] / 2]; }
+      case 'case': return q.steps.map(answerOf);
+      case 'template': throw new Error('the answer of an instance of ' + q.id + ' (LEARN.make), not of the template');
+      default: return q.correct;
+    }
+  }
+
   // ---------------- mastery: Leitner boxes ----------------
   // state.q[course:qid] = [box 0..5, the day of the next repeat, right, asked]. Right: one box up, repeat after INTERVAL[box] days;
   // wrong: back to box 1, repeat tomorrow. Only the first attempt at a question in a run or a lesson is recorded (the caller's rule).
@@ -110,5 +122,5 @@
     return { course: courseId, title: c.title, topics, total: sum('total'), asked: sum('asked'), mastered: sum('mastered'), due: sum('due'), weak: sum('weak'), done: topics.every((t) => t.done) };
   }
 
-  window.LEARN = { GEN, INTERVAL, GAME_KINDS, course, courses, question, key, kindOf, shuffle, make, check, norm, fresh, day, record, pick, snapshot, rank, mastery };
+  window.LEARN = { GEN, INTERVAL, GAME_KINDS, course, courses, question, key, kindOf, shuffle, make, check, answerOf, norm, fresh, day, record, pick, snapshot, rank, mastery };
 })();

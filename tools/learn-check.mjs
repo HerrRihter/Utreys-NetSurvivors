@@ -8,7 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const live = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'live');
 const ctx = { console, Math, Date, JSON }; ctx.window = ctx; ctx.globalThis = ctx; vm.createContext(ctx);
-for (const f of ['course.js', 'learn/core.js']) vm.runInContext(fs.readFileSync(path.join(live, f), 'utf8'), ctx, { filename: f });
+for (const f of ['course.js', 'learn/core.js', 'learn/templates.js']) vm.runInContext(fs.readFileSync(path.join(live, f), 'utf8'), ctx, { filename: f });
 const { LEARN, COURSE } = ctx;
 let bad = 0; const ok = (c, s) => { console.log((c ? 'ok   ' : 'FAIL ') + s); if (!c) bad++; };
 const mulberry = (seed) => { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
@@ -80,10 +80,26 @@ ok(ms.topics[0].done && !ms.topics[1].done && ms.topics[0].mastered === ms.topic
 // ---------------- the real courses through make → check ----------------
 let n = 0, wrong = [];
 for (const id of Object.keys(COURSE.courses)) for (const q of COURSE.courses[id].questions) { if (q.type === 'template' && !LEARN.GEN[q.gen]) continue;
-  const x = LEARN.make(q, mulberry(n++)), key = x.type === 'true_false' ? x.correct : x.correct;
+  const x = LEARN.make(q, mulberry(n++)), key = LEARN.answerOf(x);
   if (!LEARN.check(x, key).correct) wrong.push(id + ':' + q.id); }
 ok(!wrong.length, `every question of every course accepts its own key (${n})` + (wrong.length ? ': ' + wrong.slice(0, 5).join(', ') : ''));
 ok(LEARN.courses({ stubs: false }).every((id) => !COURSE.courses[id].stub), 'a public build hides stub courses');
+
+// ---------------- the stub course «Мониторинг» and the chart generator ----------------
+const stub = COURSE.courses['monitoring-stub'];
+ok(stub && stub.stub && !COURSE.order.includes('monitoring-stub') && LEARN.courses({ stubs: true }).includes('monitoring-stub') && !LEARN.courses({ stubs: false }).includes('monitoring-stub'),
+  'the stub course: a dev build shows it, a public build does not, the training centre never asks it');
+const types = new Set(stub.questions.map((q) => q.type));
+ok(['true_false', 'order', 'pairs', 'gap', 'hotspot', 'case', 'template'].every((t) => types.has(t)), 'the stub has every new type: ' + [...types].join(', '));
+const tq = stub.questions.find((q) => q.id === 'stub-chart-1'), shapes = {};
+for (let i = 0; i < 200; i++) { const x = LEARN.make(tq, mulberry(i)), s = x.chart.series, sh = x.correct[0]; shapes[sh] = (shapes[sh] || 0) + 1;
+  const okShape = sh === 'drop' ? s[s.length - 1] === 0 && s[0] > 0 : sh === 'leak' ? s[s.length - 1] > s[0] * 2 : sh === 'spike' ? Math.max(...s) > 2.5 * s[0] : Math.max(...s) < 1.2 * Math.min(...s) * 1.2;
+  if (!okShape || x.chart.shape !== sh || s.length !== 60) { shapes.bad = (shapes.bad || 0) + 1; } }
+ok(!shapes.bad && ['spike', 'leak', 'drop', 'normal'].every((s) => shapes[s] > 20), 'chart: 200 graphs, each drawn shape looks like its answer: ' + JSON.stringify(shapes));
+const t2 = LEARN.make(stub.questions.find((q) => q.id === 'stub-chart-2'), mulberry(1));
+ok(t2.options.length === 3 && t2.options.every((o) => ['leak', 'drop', 'normal'].includes(o.id)), 'chart: params limit the shapes offered');
+const mix = LEARN.pick(LEARN.fresh(), { course: 'monitoring-stub', count: 20, rng: mulberry(4), today: T });
+ok(mix.length === stub.questions.length, 'a lesson may pick every type from the stub (no kinds filter)');
 
 console.log(bad ? `\n${bad} FAILED` : '\nall ok');
 process.exitCode = bad ? 1 : 0;
