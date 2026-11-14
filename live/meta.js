@@ -1,9 +1,12 @@
 // live/meta.js: everything between runs, modelled on utreys-survivors (docs/META-PROGRESSION.md, data/upgrades.js):
 // the wallet of marking codes, the shop of permanent upgrades (price 30 × next rank), records, the collection of what was seen,
 // and the menu screens' state and layout. The scene draws the screens from META.view(); index.html routes input here while
-// no run is going and calls META.bank(run) once when a run ends or is left. Saved in localStorage ('ns_meta_v4'); the achievements are live/ach.js.
+// no run is going and calls META.bank(run) once when a run ends or is left. Saved in localStorage ('ns_meta'); the achievements are live/ach.js.
 (() => {
-  const KEY = 'ns_meta_v5', KEY_V4 = 'ns_meta_v4', KEY_V3 = 'ns_meta_v3', KEY_V2 = 'ns_meta_v2', KEY_V1 = 'ns_meta_v1';
+  // one key, the version inside it (docs/PLAN-SUPERAPP.md, «Подготовка», П.3). Before 14.11 every version had a key of its own
+  // (ns_meta_v1 … ns_meta_v5) and the old ones stayed forever: they are read once, moved here and removed. KEY_PREV keeps the save as
+  // it was before the last migration, and only that one.
+  const V = 5, KEY = 'ns_meta', KEY_PREV = 'ns_meta_prev', LEGACY = ['ns_meta_v5', 'ns_meta_v4', 'ns_meta_v3', 'ns_meta_v2', 'ns_meta_v1'];
   // the screens' logical size: 1920×1080, or 960×540 drawn 2× larger on phones and tablets (U = 2, stage 7б of docs/PLAN-FEEDBACK-27-10.md).
   // The page passes pointer positions in view px; they are divided by U here. CP: the compact layouts are in use.
   let U = 1, W = 1920, H = 1080, CP = false;
@@ -35,21 +38,29 @@
   const learn0 = () => ({ v: 1, q: {}, xp: 0, streak: { days: 0, last: 0, freeze: 0 } });
   const rec0 = () => ({ time: 0, kills: 0, lvl: 0, wins: 0, runs: 0 });
   const st0 = () => ({ bosses: 0, casts: 0, heals: 0, evos: 0, evoMax: 0, calmMax: 0, noHealWins: 0, eduWins: 0, eduTop: 0, foes: {}, codes: 0, noCastWins: 0, winMin: 0 });
-  const fresh = () => ({ v: 5, st: st0(), ach: {}, done: {}, fresh: {}, codes: 0, up: {}, runs: 0, wins: 0, kills: 0, time: 0, best: { time: 0, kills: 0, lvl: 0 }, seen: { w: { trace: 1 }, e: {}, p: {} },
+  const fresh = () => ({ v: V, st: st0(), ach: {}, done: {}, fresh: {}, codes: 0, up: {}, runs: 0, wins: 0, kills: 0, time: 0, best: { time: 0, kills: 0, lvl: 0 }, seen: { w: { trace: 1 }, e: {}, p: {} },
     heroes: { utrace: 1 }, skins: {}, sel: { hero: 'utrace', skin: null, skins: {}, map: 'dc', course: null }, maps: { dc: 1, edu: 1 }, byMap: {}, byHero: {}, byCourse: {}, learn: learn0(), ui: { fps: false },
     cloud: { uid: '', epoch: 0, wipe: false, rev: 0, fp: '' } });   // cloud: the account this save last synced with, that account's reset count, a reset still
                                                                      // to send, the cloud's revision and this save's fingerprint at that sync
   // a loaded save, normalised against the current shape (missing fields get defaults, so older saves and future fields both load)
-  const norm = (s) => { const f = fresh(); return Object.assign(f, s, { v: 5, st: Object.assign(f.st, s.st, { foes: Object.assign({}, s.st && s.st.foes) }), ach: Object.assign({}, s.ach), done: Object.assign({}, s.done), fresh: Object.assign({}, s.fresh), best: Object.assign(f.best, s.best), seen: Object.assign(f.seen, s.seen),
+  const norm = (s) => { const f = fresh(); return Object.assign(f, s, { v: V, st: Object.assign(f.st, s.st, { foes: Object.assign({}, s.st && s.st.foes) }), ach: Object.assign({}, s.ach), done: Object.assign({}, s.done), fresh: Object.assign({}, s.fresh), best: Object.assign(f.best, s.best), seen: Object.assign(f.seen, s.seen),
     heroes: Object.assign(f.heroes, s.heroes), skins: Object.assign({}, s.skins), sel: Object.assign(f.sel, s.sel, { skins: Object.assign({}, s.sel && s.sel.skins) }), maps: Object.assign(f.maps, s.maps),
     byMap: Object.assign({}, s.byMap), byHero: Object.assign({}, s.byHero), byCourse: Object.assign({}, s.byCourse),
     learn: Object.assign(f.learn, s.learn, { v: 1, q: Object.assign({}, s.learn && s.learn.q), streak: Object.assign(f.learn.streak, s.learn && s.learn.streak) }), ui: Object.assign(f.ui, s.ui), cloud: Object.assign(f.cloud, s.cloud) }); };
   let D = fresh();
-  // the newest save found wins; older keys stay as backups (v1 → v2 → v3 → v4 → v5: everything carries over)
-  try { const rd = (k) => JSON.parse(localStorage.getItem(k) || 'null'), keys = [[KEY, 5], [KEY_V4, 4], [KEY_V3, 3], [KEY_V2, 2], [KEY_V1, 1]];
-    for (const [k, v] of keys) { const s = rd(k); if (s && s.v === v) { D = norm(s); break; } }
+  // loading: the save under KEY, or (once) the newest of the old per-version keys. An older version is migrated (norm: v1 → … → V,
+  // everything carries over) and the save as it was goes to KEY_PREV. A save newer than this code (an old page still cached after an
+  // update) loads but is never written back, so the old page cannot overwrite what the new one saved.
+  let newer = false;
+  try { const rd = (k) => JSON.parse(localStorage.getItem(k) || 'null');
+    let s = rd(KEY), legacy = false;
+    if (!s) for (const k of LEGACY) { const o = rd(k); if (o && o.v) { s = o; legacy = true; break; } }
+    if (s && s.v > V) { D = norm(s); newer = true; }
+    else if (s && s.v >= 1) { D = norm(s);
+      if (legacy || s.v < V) { localStorage.setItem(KEY_PREV, JSON.stringify(s)); localStorage.setItem(KEY, JSON.stringify(D)); }
+      if (legacy) for (const k of LEGACY) localStorage.removeItem(k); }
   } catch (_) {}
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (_) {} if (window.CLOUD && CLOUD.soon) CLOUD.soon(); };   // the account gets it ~2 s later
+  const save = () => { try { if (!newer) localStorage.setItem(KEY, JSON.stringify(D)); } catch (_) {} if (window.CLOUD && CLOUD.soon) CLOUD.soon(); };   // the account gets it ~2 s later
   // the copy an undo of a reset used to keep (there is no undo now)
   try { localStorage.removeItem('ns_meta_backup'); } catch (_) {}
   // achievements already met by the loaded save (a v3 save's totals, or a list that grew) are done now, waiting to be claimed

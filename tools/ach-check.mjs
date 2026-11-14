@@ -34,7 +34,7 @@ const none = { px: 960, py: 540 };
   ok(JSON.stringify(got) === JSON.stringify([...want].sort()) && Object.keys(D.ach).length === 0, 'v2 → v5: waiting on load ' + got.join(', '));
   ok(D.codes === 100, 'nothing paid before the claims');
   ok(D.up.power === 2 && D.heroes.qa && D.skins.utrace_zen && D.sel.hero === 'qa' && D.ui.fps && D.st.bosses === 0, 'upgrades, heroes, skins, choices and settings carried over; run facts start at zero');
-  ok(store.ns_meta_v2 === JSON.stringify(v2) && JSON.parse(store.ns_meta_v5).v === 5 && !store.ns_meta_v4, 'saved as v5; the v2 save stays as a backup');
+  ok(JSON.parse(store.ns_meta).v === 5 && store.ns_meta_prev === JSON.stringify(v2) && !Object.keys(store).some((k) => /^ns_meta_v\d$/.test(k)), 'saved as v5 under ns_meta; the v2 save is the backup (ns_meta_prev); the old key is gone');
   const paid = want.reduce((n, id) => n + ACH.BY[id].reward, 0); META.claimAll();
   ok(D.codes === 100 + paid && want.every((id) => D.ach[id]) && !Object.keys(D.done).length, `«Забрать всё»: codes 100 + ${paid} = ${D.codes}`);
   const again = page(store).META.data; ok(again.codes === D.codes && Object.keys(again.ach).length === want.length && !Object.keys(again.done).length, 'loading again pays nothing twice'); }
@@ -47,14 +47,22 @@ const none = { px: 960, py: 540 };
   ok(D.v === 5 && D.ach.surv_60 && D.ach.win_1 && D.codes === 50, 'v3 → v5: done achievements stay claimed, codes unchanged');
   ok(D.done.foe_bug && D.done.evo_trace_x && D.done.win_utrace && !D.ach.foe_bug, 'new achievements met by v3 totals wait: ' + Object.keys(D.done).join(', '));
   ok(ACH.isOpen(D, 'u', 'speed') && ACH.isOpen(D, 'u', 'rerolls') && !ACH.isOpen(D, 'u', 'armor'), 'upgrades opened by claimed achievements are open; the rest closed'); }
-// 4b. a v4 save (docs/DESIGN-LEARN-CORE.md): everything carries over, learn starts empty, the v4 save stays as a backup; a v5 save keeps learn
-{ const store = {}; { const { META } = page(store); store.ns_meta_v4 = JSON.stringify(Object.assign(JSON.parse(store.ns_meta_v5 || JSON.stringify(META.data)), { v: 4, codes: 77, ach: { surv_60: 1 }, learn: undefined })); delete store.ns_meta_v5; }
+// 4b. a v4 save (docs/DESIGN-LEARN-CORE.md): everything carries over, learn starts empty, the v4 save is the backup; a v5 save keeps learn
+{ const store = {}; { const { META } = page(store); store.ns_meta_v4 = JSON.stringify(Object.assign(JSON.parse(JSON.stringify(META.data)), { v: 4, codes: 77, ach: { surv_60: 1 }, learn: undefined })); delete store.ns_meta; }
   const v4 = store.ns_meta_v4, { META } = page(store), D = META.data;
   ok(D.v === 5 && D.codes === 77 && D.ach.surv_60 && D.learn && D.learn.v === 1 && !Object.keys(D.learn.q).length && D.learn.streak.days === 0, 'v4 → v5: codes and achievements kept, learn empty');
   D.learn.q['batch-accounting:batch-1'] = [2, 20001, 2, 2]; META.save();
   const again = page(store).META.data;
-  ok(store.ns_meta_v4 === v4 && JSON.stringify(again.learn.q) === JSON.stringify({ 'batch-accounting:batch-1': [2, 20001, 2, 2] }), 'the v4 save stays as a backup; learn survives a reload');
+  ok(store.ns_meta_prev === v4 && !store.ns_meta_v4 && JSON.stringify(again.learn.q) === JSON.stringify({ 'batch-accounting:batch-1': [2, 20001, 2, 2] }), 'the v4 save is the backup (ns_meta_prev); learn survives a reload');
   ok(META.SYNCED.includes('learn') && !META.cloudSide().empty, 'learn goes to the account, and a save with learning is not «empty»'); }
+// 4c. one key (docs/PLAN-SUPERAPP.md, «Подготовка», П.3): ns_meta wins over leftovers of the old keys; a current save is loaded as it is,
+// with no backup written; a save newer than the code (an old page still cached) is read but never written over
+{ const cur = JSON.parse(JSON.stringify(page({}).META.data)); cur.codes = 5;
+  const store = { ns_meta: JSON.stringify(cur), ns_meta_v4: JSON.stringify(Object.assign({}, cur, { v: 4, codes: 999 })) }, { META } = page(store);
+  ok(META.data.codes === 5 && !store.ns_meta_prev, 'ns_meta wins over an old key left behind; a current save writes no backup');
+  const fut = Object.assign({}, cur, { v: 6, codes: 1234, future: { x: 1 } }), st6 = { ns_meta: JSON.stringify(fut) }, M6 = page(st6).META;
+  M6.data.codes = 1; M6.save();
+  ok(M6.data.codes === 1 && st6.ns_meta === JSON.stringify(fut), 'a newer save (v6) loads, but this page never writes over it'); }
 
 // 5. a banked run adds its facts and reports the achievements it met; they wait for a claim
 { const store = {}, { META, SIM } = page(store); const S = SIM.spawn(2, {}, { hero: 'utrace' });
@@ -118,7 +126,7 @@ function center(r) { return [r[0] + r[2] / 2, r[1] + r[3] / 2]; }
   S.ed.answers = { [q1.id]: { attempts: 2, correct: 1, firstCorrect: false, topic: 0 }, [q2.id]: { attempts: 1, correct: 1, firstCorrect: true, topic: 0 } }; S.over = { k: 'dead', t: 60 }; S.t = 60;
   META.bank(S); const r1 = D.learn.q[LEARN.key(cid, q1.id)], r2 = D.learn.q[LEARN.key(cid, q2.id)];
   ok(r1 && r1[0] === 1 && r1[2] === 0 && r2 && r2[0] === 1 && r2[2] === 1, 'banked: wrong at first → box 1, 0 right; right at once → box 1, 1 right');
-  const next = META.runOpts().learn; ok(next[q1.id] === 0 && next[q2.id] === 2 && JSON.parse(store.ns_meta_v5).learn.q[LEARN.key(cid, q1.id)], 'the next run\'s snapshot: the one got wrong first (0), the one right after the new ones (2); the save keeps them');
+  const next = META.runOpts().learn; ok(next[q1.id] === 0 && next[q2.id] === 2 && JSON.parse(store.ns_meta).learn.q[LEARN.key(cid, q1.id)], 'the next run\'s snapshot: the one got wrong first (0), the one right after the new ones (2); the save keeps them');
   const S2 = SIM.spawn(5, {}, META.runOpts()); ok(JSON.stringify(S2.ed.snap) === JSON.stringify(next), 'the run keeps its snapshot in its state (a resumed run asks the same)'); }
 
 console.log(bad ? `\n${bad} FAILED` : '\nall ok');

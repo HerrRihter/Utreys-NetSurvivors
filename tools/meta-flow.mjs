@@ -8,7 +8,7 @@ await pg.goto('http://127.0.0.1:' + (process.env.PORT || 8931) + '/live/index.ht
 fs.mkdirSync('frames/meta', { recursive: true });
 const shot = async (n) => { await pg.waitForTimeout(400); await pg.screenshot({ path: `frames/meta/${n}.png` }); };
 const out = {};
-await pg.evaluate(() => { localStorage.removeItem('ns_meta_v1'); META.reset(); }); await shot('1_menu');
+await pg.evaluate(() => { localStorage.removeItem('ns_meta'); META.reset(); }); await shot('1_menu');
 await pg.keyboard.press('Enter'); await pg.waitForTimeout(300); await pg.keyboard.press('Enter'); await pg.waitForTimeout(300); await pg.keyboard.press('Enter'); await pg.waitForTimeout(1200);   // menu → hero → map → run
 out.started = await pg.evaluate(() => !!SCENE.state && SCENE.state.t > 0);
 await pg.evaluate(() => { const S = SCENE.state; S.bars = 12; S.kills = 57; S.hp = 0.01; S.iT = -99; for (let i = 0; i < 6; i++) { const e = SIM.mkFoe(S, 'node', S.x + 30, S.y + 5); e.nextAtk = 0; } });
