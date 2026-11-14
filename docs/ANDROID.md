@@ -15,16 +15,16 @@ APK: `android\app\build\outputs\apk\debug\app-debug.apk` (≈ 68 МБ). Пере
 файлы остаются в APK.
 
 Что делает скрипт:
-1. Собирает статическую версию игры `dist/app/game` скриптом скилла ref2game `pack.py`. В ней выключены опрос сервера и панель
-   разработчика. Текстуры переводятся в WebP (`tools/webp-assets.py`, нужен Pillow): в `live/` остаются PNG-исходники.
+1. Собирает статическую версию игры `dist/app/game` тем же скриптом, что и сайт (`tools/pages-build.cjs dist/app/game`; до 14.11 —
+   `pack.py` скилла ref2game). В ней выключены опрос сервера и панель разработчика. Текстуры переводятся в WebP (`tools/webp-assets.py`, нужен Pillow): в `live/` остаются PNG-исходники.
 2. Копирует её в Android-проект (`cap sync android`).
 3. Собирает APK через Gradle.
 
 Без сети: `$env:GRADLE_OFFLINE='1'; node tools/android-build.cjs` — всё нужное уже лежит в кэше Gradle (`~/.gradle`).
 
-Откуда инструменты (ничего не скачивалось):
-- **CLI Capacitor** — из оригинала, `D:\Utreys-Survivors\node_modules\@capacitor\cli`, только чтение.
-- **Пакеты** `@capacitor/android`, `core` и `app` 8.x скопированы из оригинала в `node_modules/@capacitor`.
+Откуда инструменты:
+- **CLI Capacitor и пакеты** `@capacitor/android`, `core`, `app` — из `package.json`, один раз `npm ci` (с 14.11; раньше брались
+  из оригинала `D:\Utreys-Survivors`).
 - **JDK** — из Android Studio (Java 25). Поэтому обёртка Gradle — 9.1.0, как в оригинале: шаблонный Gradle 8.14.3 с Java 25 не
   работает.
 - **Android SDK** — `%LOCALAPPDATA%\Android\Sdk`.

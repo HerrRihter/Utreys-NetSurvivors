@@ -1,20 +1,17 @@
-// Builds the Android app (docs/ANDROID.md, stage 8 of docs/PLAN-FEEDBACK-27-10.md): the game packed as a static build (the ref2game
-// skill's pack.py → dist/app/game), copied into android/ (cap sync), then an APK by Gradle. Modelled on utreys-survivors'
-// tools/android-build.cjs. The Capacitor CLI is the original project's (D:\Utreys-Survivors, read only); the platform packages are
-// copies in node_modules/@capacitor.
+// Builds the Android app (docs/ANDROID.md, stage 8 of docs/PLAN-FEEDBACK-27-10.md): the game's static build (the same as the web
+// version: tools/pages-build.cjs → dist/app/game), copied into android/ (cap sync), then an APK by Gradle. The Capacitor CLI and
+// the platform packages come from package.json (npm ci).
 //
 //   node tools/android-build.cjs            debug APK → android/app/build/outputs/apk/debug/app-debug.apk
 //   node tools/android-build.cjs release    signed APK (needs android/keystore.properties)
 const fs = require('node:fs');
 const path = require('node:path');
-const os = require('node:os');
 const { spawnSync } = require('node:child_process');
 
 const root = path.join(__dirname, '..');
 const android = path.join(root, 'android');
 const windows = process.platform === 'win32';
-const CAP = process.env.CAP_CLI || 'D:/Utreys-Survivors/node_modules/@capacitor/cli/bin/capacitor';
-const PACK = process.env.REF2GAME_PACK || path.join(os.homedir(), '.claude/skills/ref2game/scripts/pack.py');
+const CAP = process.env.CAP_CLI || path.join(root, 'node_modules', '@capacitor', 'cli', 'bin', 'capacitor');
 
 function run(command, args, options = {}) {
   const line = [command, ...args].map((a) => (/\s/.test(a) ? `"${a}"` : a)).join(' ');
@@ -49,12 +46,8 @@ function main([kind = 'debug']) {
   // the APK talks to the real Firebase project (live/firebase-config.js), never to the emulators (?emu=1 is a page parameter only)
   if (!fs.existsSync(path.join(root, 'live', 'firebase-config.js'))) console.warn('No live/firebase-config.js: the APK will play without an account.');
   const env = toolchain();
-  run('python', [PACK, '--name', 'app', '--out', 'dist'], { cwd: root, env });
-  // pack.py copies live/*.js, fonts/ and audio/ only: the game's other script folders (learn/) go in here
-  const game = path.join(root, 'dist', 'app', 'game');
-  for (const d of fs.readdirSync(path.join(root, 'live'), { withFileTypes: true }))
-    if (d.isDirectory() && d.name !== 'assets' && !fs.existsSync(path.join(game, d.name))) fs.cpSync(path.join(root, 'live', d.name), path.join(game, d.name), { recursive: true });
-  run('python', [path.join(__dirname, 'webp-assets.py'), path.join(root, 'dist', 'app', 'game')], { cwd: root, env });   // textures as WebP
+  if (!fs.existsSync(CAP)) throw new Error('No Capacitor CLI: run npm ci first.');
+  run('node', [path.join(__dirname, 'pages-build.cjs'), path.join('dist', 'app', 'game')], { cwd: root, env });   // the static game, textures as WebP
   run('node', [CAP, 'sync', 'android'], { cwd: root, env });
   // clean first: an incremental build keeps assets that were removed from the game (an APK of 150 MB after the textures shrank)
   run(path.join(android, windows ? 'gradlew.bat' : 'gradlew'), ['clean', kind === 'release' ? 'assembleRelease' : 'assembleDebug', ...(process.env.GRADLE_OFFLINE ? ['--offline'] : [])], { cwd: android, env });

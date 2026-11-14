@@ -2,7 +2,7 @@
 // save in the cloud (the next epoch) and, on its next sync, the other device; there is no undo (owner, 31.10: no row, no backup copy,
 // the dialog says so); a guest with progress of its own who signs in to the account chooses which save to keep (docs/PLAN-CLOUD-SAVE-31-10.md).
 //   firebase emulators:start --only auth,firestore --project demo-netsurvivors ; python tools/serve.py 8931 ; node tools/wipe-flow.mjs
-const { chromium } = await import('file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs');
+const { chromium } = await import(process.env.PLAYWRIGHT ? 'file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs' : 'playwright');
 const fs = await import('node:fs'); fs.mkdirSync('frames/wipe', { recursive: true });
 const b = await chromium.launch(), url = 'http://localhost:8931/live/index.html?emu=1', login = 'wipe' + String(Date.now()).slice(-8), out = {}, errs = [];
 const wait = (pg, f, arg) => pg.waitForFunction(f, arg, { timeout: 90000 });

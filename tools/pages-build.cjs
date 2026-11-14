@@ -1,9 +1,10 @@
-// Builds the web version for GitHub Pages (.github/workflows/pages.yml): live/ copied to dist/pages as a static site, as the
-// ref2game skill's pack.py does for the APK — index.html gets window.__STATIC__, so hot-reload polling and the dev overlay are off,
-// and window.__BUILD__ (the commit), so the files are cached between visits.
+// Builds the static game: the web version for GitHub Pages (.github/workflows/pages.yml) and the web part of the APK
+// (tools/android-build.cjs → dist/app/game). live/ is copied as it is; index.html gets window.__STATIC__, so hot-reload polling and
+// the dev overlay are off, and window.__BUILD__ (the commit), so the files are cached between visits.
 // The dev tools (*.cjs) stay out. The game opens at the site's root. The textures ship as WebP (tools/webp-assets.py, needs Pillow).
 //
 //   node tools/pages-build.cjs              → dist/pages
+//   node tools/pages-build.cjs dist/app/game   (the APK's copy)
 //   python tools/serve.py 8930              then http://127.0.0.1:8930/dist/pages/index.html to check it locally
 const fs = require('node:fs');
 const path = require('node:path');
@@ -11,7 +12,7 @@ const { spawnSync } = require('node:child_process');
 
 const root = path.join(__dirname, '..');
 const live = path.join(root, 'live');
-const out = path.join(root, 'dist', 'pages');
+const out = path.resolve(root, process.argv[2] || path.join('dist', 'pages'));
 
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });

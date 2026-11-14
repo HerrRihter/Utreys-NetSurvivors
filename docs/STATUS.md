@@ -275,7 +275,10 @@ Enter, Esc и колесо не показываются, кнопки подп�
 ## Рабочие команды (Git Bash)
 
 ```
-export PLAYWRIGHT="C:/Users/Herr_Rihter/.claude/skills/ref2game/scripts/node_modules/playwright" PYTHONUTF8=1
+npm ci                                                     # один раз: инструменты проекта (Capacitor, Firebase CLI, Playwright, тесты правил)
+npm run check                                              # контент и все проверки без браузера
+npm run check:rules                                        # правила Firestore на эмуляторе (нужна Java)
+export PLAYWRIGHT="C:/Users/Herr_Rihter/.claude/skills/ref2game/scripts/node_modules/playwright" PYTHONUTF8=1   # для qa и livecheck скилла
 node ~/.claude/skills/ref2game/scripts/qa.mjs            # рига, прицел, интерфейс — должно быть "qa: ok"
 node ~/.claude/skills/ref2game/scripts/livecheck.mjs     # ошибки и fps
 node -e "const S=require('./live/sim.js'); console.log(S.selfCheck('dc', 0))"   # раскладка: пересечения, проходимость (карта, сид)
@@ -287,7 +290,9 @@ python3 tools/ingest.py <sheet...>                          # нарезка и 
 Особенности Windows:
 - Codex запускать из `C:\cx`: копия из WinGet падает, потому что путь её служебного файла длиннее 260 символов.
 - `PYTHONUTF8=1` нужен для prep.
-- `PLAYWRIGHT` — чтобы qa и livecheck нашли браузер.
+- `PLAYWRIGHT` — чтобы qa и livecheck скилла нашли браузер; проверки проекта (`tools/*-flow.mjs`) берут Playwright из `node_modules`.
+- Эмулятор Firestore (Java) на Windows: если он падает с «failed to create a child event loop», задать
+  `JAVA_TOOL_OPTIONS=-Djdk.net.unixdomain.tmpdir=<своя папка>` — так же, как это делает `android-build.cjs` для Gradle.
 - После каждой скриптовой правки — `node --check`.
 
 ## Известные проблемы и долги

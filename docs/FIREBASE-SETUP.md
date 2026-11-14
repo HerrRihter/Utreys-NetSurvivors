@@ -42,12 +42,14 @@ Firestore и тесты на эмуляторе я пишу сам; от вас 
 
 ## 6. Выкатить правила (после того как я их напишу и проверю на эмуляторе)
 
-Firebase CLI у вас уже есть в оригинале. Если вы входили в него под тем же Google-аккаунтом, повторять `firebase login` не нужно.
-Из папки `D:\Utreys-NetSurvivors` в PowerShell:
+Firebase CLI ставится вместе с проектом (`npm ci`, с 14.11). Если вы уже входили в него под тем же Google-аккаунтом, повторять
+`npx firebase login` не нужно. Из папки `D:\Utreys-NetSurvivors`:
 
 ```powershell
-D:\Utreys-Survivors\node_modules\.bin\firebase.cmd deploy --only firestore:rules --project <Project ID>
+npm run rules:deploy
 ```
+
+Перед выкладкой правила проверяются на эмуляторе: `npm run check:rules` (то же делает CI при каждом пуше).
 
 Без правил база закрыта и регистрация не работает. Каждое изменение правил (например, новая карта в таблицах) выкатывается этой
 же командой.

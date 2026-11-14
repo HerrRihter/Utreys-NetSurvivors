@@ -1,13 +1,25 @@
 {
   "name": "utreys-netsurvivors",
   "private": true,
-  "description": "NetSurvivors: the ref2game slice; the Android app wraps the packed game (docs/ANDROID.md)",
+  "description": "NetSurvivors: the learning superapp (docs/PLAN-SUPERAPP.md) and its game; the Android app wraps the static build (docs/ANDROID.md)",
   "scripts": {
-    "android:apk": "node tools/android-build.cjs"
+    "check": "node tools/build-content.mjs --check && node tools/learn-check.mjs && node tools/edu-check.mjs && node tools/ability-check.mjs && node tools/aim-check.mjs && node tools/defense-check.mjs && node tools/ach-check.mjs",
+    "check:rules": "firebase emulators:exec --only auth,firestore --project demo-netsurvivors \"node tools/rules-check.mjs\"",
+    "content": "node tools/build-content.mjs",
+    "pages": "node tools/pages-build.cjs",
+    "android:apk": "node tools/android-build.cjs",
+    "rules:deploy": "firebase deploy --only firestore:rules --project netsurvivors"
   },
   "dependencies": {
     "@capacitor/android": "8.5.3",
     "@capacitor/app": "8.1.2",
     "@capacitor/core": "8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.3",
+    "@firebase/rules-unit-testing": "5.0.2",
+    "firebase": "12.19.0",
+    "firebase-tools": "15.34.0",
+    "playwright": "1.64.1"
   }
 }

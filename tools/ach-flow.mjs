@@ -1,7 +1,7 @@
 // The achievements in a real browser: a fresh save, a shift that meets several goals ends in defeat → the results list the new
 // achievements, waiting to be claimed; a reload keeps them (save v4); «Забрать всё» on the achievements screen pays them once.
-//   PLAYWRIGHT=<path to playwright> node tools/ach-flow.mjs   (the game served on :8931)
-const { chromium } = await import('file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs');
+//   node tools/ach-flow.mjs   (the game served on :8931)
+const { chromium } = await import(process.env.PLAYWRIGHT ? 'file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs' : 'playwright');
 const fs = await import('node:fs'); fs.mkdirSync('frames/ach', { recursive: true });
 const b = await chromium.launch(); const pg = await b.newPage({ viewport: { width: 1600, height: 900 } });
 const errs = []; pg.on('pageerror', (e) => errs.push(String(e)));

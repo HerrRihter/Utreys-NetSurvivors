@@ -3,9 +3,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..'), nm = 'D:/Utreys-Survivors/node_modules/';
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 import { createRequire } from 'node:module';
-const req = createRequire(nm + 'package.json');                                      // the original's test libraries (read only)
+const req = createRequire(import.meta.url);                                           // the test libraries (package.json devDependencies)
 const T = req('@firebase/rules-unit-testing'), F = req('firebase/firestore');
 const { doc, setDoc, getDoc, runTransaction, serverTimestamp, collection, query, where, orderBy, limit, getDocs } = F, getCount = F.getCountFromServer;
 const env = await T.initializeTestEnvironment({ projectId: 'demo-netsurvivors', firestore: { host: '127.0.0.1', port: 8085, rules: fs.readFileSync(path.join(root, 'firestore.rules'), 'utf8') } });

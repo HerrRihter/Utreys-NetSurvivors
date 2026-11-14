@@ -1,7 +1,7 @@
 // Pause, keeping a shift and the music after a restart, in a real browser with real keys:
 // Esc → the pause menu, the game stands still → «Выйти в меню» → «Продолжить смену» from the same moment → a page reload keeps it →
 // a new start ends the kept shift (codes banked) → a defeat, Space → the battle music plays again.
-const { chromium } = await import('file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs');
+const { chromium } = await import(process.env.PLAYWRIGHT ? 'file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs' : 'playwright');
 const fs = await import('node:fs'); fs.mkdirSync('frames/pause', { recursive: true });
 const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] }); const pg = await b.newPage({ viewport: { width: 1600, height: 900 } });
 const errs = []; pg.on('pageerror', (e) => errs.push(String(e)));

@@ -3,7 +3,7 @@
 // device 2 (an empty save) signs in → it gets them claimed, with nothing waiting and no «новое» mark device 1 already looked at;
 // device 2 earns a new one → device 1 gets it after a reload.
 //   firebase emulators:start --only auth,firestore --project demo-netsurvivors ; python tools/serve.py 8931 ; node tools/ach-cloud-flow.mjs
-const { chromium } = await import('file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs');
+const { chromium } = await import(process.env.PLAYWRIGHT ? 'file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs' : 'playwright');
 const b = await chromium.launch(), url = 'http://localhost:8931/live/index.html?emu=1', login = 'ach' + String(Date.now()).slice(-8), out = {}, errs = [];
 const wait = (pg, f, arg) => pg.waitForFunction(f, arg, { timeout: 90000 });
 async function device() { const ctx = await b.newContext({ viewport: { width: 1600, height: 900 } }), pg = await ctx.newPage();

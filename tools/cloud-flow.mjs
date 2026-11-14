@@ -1,7 +1,7 @@
 // The account and the leaderboards end to end in a real browser against the local emulators (?emu=1): register two players, a
 // counted run each, the run reaches stats/{uid}, the results show the record's place, the «Лидеры» screen lists both, sign out and in.
 //   firebase emulators:start --only auth,firestore --project demo-netsurvivors ; python tools/serve.py 8931 ; node tools/cloud-flow.mjs
-const { chromium } = await import('file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs');
+const { chromium } = await import(process.env.PLAYWRIGHT ? 'file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs' : 'playwright');
 const out = 'frames/cloud';
 await import('node:fs').then((fs) => fs.mkdirSync(out, { recursive: true }));
 const b = await chromium.launch();

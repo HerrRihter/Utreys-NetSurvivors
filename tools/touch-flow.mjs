@@ -1,8 +1,8 @@
 // Stage 7a of docs/PLAN-FEEDBACK-27-10.md in a real browser with touch emulation: a landscape phone (844×390) goes through the
 // menus by taps, moves with the floating stick, casts E, pauses and resumes, ends the shift and taps «В меню»; a portrait phone is
 // asked to turn; a tablet (1024×768) starts a shift too. Screenshots in frames/touch/.
-//   PLAYWRIGHT=<path to playwright> node tools/touch-flow.mjs   (the game served on :8931)
-const { chromium } = await import('file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs');
+//   node tools/touch-flow.mjs   (the game served on :8931)
+const { chromium } = await import(process.env.PLAYWRIGHT ? 'file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs' : 'playwright');
 const fs = await import('node:fs'); fs.mkdirSync('frames/touch', { recursive: true });
 const b = await chromium.launch(), url = 'http://localhost:8931/live/index.html', out = {}, errs = [];
 async function device(w, h, name) {

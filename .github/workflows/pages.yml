@@ -1,5 +1,5 @@
-# The web version on GitHub Pages: every push to main (and a manual run) checks the game's scripts, runs the headless checks, builds dist/pages with
-# tools/pages-build.cjs and publishes it. Pages must use «GitHub Actions» as its source (Settings → Pages).
+# The web version on GitHub Pages: every push to main (and a manual run) installs the tools (npm ci), checks the scripts, the content, the
+# headless checks and the Firestore rules (emulator), builds dist/pages with tools/pages-build.cjs and publishes it. Pages must use «GitHub Actions» as its source (Settings → Pages).
 name: Pages
 
 on:
@@ -24,12 +24,19 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
+          cache: npm
+      - name: Install the tools (package.json)
+        run: npm ci
       - name: Check the game's scripts
         run: for f in live/*.js live/learn/*.js tools/pages-build.cjs; do node --check "$f"; done
-      - name: Check the course content
-        run: node tools/build-content.mjs --check
-      - name: Run the checks that need no browser
-        run: for t in learn edu ability aim defense ach; do echo "== $t"; node tools/$t-check.mjs || exit 1; done
+      - name: Check the content and run the checks that need no browser
+        run: npm run check
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Check the Firestore rules on the emulator
+        run: npm run check:rules
       - uses: actions/setup-python@v7
         with:
           python-version: '3.13'

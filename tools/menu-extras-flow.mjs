@@ -1,6 +1,6 @@
 // Stage 1 of docs/PLAN-FEEDBACK-27-10.md in a real browser: the pause menu's «Следующий трек» and «Повтор трека», the refusal
 // sound (not enough codes), and «Выход» (asks once more, then the game stops and says the tab can be closed; «Вернуться» resumes).
-const { chromium } = await import('file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs');
+const { chromium } = await import(process.env.PLAYWRIGHT ? 'file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs' : 'playwright');
 const fs = await import('node:fs'); fs.mkdirSync('frames/extras', { recursive: true });
 const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] }); const pg = await b.newPage({ viewport: { width: 1600, height: 900 } });
 const errs = []; pg.on('pageerror', (e) => errs.push(String(e)));

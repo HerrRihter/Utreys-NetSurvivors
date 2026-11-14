@@ -4,7 +4,7 @@
 // dialog, both ways; a guest with progress signs in → the choice; signing out clears the device and signing in brings it back;
 // the old document (achievements only) moves to the new shape.
 //   firebase emulators:start --only auth,firestore --project demo-netsurvivors ; python tools/serve.py 8931 ; node tools/cloud-save-flow.mjs
-const { chromium } = await import('file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs');
+const { chromium } = await import(process.env.PLAYWRIGHT ? 'file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs' : 'playwright');
 const fs = await import('node:fs'); fs.mkdirSync('frames/cloud', { recursive: true });
 const b = await chromium.launch(), url = 'http://localhost:8931/live/index.html?emu=1', login = 'sav' + String(Date.now()).slice(-8), out = {}, errs = [];
 const wait = (pg, f, arg) => pg.waitForFunction(f, arg, { timeout: 90000 });
@@ -52,7 +52,7 @@ await signIn(G); out.Gback = await st(G);
 // the account menu says the progress is saved
 await G.evaluate(() => ACCOUNT_UI.open()); out.Gline = await G.evaluate(() => document.getElementById('acct-p').textContent); await G.screenshot({ path: 'frames/cloud/2_account.png' }); await G.evaluate(() => ACCOUNT_UI.close());
 // the old document ({ ach, epoch }) of an older version: its achievements join the save, claimed
-{ const { createRequire } = await import('node:module'), req = createRequire('D:/Utreys-Survivors/node_modules/package.json'), T = req('@firebase/rules-unit-testing'), F = req('firebase/firestore');
+{ const { createRequire } = await import('node:module'), req = createRequire(import.meta.url), T = req('@firebase/rules-unit-testing'), F = req('firebase/firestore');
   const env = await T.initializeTestEnvironment({ projectId: 'demo-netsurvivors', firestore: { host: '127.0.0.1', port: 8085 } }), uid = await G.evaluate(() => CLOUD.state.uid);
   await env.withSecurityRulesDisabled(async (x) => { await F.setDoc(F.doc(x.firestore(), 'progress', uid), { ach: ['wins_10', 'kills_1000'], epoch: 0, updatedAt: new Date() }); }); await env.cleanup(); }
 await G.evaluate(() => { META.data.cloud.rev = 0; }); await synced(G); out.Glegacy = await st(G);
