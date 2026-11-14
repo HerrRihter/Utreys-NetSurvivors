@@ -133,20 +133,6 @@ service cloud.firestore {
     // device's fields, in the shape of fresh() in live/meta.js (tools/rules-check.mjs compares the keys); rev grows by one with every
     // write. Written by CLOUD.sync in live/cloud.js.
     match /progress/{uid} {
-      // Keep in step with ACH.LIST in live/ach.js (tools/rules-check.mjs compares them).
-      function knownAch() {
-        return [
-          'surv_60', 'surv_180', 'surv_300', 'surv_480', 'kills_100', 'kills_1000', 'kills_5000', 'kills_10000', 'runs_5', 'runs_10',
-          'runs_25', 'runs_100', 'win_1', 'wins_10', 'wins_50', 'bosses_1', 'bosses_10', 'bosses_50', 'cast_10', 'cast_50', 'cast_250',
-          'evo_1', 'evo_3', 'calm_180', 'win_noheal', 'lvl_20', 'lvl_30', 'edu_win', 'edu_top', 'codes_1000', 'codes_10000', 'foes_15',
-          'win_fast', 'win_nocast', 'foe_sdesk', 'foe_bug', 'foe_bugl', 'foe_bugg', 'foe_bugu', 'foe_buga', 'foe_crpt', 'foe_batch',
-          'foe_repl', 'foe_rstorm', 'foe_outage', 'evo_shield_x', 'evo_trace_x', 'evo_orbit_x', 'evo_homing_x', 'evo_mine_x',
-          'evo_ping_x', 'evo_retry_x', 'evo_cache_x', 'evo_udp_x', 'evo_chain_x', 'evo_storm_x', 'evo_turret_x', 'evo_cryo_x',
-          'evo_fork_x', 'evo_tchain_x', 'evo_packet_x', 'evo_req_x', 'evo_regress_x', 'edu_batch_accounting', 'edu_critical_incidents',
-          'runs5_utrace', 'win_utrace', 'wins3_utrace', 'runs5_traceability', 'win_traceability', 'wins3_traceability',
-          'runs5_serialization', 'win_serialization', 'wins3_serialization', 'runs5_ba', 'win_ba', 'wins3_ba', 'runs5_qa', 'win_qa',
-          'wins3_qa', 'heroes_all', 'all'];
-      }
       // Keep in step with fresh() in live/meta.js, without its device fields ui and cloud.
       function saveKeys() {
         return ['v', 'st', 'ach', 'done', 'fresh', 'codes', 'up', 'runs', 'wins', 'kills', 'time', 'best', 'seen', 'heroes', 'skins', 'sel',
@@ -169,8 +155,10 @@ service cloud.firestore {
           && learnOk(d)
           && count(d.codes) && count(d.runs) && count(d.wins) && count(d.kills)
           && d.time is number && d.time >= 0 && d.time <= 1000000000
-          && d.ach is map && d.ach.keys().hasOnly(knownAch())
-          && d.done is map && d.done.keys().hasOnly(knownAch())
+          // achievements by shape, not by a list of ids (docs/PLAN-SUPERAPP.md, «Подготовка», П.2): a new achievement needs no rules
+          // deploy. ach: claimed (1); done: met and waiting (1 here, 2 on another device). The game ignores ids it does not know.
+          && d.ach is map && d.ach.size() <= 256 && d.ach.values().hasOnly([1])
+          && d.done is map && d.done.size() <= 256 && d.done.values().hasOnly([1, 2])
           && d.fresh is map && d.fresh.size() <= 256
           && d.up is map && d.up.size() <= 64
           && d.heroes is map && d.heroes.size() <= 32

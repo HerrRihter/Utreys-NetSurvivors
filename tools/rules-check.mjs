@@ -54,7 +54,6 @@ const vm = await import('node:vm'), c = { console, Math, Date, JSON, localStorag
 for (const f of ['course.js', 'learn/core.js', 'edu.js', 'sim.js', 'ach.js', 'meta.js']) vm.runInContext(fs.readFileSync(path.join(root, 'live', f), 'utf8'), c);
 const rules = fs.readFileSync(path.join(root, 'firestore.rules'), 'utf8'), listOf = (fn) => rules.match(new RegExp('function ' + fn + '\\(\\) \\{\\s*return \\[([^\\]]*)\\]'))[1].match(/'([^']+)'/g).map((s) => s.slice(1, -1));
 const sameSet = (name, a, b) => { if (a.length === b.length && a.every((x) => b.includes(x))) pass++; else { failN++; console.log('FAIL ' + name, a.filter((x) => !b.includes(x)), b.filter((x) => !a.includes(x))); } };
-sameSet('the rules\' knownAch differs from live/ach.js', c.ACH.LIST.map((x) => x.id), listOf('knownAch'));
 sameSet('the rules\' saveKeys differ from fresh() in live/meta.js', [...c.META.SYNCED], listOf('saveKeys'));
 const save0 = JSON.parse(JSON.stringify(c.META.cloudSide().data)), save = (o = {}) => Object.assign(JSON.parse(JSON.stringify(save0)), o);
 const prog = (db, uid, data, rev, epoch = 0, extra = {}) => setDoc(doc(db, 'progress', uid), Object.assign({ data, schema: 1, rev, device: 'dev1', epoch, updatedAt: serverTimestamp() }, extra));
@@ -70,8 +69,10 @@ await no('negative codes', prog(A, 'alice', save({ codes: -5 }), 4));
 await no('codes beyond 10⁹', prog(A, 'alice', save({ codes: 2e9 }), 4));
 await no('fractional codes', prog(A, 'alice', save({ codes: 10.5 }), 4));
 await no('codes as a string', prog(A, 'alice', save({ codes: '999' }), 4));
-await no('an unknown achievement', prog(A, 'alice', save({ ach: { free_codes: 1 } }), 4));
-await no('an unknown achievement waiting', prog(A, 'alice', save({ done: { free_codes: 1 } }), 4));
+// achievements are checked by shape, not by id (a new achievement needs no rules deploy): claimed is 1, waiting is 1 or 2
+await no('an achievement claimed with another value', prog(A, 'alice', save({ ach: { surv_60: 999 } }), 4));
+await no('an achievement waiting with another value', prog(A, 'alice', save({ done: { surv_60: 'x' } }), 4));
+await no('more than 256 achievements', prog(A, 'alice', save({ ach: Object.fromEntries(Array.from({ length: 257 }, (_, i) => ['a' + i, 1])) }), 4));
 await no('an unknown key in the save', prog(A, 'alice', save({ cheat: 1 }), 4));
 await no('the device\'s fields in the save', prog(A, 'alice', save({ ui: { fps: true } }), 4));
 await no('a save without a field', prog(A, 'alice', (() => { const d = save(); delete d.codes; return d; })(), 4));
