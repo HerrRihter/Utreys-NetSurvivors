@@ -10,8 +10,8 @@ cd D:\Utreys-NetSurvivors; python tools/serve.py 8930
 ```
 Открыть http://127.0.0.1:8930/live/index.html. Не запускать через `python -m http.server`: у него очередь соединений 5, и при загрузке ~200 текстур часть запросов получает отказ, а проверка горячей перезагрузки подвисает. `tools/serve.py` — многопоточный, очередь 256, без кэша. Открывается главное меню поверх демо-смены: «Начать смену», «Магазин», «Коллекция», «Рекорды», «Настройки» (стрелки или мышь, Enter).
 
-**Веб-версия** (GitHub Pages): https://herrrihter.github.io/Utreys-NetSurvivors/. Каждый пуш в `main` проверяет скрипты игры, собирает
-`dist/pages` (`node tools/pages-build.cjs`: копия `live/` без инструментов, опрос сервера и панель разработчика выключены, как в APK) и
+**Веб-версия** (GitHub Pages): https://herrrihter.github.io/Utreys-NetSurvivors/. Каждый пуш в `main` проверяет скрипты игры, прогоняет проверки без браузера (`tools/*-check.mjs`), собирает
+`dist/pages` (`node tools/pages-build.cjs`: копия `live/` без инструментов, опрос сервера и панель разработчика выключены, как в APK; текстуры — WebP, `tools/webp-assets.py`: 59 МБ PNG → 10 МБ) и
 публикует сайт (`.github/workflows/pages.yml`). Один раз в настройках репозитория: Settings → Pages → Source: «GitHub Actions». Чтобы на
 сайте работали вход и таблицы, домен `herrrihter.github.io` добавляется в Firebase: Authentication → Settings → Authorized domains.
 

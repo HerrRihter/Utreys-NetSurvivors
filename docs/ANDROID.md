@@ -16,7 +16,7 @@ APK: `android\app\build\outputs\apk\debug\app-debug.apk` (≈ 68 МБ). Пере
 
 Что делает скрипт:
 1. Собирает статическую версию игры `dist/app/game` скриптом скилла ref2game `pack.py`. В ней выключены опрос сервера и панель
-   разработчика.
+   разработчика. Текстуры переводятся в WebP (`tools/webp-assets.py`, нужен Pillow): в `live/` остаются PNG-исходники.
 2. Копирует её в Android-проект (`cap sync android`).
 3. Собирает APK через Gradle.
 

@@ -1,7 +1,7 @@
 // Builds the web version for GitHub Pages (.github/workflows/pages.yml): live/ copied to dist/pages as a static site, as the
 // ref2game skill's pack.py does for the APK — index.html gets window.__STATIC__, so hot-reload polling and the dev overlay are off,
 // and window.__BUILD__ (the commit), so the files are cached between visits.
-// The dev tools (*.cjs) stay out. The game opens at the site's root.
+// The dev tools (*.cjs) stay out. The game opens at the site's root. The textures ship as WebP (tools/webp-assets.py, needs Pillow).
 //
 //   node tools/pages-build.cjs              → dist/pages
 //   python tools/serve.py 8930              then http://127.0.0.1:8930/dist/pages/index.html to check it locally
@@ -26,6 +26,10 @@ const build = (process.env.GITHUB_SHA || spawnSync('git', ['rev-parse', 'HEAD'],
 const marked = html.replace('<script>\n', `<script>window.__STATIC__ = 1; window.__BUILD__ = '${build}';</script>\n<script>\n`);
 if (marked === html) throw new Error('live/index.html: no <script> to mark the static build');
 fs.writeFileSync(path.join(out, 'index.html'), marked);
+// the textures as WebP: ~10 MB to download instead of ~59 MB of PNG
+const python = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
+const webp = spawnSync(python, [path.join(__dirname, 'webp-assets.py'), out], { stdio: 'inherit' });
+if (webp.status !== 0) throw new Error('tools/webp-assets.py failed (pip install pillow)');
 // no Jekyll: Pages serves the files as they are
 fs.writeFileSync(path.join(out, '.nojekyll'), '');
 const count = (dir) => fs.readdirSync(dir, { withFileTypes: true }).reduce((n, e) => n + (e.isDirectory() ? count(path.join(dir, e.name)) : 1), 0);

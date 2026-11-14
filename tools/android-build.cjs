@@ -50,6 +50,7 @@ function main([kind = 'debug']) {
   if (!fs.existsSync(path.join(root, 'live', 'firebase-config.js'))) console.warn('No live/firebase-config.js: the APK will play without an account.');
   const env = toolchain();
   run('python', [PACK, '--name', 'app', '--out', 'dist'], { cwd: root, env });
+  run('python', [path.join(__dirname, 'webp-assets.py'), path.join(root, 'dist', 'app', 'game')], { cwd: root, env });   // textures as WebP
   run('node', [CAP, 'sync', 'android'], { cwd: root, env });
   // clean first: an incremental build keeps assets that were removed from the game (an APK of 150 MB after the textures shrank)
   run(path.join(android, windows ? 'gradlew.bat' : 'gradlew'), ['clean', kind === 'release' ? 'assembleRelease' : 'assembleDebug', ...(process.env.GRADLE_OFFLINE ? ['--offline'] : [])], { cwd: android, env });

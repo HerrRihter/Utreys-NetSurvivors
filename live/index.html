@@ -68,7 +68,9 @@ const load = (src) => new Promise((res, rej) => { const s = document.createEleme
   document.getElementById('hint').textContent = SIM.HINT && !matchMedia('(hover: none) and (pointer: coarse)').matches ? SIM.HINT : '';
   G.init(document.getElementById('c'), VW, VH);
   const rep = new Set(SCENE.REPEAT || []), near = (n) => SCENE.NEAREST === true || (SCENE.NEAREST || []).includes(n);   // NEAREST: true = all
-  await Promise.all(Object.keys(ASSETS).map((n) => G.load(n, 'assets/' + n + '.png?v=' + V, { repeat: rep.has(n), nearest: near(n) })));
+  // static builds ship the textures as WebP (tools/webp-assets.py sets __IMG__); live/ keeps the PNG sources
+  const IMG = window.__IMG__ || 'png';
+  await Promise.all(Object.keys(ASSETS).map((n) => G.load(n, 'assets/' + n + '.' + IMG + '?v=' + V, { repeat: rep.has(n), nearest: near(n) })));
   SCENE.programs();
   window.__duration = SIM.L;
   window.__renderAt = (t) => { SCENE.render(t); return document.getElementById('c').toDataURL('image/png'); };
