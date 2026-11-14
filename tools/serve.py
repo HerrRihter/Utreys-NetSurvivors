@@ -16,5 +16,5 @@ class Server(http.server.ThreadingHTTPServer):
     daemon_threads = True
 
 port = int(sys.argv[1]) if len(sys.argv) > 1 else 8930
-print(f'serving http://127.0.0.1:{port}/live/index.html')
+print(f'serving http://127.0.0.1:{port}/live/index.html (the game) and /live/shell/index.html (the app, after npm run shell)')
 Server(('127.0.0.1', port), Handler).serve_forever()

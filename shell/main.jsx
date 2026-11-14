@@ -1,10 +1,15 @@
-// The shell's entry (docs/PLAN-SUPERAPP.md, stage 2). For now one screen: a lesson in the style of the game (a mockup: nothing is
-// saved yet). ?course=<id> picks the course, the training centre's first one by default.
+// The shell's entry (docs/PLAN-SUPERAPP.md, stage 2): the app opens here. Screens by hash route (shell/nav.js): the home and a lesson.
+// The game is a page of its own (nav.js GAME_URL).
 import { render } from 'preact';
+import { route } from './nav.js';
+import { Home } from './home.jsx';
 import { Lesson } from './lesson.jsx';
 import './style.css';
 
-const params = new URLSearchParams(location.search);
-const course = window.LEARN && LEARN.course(params.get('course')) ? params.get('course') : window.COURSE && COURSE.order[0];
+function App() {
+  const r = route.value;
+  if (r.name === 'lesson' && LEARN.course(r.course)) return <Lesson course={r.course} key={r.course} />;
+  return <Home />;
+}
 
-render(window.LEARN ? <Lesson course={course} /> : <p class="fatal">Не загрузилось ядро обучения (learn/core.js).</p>, document.getElementById('app'));
+render(window.LEARN ? <App /> : <p class="fatal">Не загрузилось ядро обучения (learn/core.js).</p>, document.getElementById('app'));

@@ -9,8 +9,8 @@ import argparse, os, sys
 from concurrent.futures import ThreadPoolExecutor
 from PIL import Image
 
-ap = argparse.ArgumentParser(); ap.add_argument('game'); ap.add_argument('--quality', type=int, default=90); a = ap.parse_args()
-assets, html = os.path.join(a.game, 'assets'), os.path.join(a.game, 'index.html')
+ap = argparse.ArgumentParser(); ap.add_argument('game'); ap.add_argument('--quality', type=int, default=90); ap.add_argument('--html', default='index.html'); a = ap.parse_args()
+assets, html = os.path.join(a.game, 'assets'), os.path.join(a.game, a.html)          # the page that loads the textures (the game)
 pngs = sorted(f for f in os.listdir(assets) if f.endswith('.png'))
 
 def convert(f):

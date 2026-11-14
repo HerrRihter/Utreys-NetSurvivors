@@ -191,7 +191,7 @@
   // the maps (plan stage 3): the minimap is drawn by the scene from a generated layout; the training centre is open from the start, as in the original
   const MAPS = [{ id: 'dc', name: 'Дата-центр Utrace', desc: 'Пять компонентов вокруг ядра: в каждом свой баг. Победи бага или продержись 30 с в его круге, затем закрой «Отказ дата-центра».', note: 'Каждая смена — новая раскладка' },
     { id: 'edu', name: 'Учебный центр', desc: 'Три случайных лабиринта с терминалами-тестами, затем центральный зал с боссом курса.', note: 'Терминалы под охраной багов · тест 3 вопроса, нужно 2 верных · знания дают вторую жизнь' }];
-  const MAIN = [['start', 'Начать смену'], ['shop', 'Магазин'], ['coll', 'Коллекция'], ['ach', 'Достижения'], ['rec', 'Рекорды'], ['lead', 'Лидеры'], ['set', 'Настройки'], ['quit', 'Выход']];
+  const MAIN = [['start', 'Начать смену'], ['shop', 'Магазин'], ['coll', 'Коллекция'], ['ach', 'Достижения'], ['rec', 'Рекорды'], ['lead', 'Лидеры'], ['set', 'Настройки'], ['quit', 'На главную']];
   const C = () => window.CLOUD || null;
   // a shift kept for later (the page holds the run itself): { hero, map, t, room } for the menu's «Продолжить смену», or null
   let susp = null;
@@ -332,7 +332,7 @@
       if (it.refresh) cl.loadBoard({}, true); else if (it.metric !== undefined) cl.loadBoard({ metric: it.metric }); else if (it.scope) cl.loadBoard({ scope: it.scope });
       else if (it.heroF !== undefined) cl.loadBoard({ hero: it.heroF }); else if (it.near) cl.loadBoard({ near: !B.near }); sfx('ui'); return null; }
     if (scr === 'main' && it.id === 'resume') return 'resume';
-    if (scr === 'main' && it.id === 'quit') { if (!armedQuit) { armedQuit = 1; sfx('ui'); return null; } armedQuit = 0; sfx('ui'); return 'quit'; }   // the exit asks once more
+    if (scr === 'main' && it.id === 'quit') { sfx('ui'); return 'quit'; }   // to the app's home (the shell): nothing is lost, so no second press
     if (scr === 'main') { if (it.id === 'lead') { go('lead'); const cl = C(); if (cl) cl.loadBoard(); return null; }
       if (it.id === 'start') { go('hero'); sel = Math.max(0, Object.keys(SIM.HEROES).indexOf(D.sel.hero)); focus = D.sel.hero; return null; }
       go(it.id); return null; }

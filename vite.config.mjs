@@ -9,5 +9,6 @@ export default defineConfig({
   root: 'shell',
   base: './',                       // relative URLs: the site lives under /Utreys-NetSurvivors/, the APK at the WebView's root
   plugins: [preact()],
-  build: { outDir: '../live/shell', emptyOutDir: true, target: 'es2020', reportCompressedSize: true },
+  // assets in ui/, not assets/: the static builds put the shell at the root, next to the game's textures in assets/
+  build: { outDir: '../live/shell', emptyOutDir: true, assetsDir: 'ui', target: 'es2020', reportCompressedSize: true },
 });

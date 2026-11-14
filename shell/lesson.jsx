@@ -4,6 +4,7 @@
 // Keys: 1–9 pick an option, Enter checks and goes on. Touch: every target is at least 48 px high.
 import { useSignal, useComputed } from '@preact/signals';
 import { useEffect } from 'preact/hooks';
+import { GAME_URL } from './nav.js';
 
 const COUNT = 6, HEARTS = 3, KINDS = ['single', 'multiple', 'true_false'];
 const TF = [{ id: true, text: 'Верно' }, { id: false, text: 'Неверно' }];
@@ -27,6 +28,7 @@ export function Lesson({ course }) {
   const set = (patch) => { s.value = { ...s.value, ...patch }; };
   const item = useComputed(() => s.value.items[s.value.index]);
   const c = LEARN.course(course);
+  document.title = 'Урок · ' + c.title;
 
   const pick = (id) => { const st = s.value, q = item.value; if (st.checked || st.over || !q) return;
     const picked = q.type === 'multiple' ? (st.picked.includes(id) ? st.picked.filter((x) => x !== id) : [...st.picked, id]) : [id];
@@ -60,7 +62,7 @@ export function Lesson({ course }) {
   return (
     <div class="lesson">
       <header class="bar">
-        <a class="close" href="../index.html" aria-label="Выйти в игру">✕</a>
+        <a class="close" href="#/" aria-label="На главную">✕</a>
         <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax={st.items.length} aria-valuenow={st.index + (r ? 1 : 0)}>
           <i style={{ width: `${Math.max(4, progress * 100)}%` }} />
         </div>
@@ -125,7 +127,8 @@ function Summary({ st, title, again }) {
       </ul>
       <div class="actions">
         <button class="go" onClick={again}>Ещё урок</button>
-        <a class="go ghost" href="../index.html">В игру</a>
+        <a class="go ghost" href={GAME_URL}>В игру</a>
+        <a class="go ghost" href="#/">На главную</a>
       </div>
       <p class="mock">макет · XP и серия дней появятся на следующем шаге</p>
     </div>

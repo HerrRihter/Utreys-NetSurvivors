@@ -1,7 +1,10 @@
-// Builds the static game: the web version for GitHub Pages (.github/workflows/pages.yml) and the web part of the APK
-// (tools/android-build.cjs → dist/app/game). live/ is copied as it is; index.html gets window.__STATIC__, so hot-reload polling and
-// the dev overlay are off, and window.__BUILD__ (the commit), so the files are cached between visits.
-// The dev tools (*.cjs) stay out. The game opens at the site's root. The textures ship as WebP (tools/webp-assets.py, needs Pillow).
+// Builds the static app: the web version for GitHub Pages (.github/workflows/pages.yml) and the web part of the APK
+// (tools/android-build.cjs → dist/app/game). live/ is copied as it is, and laid out as the app (docs/PLAN-SUPERAPP.md, stage 2):
+//   index.html   the shell (built from shell/ into live/shell/ by Vite), the page the app opens on; its files in ui/
+//   game.html    the game (live/index.html in development, where the game's tools expect it)
+// Both pages get window.__STATIC__ (hot-reload polling and the dev overlay off; the pages link each other by these names) and
+// window.__BUILD__ (the commit: files load as name?v=<commit>, cached until the next deploy). The dev tools (*.cjs) stay out.
+// The textures ship as WebP (tools/webp-assets.py, needs Pillow).
 //
 //   node tools/pages-build.cjs              → dist/pages
 //   node tools/pages-build.cjs dist/app/game   (the APK's copy)
@@ -27,15 +30,24 @@ for (const f of fs.readdirSync(live)) {
   if (fs.statSync(from).isDirectory()) fs.cpSync(from, path.join(out, f), { recursive: true });
   else if (f.endsWith('.js')) fs.copyFileSync(from, path.join(out, f));
 }
-const html = fs.readFileSync(path.join(live, 'index.html'), 'utf8');
 // the commit names the version: files load as name?v=<commit>, cached until the next deploy
 const build = (process.env.GITHUB_SHA || spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout || String(Date.now())).trim().slice(0, 12);
-const marked = html.replace('<script>\n', `<script>window.__STATIC__ = 1; window.__BUILD__ = '${build}';</script>\n<script>\n`);
-if (marked === html) throw new Error('live/index.html: no <script> to mark the static build');
-fs.writeFileSync(path.join(out, 'index.html'), marked);
+const mark = `<script>window.__STATIC__ = 1; window.__BUILD__ = '${build}';</script>\n`;
+// the game → game.html
+const html = fs.readFileSync(path.join(live, 'index.html'), 'utf8');
+const game = html.replace('<script>\n', mark + '<script>\n');
+if (game === html) throw new Error('live/index.html: no <script> to mark the static build');
+fs.writeFileSync(path.join(out, 'game.html'), game);
+// the shell → index.html at the root: its shared scripts (../course.js, ../learn/*) are next to it now, versioned like the game's
+const shellDir = path.join(out, 'shell'), sh = fs.readFileSync(path.join(shellDir, 'index.html'), 'utf8');
+const home = sh.replace(/<script src="\.\.\/([^"]+)"><\/script>/g, (_, f) => `<script src="./${f}?v=${build}"></script>`).replace('<head>', '<head>\n  ' + mark.trim());
+if (home === sh || !/\.\/course\.js\?v=/.test(home)) throw new Error('live/shell/index.html: the shared scripts were not found to relink');
+fs.writeFileSync(path.join(out, 'index.html'), home);
+fs.cpSync(path.join(shellDir, 'ui'), path.join(out, 'ui'), { recursive: true });
+fs.rmSync(shellDir, { recursive: true, force: true });
 // the textures as WebP: ~10 MB to download instead of ~59 MB of PNG
 const python = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
-const webp = spawnSync(python, [path.join(__dirname, 'webp-assets.py'), out], { stdio: 'inherit' });
+const webp = spawnSync(python, [path.join(__dirname, 'webp-assets.py'), out, '--html', 'game.html'], { stdio: 'inherit' });
 if (webp.status !== 0) throw new Error('tools/webp-assets.py failed (pip install pillow)');
 // no Jekyll: Pages serves the files as they are
 fs.writeFileSync(path.join(out, '.nojekyll'), '');

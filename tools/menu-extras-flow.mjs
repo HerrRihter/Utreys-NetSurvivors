@@ -1,5 +1,6 @@
 // Stage 1 of docs/PLAN-FEEDBACK-27-10.md in a real browser: the pause menu's «Следующий трек» and «Повтор трека», the refusal
-// sound (not enough codes), and «Выход» (asks once more, then the game stops and says the tab can be closed; «Вернуться» resumes).
+// sound (not enough codes), and «На главную» (the last item: one press leads to the app's home, the shell; it replaced «Выход» and
+// its «the game is closed» screen, docs/PLAN-SUPERAPP.md, stage 2).
 const { chromium } = await import(process.env.PLAYWRIGHT ? 'file:///' + process.env.PLAYWRIGHT.replace(/\\/g, '/') + '/index.mjs' : 'playwright');
 const fs = await import('node:fs'); fs.mkdirSync('frames/extras', { recursive: true });
 const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] }); const pg = await b.newPage({ viewport: { width: 1600, height: 900 } });
@@ -22,26 +23,22 @@ out.next = await pg.evaluate(() => ({ track: AUDIO.current.title, music: AUDIO.m
 await key('ArrowDown'); await key('Enter'); out.repeat = await pg.evaluate(() => ({ pref: AUDIO.pref.repeat }));
 await pg.screenshot({ path: 'frames/extras/1_pause_music.png' });
 await key('ArrowDown'); await key('Enter'); await key('ArrowUp', 3); await key('Enter');            // repeat off again, then «Продолжить»
-// back to the menu: «Выход» asks once more, then the page stops
+// back to the menu: «На главную» (last) leads to the shell with one press
 await key('Escape'); await key('ArrowDown', 5); await key('Enter'); await pg.waitForTimeout(500);
-await key('ArrowUp', 2);                                                                          // from «Продолжить смену» (first) up to «Выход» (last)
-out.sel = await pg.evaluate(() => META.view().items[META.view().sel].id);
-await key('Enter'); out.armed = await pg.evaluate(() => ({ s: META.view().items[META.view().sel].s, bye: getComputedStyle(document.getElementById('bye')).display }));
-await pg.screenshot({ path: 'frames/extras/2_quit_armed.png' });
-await key('Enter'); await pg.waitForTimeout(600);
-out.gone = await pg.evaluate(() => ({ bye: getComputedStyle(document.getElementById('bye')).display, halted: AUDIO.halted, music: AUDIO.music && AUDIO.music.paused }));
-await pg.screenshot({ path: 'frames/extras/3_bye.png' });
-await pg.click('#bye-back'); await pg.waitForTimeout(600);
-out.back = await pg.evaluate(() => ({ bye: getComputedStyle(document.getElementById('bye')).display, halted: AUDIO.halted, scr: META.view().scr }));
+await key('ArrowUp', 2);                                                                          // from «Продолжить смену» (first) up to «На главную» (last)
+out.sel = await pg.evaluate(() => ({ id: META.view().items[META.view().sel].id, s: META.view().items[META.view().sel].s }));
+await pg.screenshot({ path: 'frames/extras/2_home_item.png' });
+await Promise.all([pg.waitForURL(/\/live\/shell\/index\.html/, { timeout: 15000 }), key('Enter')]);
+await pg.waitForFunction(() => document.querySelector('.home'), null, { timeout: 15000 });
+out.home = await pg.evaluate(() => ({ url: location.pathname, tiles: document.querySelectorAll('.tile').length }));
+await pg.screenshot({ path: 'frames/extras/3_home.png' });
 const checks = [
   ['the refusal plays its own sound', out.refusal.includes('deny') && !out.refusal.includes('hurt')],
   ['«Следующий трек» changes the track', out.next.track !== out.before.track && out.next.music !== out.before.music],
   ['the music plays (quieter) in the pause menu', out.next.paused === false],
   ['«Повтор трека» switches', out.repeat.pref === true],
-  ['«Выход» is reached from the top of the menu', out.sel === 'quit'],
-  ['«Выход» asks once more', /ещё раз/.test(out.armed.s) && out.armed.bye === 'none'],
-  ['the second press stops the game', out.gone.bye === 'flex' && out.gone.halted === true],
-  ['«Вернуться в игру» resumes', out.back.bye === 'none' && out.back.halted === false && out.back.scr === 'main'],
+  ['«На главную» is reached from the top of the menu', out.sel.id === 'quit' && out.sel.s === 'На главную'],
+  ['one press leads to the app\'s home (the shell)', out.home.url === '/live/shell/index.html' && out.home.tiles >= 3],
 ];
 for (const [s, c] of checks) console.log((c ? 'ok   ' : 'FAIL ') + s);
 console.log(JSON.stringify(out)); console.log('errors:', errs.length ? errs : 'none');
