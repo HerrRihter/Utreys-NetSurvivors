@@ -60,10 +60,10 @@ for (const [id, c] of Object.entries(courses)) {
   if (!Array.isArray(c.questions) || !c.questions.length) { at('no questions'); continue; }
   const seen = new Set();
   for (const q of c.questions) { if (seen.has(q.id)) at(`${q.id}: duplicate id`); seen.add(q.id); question(q, c).forEach((m) => at(`${q.id || '?'}: ${m}`)); }
-  if (index.order.includes(id)) {                                  // a training centre course: its rooms and terminals need single / multiple / true_false
+  if (index.order.includes(id)) {                                  // a training centre course: its rooms, and terminals that ask single / multiple
     if (!Array.isArray(c.rooms) || c.rooms.length !== rooms.filter((r) => r.maze).length || !c.boss || !str(c.victoryTag)) at('a training centre course needs rooms (a name per maze room), boss and victoryTag');
     if (c.stub) at('a stub course cannot be in order');
-    const game = c.questions.filter((q) => ['single', 'multiple', 'true_false'].includes(q.type));
+    const game = c.questions.filter((q) => ['single', 'multiple'].includes(q.type));
     c.topics.forEach((t, i) => { const n = game.filter((q) => q.topic === i).length; if (n < 3 * rules.questions) at(`topic «${t.name}»: ${n} questions the game can ask, the terminals need ${3 * rules.questions}`); });
   }
 }

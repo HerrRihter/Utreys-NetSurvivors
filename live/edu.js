@@ -61,13 +61,20 @@
 
   // ---------------- courses and questions ----------------
   const course = (id) => C.courses[id] || C.courses[C.order[0]];
-  const testable = (ed) => course(ed.course).questions.filter((q) => (q.sinceVersion || 1) <= ed.version && q.type !== 'open');
+  // the questions the game's test screen can show (live/learn/core.js GAME_KINDS: single and multiple)
+  const KINDS = (window.LEARN && LEARN.GAME_KINDS) || ['single', 'multiple'];
+  const testable = (ed) => course(ed.course).questions.filter((q) => (q.sinceVersion || 1) <= ed.version && KINDS.includes(q.type));
+  // the player's need of a question from the run's snapshot of what they know (LEARN.snapshot, taken when the run starts and kept with
+  // it, so a resumed or replayed run asks the same): 0 got it wrong last time, 1 never asked, 2..5 its box. No snapshot: all equal.
+  const need = (ed, q) => (ed.snap && window.LEARN ? LEARN.rank(ed.snap, q.id) : 1);
+  const byNeed = (ed, qs) => (ed.snap ? qs.map((q, i) => [need(ed, q), i, q]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map((x) => x[2]) : qs);
   const question = (ed, id) => course(ed.course).questions.find((q) => q.id === id);
   // a terminal's own three questions, rebuilt from the run's seed (no state, no draw from the run's random source): visiting another
-  // terminal, failing or retrying never reshuffles them; terminal k of a topic gets the k-th slice of that topic's shuffled pool
+  // terminal, failing or retrying never reshuffles them; terminal k of a topic gets the k-th slice of that topic's shuffled pool,
+  // the most needed questions first (a fresh player: the shuffle as it is)
   function terminalQuestions(ed, seed, topic, k) { const rng = mulberry((seed ^ 0x51ed270b ^ Math.imul(topic + 1, 0x9e3779b1)) >>> 0);
-    return shuffle(testable(ed).filter((q) => q.topic === topic), rng).slice(k * R.questions, (k + 1) * R.questions); }
-  const fresh = (courseId) => { const c = course(courseId); return { course: c.id, version: c.version, room: 0, audits: 0, surgeUntil: 0, nextAttempt: 1, active: null, reviveUsed: false, points: 0, answers: {}, rewards: [] }; };
+    return byNeed(ed, shuffle(testable(ed).filter((q) => q.topic === topic), rng)).slice(k * R.questions, (k + 1) * R.questions); }
+  const fresh = (courseId, snap) => { const c = course(courseId); return { course: c.id, version: c.version, snap: snap || null, room: 0, audits: 0, surgeUntil: 0, nextAttempt: 1, active: null, reviveUsed: false, points: 0, answers: {}, rewards: [] }; };
 
   // ---------------- a test ----------------
   // reason 'lesson' (a terminal: node = { topic, k, i }) or 'revive'; rnd: the run's random source (option order, revival draw)
@@ -75,7 +82,7 @@
     if (ed.active) return false;
     if (reason === 'revive') { if (ed.reviveUsed) return false; ed.reviveUsed = true; }
     const qs = node ? terminalQuestions(ed, seed, node.topic, node.k)
-      : shuffle(testable(ed), rnd).sort((a, b) => (ed.answers[a.id] && ed.answers[a.id].correct ? 1 : 0) - (ed.answers[b.id] && ed.answers[b.id].correct ? 1 : 0)).slice(0, R.questions);
+      : byNeed(ed, shuffle(testable(ed), rnd)).sort((a, b) => (ed.answers[a.id] && ed.answers[a.id].correct ? 1 : 0) - (ed.answers[b.id] && ed.answers[b.id].correct ? 1 : 0)).slice(0, R.questions);
     ed.active = { id: ed.nextAttempt++, reason, node: node ? node.i : -1, topic: node ? node.topic : null, phase: 'intro',
       questions: qs.map((q) => ({ id: q.id, options: shuffle(q.options.map((o) => o.id), rnd) })), index: 0, selected: [], answered: 0, correct: 0, lastCorrect: false, passed: false };
     return true;
@@ -83,7 +90,7 @@
   function select(ed, option) { const a = ed.active; if (!a || a.phase !== 'question' || !a.questions[a.index].options.includes(option)) return false;
     const q = question(ed, a.questions[a.index].id); a.selected = q.type === 'single' ? [option] : a.selected.includes(option) ? a.selected.filter((v) => v !== option) : a.selected.concat([option]); return true; }
   function submit(ed) { const a = ed.active; if (!a || a.phase !== 'question' || !a.selected.length) return false;
-    const q = question(ed, a.questions[a.index].id), correct = a.selected.length === q.correct.length && q.correct.every((v) => a.selected.includes(v));
+    const q = question(ed, a.questions[a.index].id), correct = window.LEARN ? LEARN.check(q, a.selected).correct : a.selected.length === q.correct.length && q.correct.every((v) => a.selected.includes(v));
     const rec = ed.answers[q.id] || { attempts: 0, correct: 0, firstCorrect: correct, firstCorrectAt: null, wrong: [], sources: [], topic: q.topic };
     rec.attempts++; a.answered++; const src = a.reason === 'revive' ? 'revive' : 'terminal'; if (!rec.sources.includes(src)) rec.sources.push(src);
     if (correct) { if (!rec.correct) ed.points += R.points; rec.correct++; if (rec.firstCorrectAt === null) rec.firstCorrectAt = rec.attempts; a.correct++; }

@@ -558,10 +558,10 @@
     S.lock = { w: ((opt && opt.lock && opt.lock.w) || []).filter((k) => WEAP[k]), p: ((opt && opt.lock && opt.lock.p) || []).filter((k) => PASS[k]) };
     S.client = heroOf(S).passive.clientHp ? (CLIENTS.includes(opt && opt.client) ? opt.client : CLIENTS[0]) : null; S.hpBonus = 0; S.hp = hpMax(S);
     S.rerolls = md(S, 'rerolls'); S.skips = md(S, 'skips'); S.got = { [S.base]: 1 }; S.ab = { cd: 0, until: -9, t0: -9 }; S.abR = 0;
-    if (map === 'edu') { S.ed = root.EDU.fresh(opt && opt.course); S.room = 0; S.bossQ = []; S.nextSwarm = 1e9; enterRoom(S); } else { placeBugs(S); placeDesks(S); }
+    if (map === 'edu') { S.ed = root.EDU.fresh(opt && opt.course, opt && opt.learn); S.room = 0; S.bossQ = []; S.nextSwarm = 1e9; enterRoom(S); } else { placeBugs(S); placeDesks(S); }
     if (md(S, 'head')) { S.pick = { t0: S.t, opts: rollPick(S) }; S.pend = md(S, 'head') - 1; }                        // Предзагрузка
     return S; };
-  const runOpt = (S) => ({ map: S.map, hero: S.hero, client: S.client, course: S.ed && S.ed.course, skin: S.skin, lock: S.lock });
+  const runOpt = (S) => ({ map: S.map, hero: S.hero, client: S.client, course: S.ed && S.ed.course, learn: S.ed && S.ed.snap, skin: S.skin, lock: S.lock });
 
   // ---------------- the training centre: rooms, terminals, tests ----------------
   const EDU_BOSS = { batch_accounting: 'batch', critical_incident: 'boss' };   // the courses' hall bosses → the slice's units

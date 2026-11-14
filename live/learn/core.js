@@ -7,7 +7,7 @@
   const GEN = {};                                                    // question generators by name: LEARN.GEN.chart = (params, rng) => instance
   const INTERVAL = [0, 1, 2, 4, 8, 16];                              // days to the next repeat, by box
   const MASTERED_BOX = 3, MASTERED_SHARE = 0.8;
-  const GAME_KINDS = ['single', 'multiple', 'true_false'];           // what the game's test screen can show
+  const GAME_KINDS = ['single', 'multiple'];                         // what the game's test screen can show (options to pick)
 
   // ---------------- courses and questions ----------------
   const course = (id) => C().courses[id] || null;

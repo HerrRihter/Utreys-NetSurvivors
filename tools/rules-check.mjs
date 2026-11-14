@@ -51,7 +51,7 @@ await no('a list without a limit', getDocs(query(collection(anon, 'stats'), wher
 await no('reading the login claims signed out', getDoc(doc(anon, 'logins', 'алена')));
 // progress/{uid}: the account's save (docs/PLAN-CLOUD-SAVE-31-10.md, stage 2); the rules' achievement ids and save keys are the game's
 const vm = await import('node:vm'), c = { console, Math, Date, JSON, localStorage: { getItem: () => null, setItem() {}, removeItem() {} } }; c.window = c; c.globalThis = c; vm.createContext(c);
-for (const f of ['course.js', 'edu.js', 'sim.js', 'ach.js', 'meta.js']) vm.runInContext(fs.readFileSync(path.join(root, 'live', f), 'utf8'), c);
+for (const f of ['course.js', 'learn/core.js', 'edu.js', 'sim.js', 'ach.js', 'meta.js']) vm.runInContext(fs.readFileSync(path.join(root, 'live', f), 'utf8'), c);
 const rules = fs.readFileSync(path.join(root, 'firestore.rules'), 'utf8'), listOf = (fn) => rules.match(new RegExp('function ' + fn + '\\(\\) \\{\\s*return \\[([^\\]]*)\\]'))[1].match(/'([^']+)'/g).map((s) => s.slice(1, -1));
 const sameSet = (name, a, b) => { if (a.length === b.length && a.every((x) => b.includes(x))) pass++; else { failN++; console.log('FAIL ' + name, a.filter((x) => !b.includes(x)), b.filter((x) => !a.includes(x))); } };
 sameSet('the rules\' knownAch differs from live/ach.js', c.ACH.LIST.map((x) => x.id), listOf('knownAch'));

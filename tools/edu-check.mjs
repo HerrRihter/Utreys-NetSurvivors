@@ -8,7 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const live = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'live');
 const ctx = { console, Math, Date, JSON }; ctx.window = ctx; ctx.globalThis = ctx; vm.createContext(ctx);
-for (const f of ['course.js', 'edu.js', 'sim.js']) vm.runInContext(fs.readFileSync(path.join(live, f), 'utf8'), ctx, { filename: f });
+for (const f of ['course.js', 'learn/core.js', 'edu.js', 'sim.js']) vm.runInContext(fs.readFileSync(path.join(live, f), 'utf8'), ctx, { filename: f });
 const { SIM, EDU, COURSE } = ctx;
 let bad = 0; const ok = (c, s) => { console.log((c ? 'ok   ' : 'FAIL ') + s); if (!c) bad++; };
 const N = +(process.argv[2] || 200), broken = []; let tries = 0, maxTries = 0;
@@ -50,5 +50,14 @@ ok(!!(S.ed.active && S.ed.active.reason === 'revive') && !before && !S.over, `le
 if (S.ed.active) { for (let i = 0; i < 40; i++) SIM.step(S, none); press({ jump: 1 }); for (let qi = 0; qi < 3; qi++) { const a = S.ed.active, q = EDU.question(S.ed, a.questions[a.index].id); press({ slot: a.questions[a.index].options.indexOf(q.correct[0]) + 1 }); if (q.type === 'multiple') for (const o of q.correct.slice(1)) press({ slot: a.questions[a.index].options.indexOf(o) + 1 }); press({ jump: 1 }); press({ jump: 1 }); }
   press({ jump: 1 }); ok(Math.round(S.hp) === Math.round(SIM.hpMax(S) / 2) && !S.over, `revival passed: hp ${Math.round(S.hp)} of ${Math.round(SIM.hpMax(S))}, over ${!!S.over}`); }
 console.log('summary', JSON.stringify(EDU.summary(S.ed)));
+// what the player knows (docs/DESIGN-LEARN-CORE.md): with the run's snapshot, a terminal asks the questions got wrong first; the sets stay
+// disjoint and fixed by the seed; with no snapshot (the demo, a fresh player) the terminals ask exactly what they asked before
+{ const id = COURSE.order[0], ed0 = EDU.fresh(id), pool = EDU.testable(ed0).filter((q) => q.topic === 0), late = EDU.terminalQuestions(ed0, 4242, 0, 2).map((q) => q.id);
+  const snap = Object.fromEntries(late.map((qid) => [qid, 0])), ed = EDU.fresh(id, snap), first = EDU.terminalQuestions(ed, 4242, 0, 0).map((q) => q.id);
+  const sets = [0, 1, 2].map((k) => EDU.terminalQuestions(ed, 4242, 0, k).map((q) => q.id)).flat();
+  ok(JSON.stringify(first) === JSON.stringify(late) && new Set(sets).size === sets.length && sets.length === 9, `snapshot: the 3 questions got wrong (${late.join(', ')}) go to the first terminal; sets disjoint`);
+  ok(JSON.stringify(EDU.terminalQuestions(EDU.fresh(id, {}), 4242, 0, 0)) === JSON.stringify(EDU.terminalQuestions(ed0, 4242, 0, 0)), 'an empty snapshot asks as before');
+  const mastered = Object.fromEntries(pool.slice(0, 6).map((q) => [q.id, 5])), edM = EDU.fresh(id, mastered), asked = EDU.terminalQuestions(edM, 4242, 0, 0).map((q) => q.id);
+  ok(asked.every((qid) => !mastered[qid]), `6 of 9 questions in box 5: the first terminal asks the 3 new ones (${asked.join(', ')})`); }
 console.log(bad ? `\n${bad} FAILED` : '\nall ok');
 process.exitCode = bad ? 1 : 0;

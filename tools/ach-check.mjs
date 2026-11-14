@@ -11,7 +11,7 @@ let bad = 0; const ok = (c, s) => { console.log((c ? 'ok   ' : 'FAIL ') + s); if
 function page(store) {
   const ls = { getItem: (k) => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v); }, removeItem: (k) => { delete store[k]; } };
   const ctx = { console, Math, Date, JSON, localStorage: ls }; ctx.window = ctx; ctx.globalThis = ctx; vm.createContext(ctx);
-  for (const f of ['course.js', 'edu.js', 'sim.js', 'ach.js', 'meta.js']) vm.runInContext(fs.readFileSync(path.join(live, f), 'utf8'), ctx, { filename: f });
+  for (const f of ['course.js', 'learn/core.js', 'edu.js', 'sim.js', 'ach.js', 'meta.js']) vm.runInContext(fs.readFileSync(path.join(live, f), 'utf8'), ctx, { filename: f });
   return ctx;
 }
 const none = { px: 960, py: 540 };
@@ -110,6 +110,16 @@ function center(r) { return [r[0] + r[2] / 2, r[1] + r[3] / 2]; }
     if (!n || !have(n) || (b.art && b.rank && !(b.rank >= 1 && b.rank <= b.of))) miss.push(x.id + (n ? ':' + n : '')); }
   ok(!miss.length, `every achievement has a badge (${ACH.LIST.length})` + (miss.length ? ': missing ' + miss.join(', ') : ''));
   ok(new Set(ACH.LIST.filter((x) => x.badge.art).map((x) => x.badge.art)).size <= 22, 'own pictures: one per meaning, not per achievement'); }
+
+// a training centre run is banked into what the player knows: the first attempt of each question moves its box; the next run's snapshot sees it
+{ const store = {}, { META, SIM, LEARN, COURSE } = page(store), D = META.data, cid = COURSE.order[0];
+  D.sel.map = 'edu'; D.sel.course = cid; const opts = META.runOpts(); ok(opts.course === cid && opts.learn && !Object.keys(opts.learn).length, 'a fresh player\'s run carries an empty snapshot');
+  const S = SIM.spawn(4, {}, opts), [q1, q2] = COURSE.courses[cid].questions;
+  S.ed.answers = { [q1.id]: { attempts: 2, correct: 1, firstCorrect: false, topic: 0 }, [q2.id]: { attempts: 1, correct: 1, firstCorrect: true, topic: 0 } }; S.over = { k: 'dead', t: 60 }; S.t = 60;
+  META.bank(S); const r1 = D.learn.q[LEARN.key(cid, q1.id)], r2 = D.learn.q[LEARN.key(cid, q2.id)];
+  ok(r1 && r1[0] === 1 && r1[2] === 0 && r2 && r2[0] === 1 && r2[2] === 1, 'banked: wrong at first → box 1, 0 right; right at once → box 1, 1 right');
+  const next = META.runOpts().learn; ok(next[q1.id] === 0 && next[q2.id] === 0 && JSON.parse(store.ns_meta_v5).learn.q[LEARN.key(cid, q1.id)], 'the next run\'s snapshot sees both as weak (box 1); the save keeps them');
+  const S2 = SIM.spawn(5, {}, META.runOpts()); ok(JSON.stringify(S2.ed.snap) === JSON.stringify(next), 'the run keeps its snapshot in its state (a resumed run asks the same)'); }
 
 console.log(bad ? `\n${bad} FAILED` : '\nall ok');
 process.exitCode = bad ? 1 : 0;

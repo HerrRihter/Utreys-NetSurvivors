@@ -140,7 +140,9 @@
     let edu = null;
     if (S.ed && window.EDU) { edu = EDU.summary(S.ed); edu.room = S.room; edu.rooms = COURSE.rooms.length;                // the training centre's report card
       if (counted) { const c = D.byCourse[S.ed.course] = Object.assign({ runs: 0, wins: 0, best: 0, points: 0, grade: '' }, D.byCourse[S.ed.course]); c.runs++; if (win) c.wins++;
-        if (edu.answered && edu.score >= c.best) { c.best = edu.score; c.grade = edu.grade; } c.points = Math.max(c.points, edu.points); edu.newBest = edu.answered && c.best === edu.score; } }
+        if (edu.answered && edu.score >= c.best) { c.best = edu.score; c.grade = edu.grade; } c.points = Math.max(c.points, edu.points); edu.newBest = edu.answered && c.best === edu.score; }
+      // what the player knows (docs/DESIGN-LEARN-CORE.md): the first attempt at each question of the run moves its Leitner box
+      if (window.LEARN) { const today = LEARN.day(); for (const [qid, a] of Object.entries(S.ed.answers || {})) D.learn = LEARN.record(D.learn, S.ed.course, qid, !!a.firstCorrect, today); } }
     if (counted) { const F = S.fx || {}, T = D.st;                                                 // the run's facts into the lifetime ones
       T.bosses += F.boss || 0; T.casts += F.cast || 0; T.heals += F.heal || 0; T.evos += F.evo || 0; T.evoMax = Math.max(T.evoMax, F.evo || 0);
       T.calmMax = Math.max(T.calmMax, F.calm || 0, (S.t || 0) - Math.max(0, S.hurtT === undefined ? 0 : S.hurtT));      // the stretch still going at the end counts too
@@ -402,7 +404,9 @@
     if (armedQuit && !(it[hov] && it[hov].id === 'quit')) armedQuit = 0; track(); }
   const view = () => ({ U, LW: W, LH: H, compact: CP, get scrollArea() { return CP ? area.slice() : null; }, scr, sel, hovBack, tab, focus, skinsOf, ownsSkin, suspended: susp, items: items(), D, last, back: back(), armedReset, spent: spent(), price, lvl, locked, owns, trPrice, TR_MAX, open, cap, ctab, acat });
 
-  const runOpts = () => ({ map: D.maps[D.sel.map] ? D.sel.map : 'dc', hero: owns(D.sel.hero) ? D.sel.hero : 'utrace', client: D.sel.client, skin: D.sel.skins[owns(D.sel.hero) ? D.sel.hero : 'utrace'] || null, lock: window.ACH ? ACH.lock(D) : undefined, course: COURSE.courses[D.sel.course] ? D.sel.course : COURSE.order[0] });
+  const runOpts = () => ({ map: D.maps[D.sel.map] ? D.sel.map : 'dc', hero: owns(D.sel.hero) ? D.sel.hero : 'utrace', client: D.sel.client, skin: D.sel.skins[owns(D.sel.hero) ? D.sel.hero : 'utrace'] || null, lock: window.ACH ? ACH.lock(D) : undefined, course: courseSel(),
+    learn: window.LEARN ? LEARN.snapshot(D.learn, courseSel()) : undefined });                 // what the player knows: the terminals ask the weak first
+  const courseSel = () => (COURSE.order.includes(D.sel.course) ? D.sel.course : COURSE.order[0]);
   window.META = { UPG, MAPS, PAUSE, save, setSuspended: (o) => { susp = o; }, get suspended() { return susp; }, tab: (x) => { tab = x; }, ctab: (x) => { ctab = x; }, acat: (x) => { acat = x; }, unlockAll: () => { Object.keys(SIM.HEROES).forEach((h) => (D.heroes[h] = 1)); }, mods, runOpts, bank, key, click: (x, y) => click(x / U, y / U), move: (x, y) => move(x / U, y / U), drag: (x) => drag(x / U), up, wheel, view, go, setUI, get U() { return U; }, get data() { return D; }, get last() { return last; }, get achOnLoad() { return achNew; }, live, achIds, claim, claimAll, wipe, cloudSide, cloudSet, adopt, withAch, signedOut, unsynced, summary, SYNCED, reset: () => { D = fresh(); save(); } };
   if (window.CLOUD && CLOUD.sync) CLOUD.sync();                                                    // the account may have signed in first
 })();
