@@ -1,5 +1,5 @@
 // The achievements without a browser (docs/PLAN-ACHIEVEMENTS.md; claims: docs/PLAN-FEEDBACK-27-10.md, stages 3–4): the sim's run facts
-// add up, v2 and v3 saves migrate to v4, a banked run reports what it met, achievements wait for a claim that pays and opens once.
+// add up, v2, v3 and v4 saves migrate to v5, a banked run reports what it met, achievements wait for a claim that pays and opens once.
 //   node tools/ach-check.mjs
 import vm from 'node:vm';
 import fs from 'node:fs';
@@ -23,7 +23,7 @@ const none = { px: 960, py: 540 };
   ok(JSON.stringify([a.x, a.y, a.kills, a.hp, a.fx]) === JSON.stringify([b.x, b.y, b.kills, b.hp, b.fx]), 'two runs from one seed match'); }
 
 // 2. a new player: nothing done, nothing paid
-{ const store = {}, { META } = page(store); ok(Object.keys(META.data.ach).length === 0 && META.data.codes === 0 && META.data.v === 4, 'a fresh save: v4, no achievements, 0 codes'); }
+{ const store = {}, { META } = page(store); ok(Object.keys(META.data.ach).length === 0 && META.data.codes === 0 && META.data.v === 5 && Object.keys(META.data.learn.q).length === 0, 'a fresh save: v5, no achievements, 0 codes, nothing learned'); }
 
 // 3. a v2 save: migrates, keeps everything; what its totals meet waits to be claimed (docs/PLAN-FEEDBACK-27-10.md, stage 4)
 { const v2 = { v: 2, codes: 100, up: { power: 2 }, runs: 30, wins: 1, kills: 1200, time: 5000, best: { time: 320, kills: 400, lvl: 21 }, seen: { w: { trace: 1 }, e: {}, p: {} },
@@ -31,10 +31,10 @@ const none = { px: 960, py: 540 };
   const store = { ns_meta_v2: JSON.stringify(v2) }, { META, ACH } = page(store), D = META.data;
   const want = ['surv_60', 'surv_180', 'surv_300', 'kills_100', 'kills_1000', 'runs_5', 'runs_10', 'runs_25', 'win_1', 'win_utrace', 'runs5_utrace', 'lvl_20'];
   const got = Object.keys(D.done).sort();
-  ok(JSON.stringify(got) === JSON.stringify([...want].sort()) && Object.keys(D.ach).length === 0, 'v2 → v4: waiting on load ' + got.join(', '));
+  ok(JSON.stringify(got) === JSON.stringify([...want].sort()) && Object.keys(D.ach).length === 0, 'v2 → v5: waiting on load ' + got.join(', '));
   ok(D.codes === 100, 'nothing paid before the claims');
   ok(D.up.power === 2 && D.heroes.qa && D.skins.utrace_zen && D.sel.hero === 'qa' && D.ui.fps && D.st.bosses === 0, 'upgrades, heroes, skins, choices and settings carried over; run facts start at zero');
-  ok(store.ns_meta_v2 === JSON.stringify(v2) && JSON.parse(store.ns_meta_v4).v === 4, 'saved as v4; the v2 save stays as a backup');
+  ok(store.ns_meta_v2 === JSON.stringify(v2) && JSON.parse(store.ns_meta_v5).v === 5 && !store.ns_meta_v4, 'saved as v5; the v2 save stays as a backup');
   const paid = want.reduce((n, id) => n + ACH.BY[id].reward, 0); META.claimAll();
   ok(D.codes === 100 + paid && want.every((id) => D.ach[id]) && !Object.keys(D.done).length, `«Забрать всё»: codes 100 + ${paid} = ${D.codes}`);
   const again = page(store).META.data; ok(again.codes === D.codes && Object.keys(again.ach).length === want.length && !Object.keys(again.done).length, 'loading again pays nothing twice'); }
@@ -44,9 +44,17 @@ const none = { px: 960, py: 540 };
     up: {}, runs: 3, wins: 1, kills: 300, time: 900, best: { time: 100, kills: 120, lvl: 9 }, seen: { w: { trace: 1 }, e: { trace_x: 1 }, p: {} }, heroes: { utrace: 1 }, skins: {}, sel: { hero: 'utrace', skin: null, skins: {}, map: 'dc', course: null },
     maps: { dc: 1, edu: 1 }, byMap: {}, byHero: { utrace: { time: 100, kills: 120, lvl: 9, wins: 1, runs: 3 } }, byCourse: {}, ui: { fps: false } };
   const store = { ns_meta_v3: JSON.stringify(v3) }, { META, ACH } = page(store), D = META.data;
-  ok(D.v === 4 && D.ach.surv_60 && D.ach.win_1 && D.codes === 50, 'v3 → v4: done achievements stay claimed, codes unchanged');
+  ok(D.v === 5 && D.ach.surv_60 && D.ach.win_1 && D.codes === 50, 'v3 → v5: done achievements stay claimed, codes unchanged');
   ok(D.done.foe_bug && D.done.evo_trace_x && D.done.win_utrace && !D.ach.foe_bug, 'new achievements met by v3 totals wait: ' + Object.keys(D.done).join(', '));
   ok(ACH.isOpen(D, 'u', 'speed') && ACH.isOpen(D, 'u', 'rerolls') && !ACH.isOpen(D, 'u', 'armor'), 'upgrades opened by claimed achievements are open; the rest closed'); }
+// 4b. a v4 save (docs/DESIGN-LEARN-CORE.md): everything carries over, learn starts empty, the v4 save stays as a backup; a v5 save keeps learn
+{ const store = {}; { const { META } = page(store); store.ns_meta_v4 = JSON.stringify(Object.assign(JSON.parse(store.ns_meta_v5 || JSON.stringify(META.data)), { v: 4, codes: 77, ach: { surv_60: 1 }, learn: undefined })); delete store.ns_meta_v5; }
+  const v4 = store.ns_meta_v4, { META } = page(store), D = META.data;
+  ok(D.v === 5 && D.codes === 77 && D.ach.surv_60 && D.learn && D.learn.v === 1 && !Object.keys(D.learn.q).length && D.learn.streak.days === 0, 'v4 → v5: codes and achievements kept, learn empty');
+  D.learn.q['batch-accounting:batch-1'] = [2, 20001, 2, 2]; META.save();
+  const again = page(store).META.data;
+  ok(store.ns_meta_v4 === v4 && JSON.stringify(again.learn.q) === JSON.stringify({ 'batch-accounting:batch-1': [2, 20001, 2, 2] }), 'the v4 save stays as a backup; learn survives a reload');
+  ok(META.SYNCED.includes('learn') && !META.cloudSide().empty, 'learn goes to the account, and a save with learning is not «empty»'); }
 
 // 5. a banked run adds its facts and reports the achievements it met; they wait for a claim
 { const store = {}, { META, SIM } = page(store); const S = SIM.spawn(2, {}, { hero: 'utrace' });

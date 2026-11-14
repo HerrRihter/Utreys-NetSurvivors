@@ -65,7 +65,7 @@ await ok('a new save (rev 1)', prog(A, 'alice', save(), 1));
 await ok('the next revision with codes, purchases and achievements', prog(A, 'alice', save({ codes: 420, runs: 3, kills: 210, time: 612.5, up: { health: 2 }, heroes: { utrace: 1, qa: 1 }, ach: { surv_60: 1 }, done: { kills_100: 1 }, fresh: { 'hero:qa': 1 } }), 2));
 await no('a revision skipped', prog(A, 'alice', save({ codes: 400 }), 4));
 await no('the same revision again', prog(A, 'alice', save({ codes: 400 }), 2));
-await ok('codes may go down (spent)', prog(A, 'alice', save({ codes: 100 }), 3));
+await ok('codes may go down (spent); learned questions go up (v5)', prog(A, 'alice', save({ codes: 100, learn: { v: 1, q: { 'batch-accounting:batch-1': [2, 20400, 2, 2] }, xp: 30, streak: { days: 2, last: 20399, freeze: 0 } } }), 3));
 await no('negative codes', prog(A, 'alice', save({ codes: -5 }), 4));
 await no('codes beyond 10⁹', prog(A, 'alice', save({ codes: 2e9 }), 4));
 await no('fractional codes', prog(A, 'alice', save({ codes: 10.5 }), 4));
@@ -75,7 +75,11 @@ await no('an unknown achievement waiting', prog(A, 'alice', save({ done: { free_
 await no('an unknown key in the save', prog(A, 'alice', save({ cheat: 1 }), 4));
 await no('the device\'s fields in the save', prog(A, 'alice', save({ ui: { fps: true } }), 4));
 await no('a save without a field', prog(A, 'alice', (() => { const d = save(); delete d.codes; return d; })(), 4));
-await no('another save version', prog(A, 'alice', save({ v: 5 }), 4));
+await no('another save version', prog(A, 'alice', save({ v: 6 }), 4));
+// learn (save v5, docs/DESIGN-LEARN-CORE.md): refused when malformed (rev 4 is the next one, so only learn can be the reason)
+await no('learn with an unknown field', prog(A, 'alice', save({ learn: { v: 1, q: {}, cheat: 1 } }), 4));
+await no('learn beyond 2000 questions', prog(A, 'alice', save({ learn: { v: 1, q: Object.fromEntries(Array.from({ length: 2001 }, (_, i) => ['c:q' + i, [1, 1, 1, 1]])) } }), 4));
+await no('negative xp', prog(A, 'alice', save({ learn: { v: 1, q: {}, xp: -1 } }), 4));
 await no('a huge list of purchases', prog(A, 'alice', save({ up: Object.fromEntries(Array.from({ length: 80 }, (_, i) => ['u' + i, 1])) }), 4));
 await no('an extra field', prog(A, 'alice', save(), 4, 0, { codes: 9999 }));
 await no('another schema', prog(A, 'alice', save(), 4, 0, { schema: 2 }));
@@ -88,7 +92,7 @@ await no('progress is not public', getDoc(doc(anon, 'progress', 'alice')));
 await no('a reset that skips an epoch', prog(A, 'alice', save(), 4, 2));
 await no('a string epoch', prog(A, 'alice', save(), 4, '1'));
 await ok('a reset: epoch 1, empty save', prog(A, 'alice', save(), 4, 1));
-await ok('the save grows in the new epoch', prog(A, 'alice', save({ codes: 30, runs: 1 }), 5, 1));
+await ok('the save grows in the new epoch (an old v4 client, no learn)', prog(A, 'alice', (() => { const d = save({ v: 4, codes: 30, runs: 1 }); delete d.learn; return d; })(), 5, 1));
 await no('going back an epoch', prog(A, 'alice', save(), 6, 0));
 await no('progress created at a later epoch', prog(B, 'bob', save(), 1, 2));
 // the old document ({ ach, epoch }, before stage 2) moves to the new shape at rev 1; the old shape is refused now

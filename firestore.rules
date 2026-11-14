@@ -150,14 +150,23 @@ service cloud.firestore {
       // Keep in step with fresh() in live/meta.js, without its device fields ui and cloud.
       function saveKeys() {
         return ['v', 'st', 'ach', 'done', 'fresh', 'codes', 'up', 'runs', 'wins', 'kills', 'time', 'best', 'seen', 'heroes', 'skins', 'sel',
-          'maps', 'byMap', 'byHero', 'byCourse'];
+          'maps', 'byMap', 'byHero', 'byCourse', 'learn'];
       }
       function count(n) {
         return n is int && n >= 0 && n <= 1000000000;
       }
+      // learn (save v5, docs/DESIGN-LEARN-CORE.md): a Leitner box per question, up to 2000 questions; the lessons' xp and streak
+      function learnOk(d) {
+        return !('learn' in d)
+          || (d.learn is map && d.learn.keys().hasOnly(['v', 'q', 'xp', 'streak'])
+            && d.learn.q is map && d.learn.q.size() <= 2000
+            && (!('xp' in d.learn) || count(d.learn.xp))
+            && (!('streak' in d.learn) || (d.learn.streak is map && d.learn.streak.size() <= 4)));
+      }
       function dataOk(d) {
         return d.keys().hasOnly(saveKeys())
-          && d.v == 4
+          && (d.v == 4 || d.v == 5)
+          && learnOk(d)
           && count(d.codes) && count(d.runs) && count(d.wins) && count(d.kills)
           && d.time is number && d.time >= 0 && d.time <= 1000000000
           && d.ach is map && d.ach.keys().hasOnly(knownAch())

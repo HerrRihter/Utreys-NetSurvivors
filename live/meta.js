@@ -3,7 +3,7 @@
 // and the menu screens' state and layout. The scene draws the screens from META.view(); index.html routes input here while
 // no run is going and calls META.bank(run) once when a run ends or is left. Saved in localStorage ('ns_meta_v4'); the achievements are live/ach.js.
 (() => {
-  const KEY = 'ns_meta_v4', KEY_V3 = 'ns_meta_v3', KEY_V2 = 'ns_meta_v2', KEY_V1 = 'ns_meta_v1';
+  const KEY = 'ns_meta_v5', KEY_V4 = 'ns_meta_v4', KEY_V3 = 'ns_meta_v3', KEY_V2 = 'ns_meta_v2', KEY_V1 = 'ns_meta_v1';
   // the screens' logical size: 1920×1080, or 960×540 drawn 2× larger on phones and tablets (U = 2, stage 7б of docs/PLAN-FEEDBACK-27-10.md).
   // The page passes pointer positions in view px; they are divided by U here. CP: the compact layouts are in use.
   let U = 1, W = 1920, H = 1080, CP = false;
@@ -30,20 +30,24 @@
   // save v4 (docs/PLAN-FEEDBACK-27-10.md, stage 4): achievements are claimed by hand. ach is now the claimed ones; done the ones met and
   // waiting (1 here, 2 from the account's other device); fresh the content a claim opened, until it is looked at. v3 → v4: everything
   // v3 had done was paid and opened, so it is claimed; what v3's totals meet beyond that (the new achievements) waits to be claimed.
+  // save v5 (docs/DESIGN-LEARN-CORE.md): learn, what the player knows (LEARN.record: a Leitner box per question) and, from stage 2 of
+  // docs/PLAN-SUPERAPP.md, the lessons' xp and streak. v4 → v5 keeps everything; learn starts empty.
+  const learn0 = () => ({ v: 1, q: {}, xp: 0, streak: { days: 0, last: 0, freeze: 0 } });
   const rec0 = () => ({ time: 0, kills: 0, lvl: 0, wins: 0, runs: 0 });
   const st0 = () => ({ bosses: 0, casts: 0, heals: 0, evos: 0, evoMax: 0, calmMax: 0, noHealWins: 0, eduWins: 0, eduTop: 0, foes: {}, codes: 0, noCastWins: 0, winMin: 0 });
-  const fresh = () => ({ v: 4, st: st0(), ach: {}, done: {}, fresh: {}, codes: 0, up: {}, runs: 0, wins: 0, kills: 0, time: 0, best: { time: 0, kills: 0, lvl: 0 }, seen: { w: { trace: 1 }, e: {}, p: {} },
-    heroes: { utrace: 1 }, skins: {}, sel: { hero: 'utrace', skin: null, skins: {}, map: 'dc', course: null }, maps: { dc: 1, edu: 1 }, byMap: {}, byHero: {}, byCourse: {}, ui: { fps: false },
+  const fresh = () => ({ v: 5, st: st0(), ach: {}, done: {}, fresh: {}, codes: 0, up: {}, runs: 0, wins: 0, kills: 0, time: 0, best: { time: 0, kills: 0, lvl: 0 }, seen: { w: { trace: 1 }, e: {}, p: {} },
+    heroes: { utrace: 1 }, skins: {}, sel: { hero: 'utrace', skin: null, skins: {}, map: 'dc', course: null }, maps: { dc: 1, edu: 1 }, byMap: {}, byHero: {}, byCourse: {}, learn: learn0(), ui: { fps: false },
     cloud: { uid: '', epoch: 0, wipe: false, rev: 0, fp: '' } });   // cloud: the account this save last synced with, that account's reset count, a reset still
                                                                      // to send, the cloud's revision and this save's fingerprint at that sync
   // a loaded save, normalised against the current shape (missing fields get defaults, so older saves and future fields both load)
-  const norm = (s) => { const f = fresh(); return Object.assign(f, s, { v: 4, st: Object.assign(f.st, s.st, { foes: Object.assign({}, s.st && s.st.foes) }), ach: Object.assign({}, s.ach), done: Object.assign({}, s.done), fresh: Object.assign({}, s.fresh), best: Object.assign(f.best, s.best), seen: Object.assign(f.seen, s.seen),
+  const norm = (s) => { const f = fresh(); return Object.assign(f, s, { v: 5, st: Object.assign(f.st, s.st, { foes: Object.assign({}, s.st && s.st.foes) }), ach: Object.assign({}, s.ach), done: Object.assign({}, s.done), fresh: Object.assign({}, s.fresh), best: Object.assign(f.best, s.best), seen: Object.assign(f.seen, s.seen),
     heroes: Object.assign(f.heroes, s.heroes), skins: Object.assign({}, s.skins), sel: Object.assign(f.sel, s.sel, { skins: Object.assign({}, s.sel && s.sel.skins) }), maps: Object.assign(f.maps, s.maps),
-    byMap: Object.assign({}, s.byMap), byHero: Object.assign({}, s.byHero), byCourse: Object.assign({}, s.byCourse), ui: Object.assign(f.ui, s.ui), cloud: Object.assign(f.cloud, s.cloud) }); };
+    byMap: Object.assign({}, s.byMap), byHero: Object.assign({}, s.byHero), byCourse: Object.assign({}, s.byCourse),
+    learn: Object.assign(f.learn, s.learn, { v: 1, q: Object.assign({}, s.learn && s.learn.q), streak: Object.assign(f.learn.streak, s.learn && s.learn.streak) }), ui: Object.assign(f.ui, s.ui), cloud: Object.assign(f.cloud, s.cloud) }); };
   let D = fresh();
-  // the newest save found wins; older keys stay as backups (v1 → v2 → v3 → v4: everything carries over)
-  try { const rd = (k) => JSON.parse(localStorage.getItem(k) || 'null'), s4 = rd(KEY), s3 = s4 ? null : rd(KEY_V3), s2 = s4 || s3 ? null : rd(KEY_V2), s1 = s4 || s3 || s2 ? null : rd(KEY_V1);
-    if (s4 && s4.v === 4) D = norm(s4); else if (s3 && s3.v === 3) D = norm(s3); else if (s2 && s2.v === 2) D = norm(s2); else if (s1 && s1.v === 1) D = norm(s1);
+  // the newest save found wins; older keys stay as backups (v1 → v2 → v3 → v4 → v5: everything carries over)
+  try { const rd = (k) => JSON.parse(localStorage.getItem(k) || 'null'), keys = [[KEY, 5], [KEY_V4, 4], [KEY_V3, 3], [KEY_V2, 2], [KEY_V1, 1]];
+    for (const [k, v] of keys) { const s = rd(k); if (s && s.v === v) { D = norm(s); break; } }
   } catch (_) {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (_) {} if (window.CLOUD && CLOUD.soon) CLOUD.soon(); };   // the account gets it ~2 s later
   // the copy an undo of a reset used to keep (there is no undo now)
@@ -91,7 +95,7 @@
   const canon = (v) => (v && typeof v === 'object' ? (Array.isArray(v) ? '[' + v.map(canon).join(',') + ']' : '{' + Object.keys(v).sort().map((k) => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}') : JSON.stringify(v));
   const print = (d) => { const s = canon(synced(d)); let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 0x01000193) >>> 0; return h.toString(16) + '.' + s.length; };
   // nothing worth asking about: a new device, or a guest who has not played (a shift, a purchase or an achievement makes it worth it)
-  const empty = (d) => !d.runs && !d.codes && !Object.keys(d.ach).length && !Object.keys(d.done).length && !Object.keys(d.up).length && !Object.keys(d.skins).length && Object.keys(d.heroes).length <= 1;
+  const empty = (d) => !d.runs && !d.codes && !Object.keys((d.learn && d.learn.q) || {}).length && !Object.keys(d.ach).length && !Object.keys(d.done).length && !Object.keys(d.up).length && !Object.keys(d.skins).length && Object.keys(d.heroes).length <= 1;
   const summary = (d) => ({ codes: d.codes | 0, runs: d.runs | 0, wins: d.wins | 0, heroes: Object.keys(d.heroes || {}).length, ach: Object.keys(d.ach || {}).length });
   // CLOUD's view of this save: the account it last synced with, its data and whether it changed since
   const cloudSide = () => Object.assign({}, D.cloud, { data: synced(D), now: print(D), empty: empty(D), sum: summary(D) });
@@ -399,6 +403,6 @@
   const view = () => ({ U, LW: W, LH: H, compact: CP, get scrollArea() { return CP ? area.slice() : null; }, scr, sel, hovBack, tab, focus, skinsOf, ownsSkin, suspended: susp, items: items(), D, last, back: back(), armedReset, spent: spent(), price, lvl, locked, owns, trPrice, TR_MAX, open, cap, ctab, acat });
 
   const runOpts = () => ({ map: D.maps[D.sel.map] ? D.sel.map : 'dc', hero: owns(D.sel.hero) ? D.sel.hero : 'utrace', client: D.sel.client, skin: D.sel.skins[owns(D.sel.hero) ? D.sel.hero : 'utrace'] || null, lock: window.ACH ? ACH.lock(D) : undefined, course: COURSE.courses[D.sel.course] ? D.sel.course : COURSE.order[0] });
-  window.META = { UPG, MAPS, PAUSE, setSuspended: (o) => { susp = o; }, get suspended() { return susp; }, tab: (x) => { tab = x; }, ctab: (x) => { ctab = x; }, acat: (x) => { acat = x; }, unlockAll: () => { Object.keys(SIM.HEROES).forEach((h) => (D.heroes[h] = 1)); }, mods, runOpts, bank, key, click: (x, y) => click(x / U, y / U), move: (x, y) => move(x / U, y / U), drag: (x) => drag(x / U), up, wheel, view, go, setUI, get U() { return U; }, get data() { return D; }, get last() { return last; }, get achOnLoad() { return achNew; }, live, achIds, claim, claimAll, wipe, cloudSide, cloudSet, adopt, withAch, signedOut, unsynced, summary, SYNCED, reset: () => { D = fresh(); save(); } };
+  window.META = { UPG, MAPS, PAUSE, save, setSuspended: (o) => { susp = o; }, get suspended() { return susp; }, tab: (x) => { tab = x; }, ctab: (x) => { ctab = x; }, acat: (x) => { acat = x; }, unlockAll: () => { Object.keys(SIM.HEROES).forEach((h) => (D.heroes[h] = 1)); }, mods, runOpts, bank, key, click: (x, y) => click(x / U, y / U), move: (x, y) => move(x / U, y / U), drag: (x) => drag(x / U), up, wheel, view, go, setUI, get U() { return U; }, get data() { return D; }, get last() { return last; }, get achOnLoad() { return achNew; }, live, achIds, claim, claimAll, wipe, cloudSide, cloudSet, adopt, withAch, signedOut, unsynced, summary, SYNCED, reset: () => { D = fresh(); save(); } };
   if (window.CLOUD && CLOUD.sync) CLOUD.sync();                                                    // the account may have signed in first
 })();
