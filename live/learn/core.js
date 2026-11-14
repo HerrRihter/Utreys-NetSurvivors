@@ -86,12 +86,15 @@
     const q = Object.assign({}, state && state.q, { [k]: [box, today + (correct ? INTERVAL[box] : 1), r[2] + (correct ? 1 : 0), r[3] + 1] });
     return Object.assign(fresh(), state, { q });
   }
-  // the order of need: 0 due for a repeat (most overdue first), 1 weak (box 1: got it wrong last time), 2 new, 3 the rest (lower box first)
+  // the last answer was wrong: a wrong answer puts the question in box 1 and any right one after it lifts it to box 2, so box 1 with
+  // fewer right answers than attempts means the last one was wrong (box 1 with all right: answered once, right)
+  const wrongLast = (r) => !!r && r[0] === 1 && r[2] < r[3];
+  // the order of need: 0 due for a repeat (most overdue first), 1 weak (got it wrong last time), 2 new, 3 the rest (lower box first)
   function need(state, courseId, q, today) {
     const r = rec(state, key(courseId, q.id));
     if (!r) return [2, 0];
     if (r[1] <= today) return [0, r[1] - today];
-    if (r[0] <= 1) return [1, 0];
+    if (wrongLast(r)) return [1, 0];
     return [3, r[0]];
   }
   // up to `count` questions of a course (of one topic, if given) that the mode can show (`kinds`), the most needed first; ties go in
@@ -104,19 +107,19 @@
     return ranked.slice(0, count).map((x) => x.q);
   }
   // what a run of the game needs to know of the player (it is saved with a suspended run, so a resumed or replayed run asks the same):
-  // { qid: rank } where a lower rank is asked first: 0 got it wrong last time, 1 never asked, 2..5 the box
+  // { qid: rank } where a lower rank is asked first: 0 got it wrong last time, 1 never asked, 2..6 known (box 1..5, so 1 + box)
   function snapshot(state, courseId) {
     const c = course(courseId), out = {}; if (!c) return out;
-    for (const q of c.questions) { const r = rec(state, key(courseId, q.id)); if (r) out[q.id] = r[0] <= 1 ? 0 : r[0]; }
+    for (const q of c.questions) { const r = rec(state, key(courseId, q.id)); if (r) out[q.id] = wrongLast(r) ? 0 : 1 + r[0]; }
     return out;
   }
   const rank = (snap, qid) => (snap && qid in snap ? snap[qid] : 1);
-  // per topic: how many questions, asked at least once, mastered (box 3+), due today, weak (box 1); a topic is mastered at 80 %
+  // per topic: how many questions, asked at least once, mastered (box 3+), due today, weak (wrong last time); a topic is mastered at 80 %
   function mastery(state, courseId, today) {
     const c = course(courseId); if (!c) return null;
     const topics = c.topics.map((t, i) => { const qs = c.questions.filter((q) => q.topic === i), rs = qs.map((q) => rec(state, key(courseId, q.id)));
       const n = { name: t.name, total: qs.length, asked: rs.filter(Boolean).length, mastered: rs.filter((r) => r && r[0] >= MASTERED_BOX).length,
-        due: today === undefined ? 0 : rs.filter((r) => r && r[1] <= today).length, weak: rs.filter((r) => r && r[0] === 1).length };
+        due: today === undefined ? 0 : rs.filter((r) => r && r[1] <= today).length, weak: rs.filter(wrongLast).length };
       n.done = n.total > 0 && n.mastered / n.total >= MASTERED_SHARE; return n; });
     const sum = (k) => topics.reduce((s, t) => s + t[k], 0);
     return { course: courseId, title: c.title, topics, total: sum('total'), asked: sum('asked'), mastered: sum('mastered'), due: sum('due'), weak: sum('weak'), done: topics.every((t) => t.done) };

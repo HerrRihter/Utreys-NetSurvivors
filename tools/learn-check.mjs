@@ -72,7 +72,8 @@ ok(order1[0] === d && order1[1] === w && order1[order1.length - 1] === r1, `pick
 ok(LEARN.pick(s, { course: cid, topic: 1, count: 99, kinds, rng: mulberry(2), today: T }).every((q) => q.topic === 1), 'pick: a topic keeps to its topic');
 ok(LEARN.pick(s, { course: cid, count: 99, kinds: ['pairs'], rng: mulberry(2), today: T }).length === 0, 'pick: only kinds the mode can show');
 const snap = LEARN.snapshot(s, cid);
-ok(snap[w] === 0 && snap[d] === 0 && snap[r1] === 2 && LEARN.rank(snap, cq[0].id) === 1 && Object.keys(snap).length === 3, 'snapshot: wrong or box 1 → 0, new → 1, box n → n');
+ok(snap[w] === 0 && snap[d] === 2 && snap[r1] === 3 && LEARN.rank(snap, cq[0].id) === 1 && Object.keys(snap).length === 3, 'snapshot: wrong last time → 0, new → 1, right once (box 1) → 2, box 2 → 3');
+ok(LEARN.mastery(s, cid, T).weak === 1, 'mastery: only the question got wrong is weak, not the one right once');
 let all = LEARN.fresh(); for (const q of cq.filter((q) => q.topic === 0)) for (let i = 0; i < 3; i++) all = LEARN.record(all, cid, q.id, true, T + i * 10);
 const ms = LEARN.mastery(all, cid, T + 30);
 ok(ms.topics[0].done && !ms.topics[1].done && ms.topics[0].mastered === ms.topics[0].total && ms.total === cq.length && !ms.done, `mastery: topic 1 mastered (${ms.topics[0].mastered}/${ms.topics[0].total}), the course not yet`);

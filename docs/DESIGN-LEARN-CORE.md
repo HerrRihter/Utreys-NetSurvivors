@@ -81,7 +81,7 @@ LEARN.make(q, rng)                        // экземпляр для пока�
 LEARN.check(q, answer)                    // → { correct, score, detail }
 LEARN.pick(state, { course, topic?, count, kinds, rng, today, exclude? })   // → [вопрос], без повторов
 LEARN.record(state, course, qid, correct, today)  // → новое состояние (исходное не меняется)
-LEARN.snapshot(state, course)             // → для смены: { qid: ранг }, 0 — ошибся в прошлый раз, 1 — новый, 2–5 — коробка
+LEARN.snapshot(state, course)             // → для смены: { qid: ранг }, 0 — ошибся в прошлый раз, 1 — новый, 2–6 — знает (1 + коробка)
 LEARN.rank(snap, qid)                     // ранг вопроса в снимке (нет в снимке — 1, новый)
 LEARN.mastery(state, course, today)       // → по темам: { total, asked, mastered, due, weak, done }
 LEARN.courses({ stubs })                  // видимые курсы; заглушки — только в сборке для разработки

@@ -118,7 +118,7 @@ function center(r) { return [r[0] + r[2] / 2, r[1] + r[3] / 2]; }
   S.ed.answers = { [q1.id]: { attempts: 2, correct: 1, firstCorrect: false, topic: 0 }, [q2.id]: { attempts: 1, correct: 1, firstCorrect: true, topic: 0 } }; S.over = { k: 'dead', t: 60 }; S.t = 60;
   META.bank(S); const r1 = D.learn.q[LEARN.key(cid, q1.id)], r2 = D.learn.q[LEARN.key(cid, q2.id)];
   ok(r1 && r1[0] === 1 && r1[2] === 0 && r2 && r2[0] === 1 && r2[2] === 1, 'banked: wrong at first → box 1, 0 right; right at once → box 1, 1 right');
-  const next = META.runOpts().learn; ok(next[q1.id] === 0 && next[q2.id] === 0 && JSON.parse(store.ns_meta_v5).learn.q[LEARN.key(cid, q1.id)], 'the next run\'s snapshot sees both as weak (box 1); the save keeps them');
+  const next = META.runOpts().learn; ok(next[q1.id] === 0 && next[q2.id] === 2 && JSON.parse(store.ns_meta_v5).learn.q[LEARN.key(cid, q1.id)], 'the next run\'s snapshot: the one got wrong first (0), the one right after the new ones (2); the save keeps them');
   const S2 = SIM.spawn(5, {}, META.runOpts()); ok(JSON.stringify(S2.ed.snap) === JSON.stringify(next), 'the run keeps its snapshot in its state (a resumed run asks the same)'); }
 
 console.log(bad ? `\n${bad} FAILED` : '\nall ok');
